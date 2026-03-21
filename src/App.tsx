@@ -50,12 +50,78 @@ import {
   Edit,
   Trash2,
   Mail,
-  ShieldCheck
+  ShieldCheck,
+  Loader2
 } from 'lucide-react';
 import { MOCK_GAMES, MOCK_BANNERS, MOCK_WALLET, MOCK_ACTIVITY, MOCK_PROVIDERS, MOCK_BANKS, MOCK_PLAYER_ACCOUNTS } from './constants';
 import { CasinoGame, DepositOrder, PlayerWallet, Bank, PlayerBankAccount } from './types';
 
 // --- Components ---
+
+const PageLoader = () => (
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="fixed inset-0 z-[300] bg-surface flex flex-col items-center justify-center gap-6"
+  >
+    <div className="relative">
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.5, 1, 0.5]
+        }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        className="w-24 h-24 rounded-full bg-primary/20 blur-2xl absolute -inset-4"
+      />
+      <div className="relative flex flex-col items-center">
+        <span className="text-4xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline mb-2">NEBULA</span>
+        <div className="flex items-center gap-2">
+          <Loader2 className="w-5 h-5 text-primary animate-spin" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-on-surface-variant">Initializing Systems</span>
+        </div>
+      </div>
+    </div>
+  </motion.div>
+);
+
+const SectionLoader = ({ message = "Loading content..." }: { message?: string }) => (
+  <div className="w-full py-12 flex flex-col items-center justify-center gap-4">
+    <div className="relative">
+      <div className="w-12 h-12 rounded-full border-2 border-primary/10 border-t-primary animate-spin" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+      </div>
+    </div>
+    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant animate-pulse">{message}</p>
+  </div>
+);
+
+const SkeletonCard = () => (
+  <div className="aspect-[3/4] rounded-2xl bg-surface-container-highest animate-pulse overflow-hidden relative">
+    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+    <div className="absolute bottom-3 left-3 right-3 space-y-2">
+      <div className="h-3 w-2/3 bg-white/10 rounded-full" />
+      <div className="h-2 w-1/2 bg-white/5 rounded-full" />
+    </div>
+  </div>
+);
+
+const SkeletonTransaction = () => (
+  <div className="p-4 bg-surface-container-low rounded-2xl border border-white/5 flex items-center justify-between animate-pulse">
+    <div className="flex items-center gap-4">
+      <div className="w-10 h-10 rounded-xl bg-white/5" />
+      <div className="space-y-2">
+        <div className="h-3 w-24 bg-white/10 rounded-full" />
+        <div className="h-2 w-16 bg-white/5 rounded-full" />
+      </div>
+    </div>
+    <div className="space-y-2 text-right">
+      <div className="h-3 w-16 bg-white/10 rounded-full ml-auto" />
+      <div className="h-2 w-12 bg-white/5 rounded-full ml-auto" />
+    </div>
+  </div>
+);
 
 const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout, onProfileClick }: { activeTab: string, wallet: typeof MOCK_WALLET, isLoggedIn: boolean, onLoginClick: () => void, onLogout: () => void, onProfileClick: () => void }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -450,8 +516,40 @@ const GameModal = ({ game, onClose }: { game: CasinoGame | null, onClose: () => 
 // --- Pages ---
 
 const LobbyPage = ({ onGameClick }: { onGameClick: (g: CasinoGame) => void }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const trendingGames = MOCK_GAMES.filter(g => g.is_top_game);
   const allGames = MOCK_GAMES;
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-10">
+        <div className="h-48 md:h-80 rounded-2xl bg-surface-container-high animate-pulse border border-white/5" />
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="h-8 w-48 bg-surface-container-high rounded-full animate-pulse" />
+            <div className="h-4 w-20 bg-surface-container-high rounded-full animate-pulse" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
+            {[...Array(5)].map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        </div>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="h-8 w-40 bg-surface-container-high rounded-full animate-pulse" />
+            <div className="h-4 w-20 bg-surface-container-high rounded-full animate-pulse" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
+            {[...Array(10)].map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -616,6 +714,13 @@ const WalletPage = ({
   onConfirmDeposit: (tx: DepositOrder) => void
 }) => {
   const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals'>('deposits');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, [activeTab]);
 
   const filteredActivity = useMemo(() => {
     if (activeTab === 'deposits') {
@@ -682,7 +787,11 @@ const WalletPage = ({
         </div>
 
         <div className="space-y-3">
-          {filteredActivity.length === 0 ? (
+          {isLoading ? (
+            <div className="space-y-3">
+              {[...Array(5)].map((_, i) => <SkeletonTransaction key={i} />)}
+            </div>
+          ) : filteredActivity.length === 0 ? (
             <div className="bg-surface-container-low rounded-3xl p-12 flex flex-col items-center justify-center text-center border border-dashed border-white/10">
               <History className="w-12 h-12 text-on-surface-variant/20 mb-4" />
               <p className="text-on-surface-variant font-bold">No transactions found</p>
@@ -1589,6 +1698,7 @@ export default function App() {
   const [selectedGame, setSelectedGame] = useState<CasinoGame | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAppLoading, setIsAppLoading] = useState(true);
   
   // Wallet Modal States
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
@@ -1605,6 +1715,12 @@ export default function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [activeTab]);
+
+  // Initial App Load Simulation
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAppLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -1671,6 +1787,10 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen bg-surface">
+      <AnimatePresence>
+        {isAppLoading && <PageLoader />}
+      </AnimatePresence>
+
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
