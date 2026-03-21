@@ -1,6 +1,6 @@
-# Nebula Casino - High Stakes Entertainment
+# NOva Casino - High Stakes Entertainment
 
-Nebula Casino is a premium, immersive digital casino application built with React, TypeScript, and Tailwind CSS. It features a sophisticated "Neon Nebula" aesthetic with glassmorphism, hyper-rounded corners, and vibrant luminous accents.
+NOva Casino is a premium, immersive digital casino application built with React, TypeScript, and Tailwind CSS. It features a sophisticated "Neon NOva" aesthetic with glassmorphism, hyper-rounded corners, and vibrant luminous accents.
 
 ## 🚀 Features
 
@@ -30,7 +30,7 @@ Before you begin, ensure you have the following installed:
 1. **Clone the repository** (or download the source code):
    ```bash
    git clone <your-repo-url>
-   cd nebula-casino
+   cd NOva-casino
    ```
 
 2. **Install dependencies:**
@@ -77,4 +77,4 @@ The application uses a mock data source based on the following entities:
 
 ---
 
-*Built with ❤️ for Nebula Casino.*
+*Built with ❤️ for NOva Casino.*
