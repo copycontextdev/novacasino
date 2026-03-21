@@ -1,7 +1,8 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Rocket } from "lucide-react";
+import { X } from "lucide-react";
 import type { AuthView } from "@/types/auth-ui.types";
+import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import OTPForm from "./OTPForm";
@@ -43,12 +44,7 @@ function AuthFlow() {
       );
     }
     if (activeView === "otp") {
-      return (
-        <OTPForm
-          phoneNumber={otpPhone}
-          onSuccess={() => setActiveView("login")}
-        />
-      );
+      return <OTPForm phoneNumber={otpPhone} onSuccess={() => setActiveView("login")} />;
     }
     if (activeView === "forgot-password") {
       return (
@@ -79,7 +75,7 @@ function AuthFlow() {
       <p className="text-on-surface-variant text-sm mt-1">Phone: {resetPhone}</p>
     ) : (
       <p className="text-on-surface-variant text-sm mt-1">
-        {activeView === "login" && "Login to access your account"}
+        {activeView === "login" && `Sign in to ${APP_NAME}`}
         {activeView === "register" && "Create an account to start playing"}
         {activeView === "forgot-password" && "We will send reset instructions"}
         {activeView === "reset-password" && "Choose a new password"}
@@ -89,10 +85,8 @@ function AuthFlow() {
   return (
     <div className="p-8">
       <div className="text-center mb-6">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-dim p-1 mx-auto mb-4 shadow-lg shadow-primary-dim/20">
-          <div className="w-full h-full rounded-xl bg-surface-container-lowest flex items-center justify-center">
-            <Rocket className="text-primary w-8 h-8 fill-primary" />
-          </div>
+        <div className="w-16 h-16 rounded-2xl bg-surface-container-lowest border border-white/10 p-2 mx-auto mb-4 shadow-lg shadow-primary/15 flex items-center justify-center overflow-hidden">
+          <img src={APP_LOGO_SRC} alt="" className="w-full h-full object-contain" width={56} height={56} />
         </div>
         <h2 className="text-2xl font-headline font-extrabold text-white tracking-tight">{viewTitles[activeView]}</h2>
         {subtitle}
@@ -102,13 +96,7 @@ function AuthFlow() {
   );
 }
 
-export function NebulaAuthModal({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
+export function NovaGamesAuthModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [flowKey, setFlowKey] = useState(0);
 
   useEffect(() => {

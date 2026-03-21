@@ -22,7 +22,6 @@ import {
   Search,
   Wallet,
   X,
-  Rocket,
   Trophy,
   Zap,
   ArrowUpRight,
@@ -44,7 +43,12 @@ import {
   Loader2,
   Landmark,
 } from "lucide-react";
-import { NebulaAuthModal } from "@/components/auth/NebulaAuthModal";
+import { NovaGamesAuthModal } from "@/components/auth/NovaGamesAuthModal";
+import {
+  PromotionBannerCarousel,
+  filterActivePromotionBanners,
+} from "@/components/PromotionBannerCarousel";
+import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
 import { useAuthStore } from "@/store/auth-store";
 import { useUiStore } from "@/store/ui-store";
 import { useLobby } from "@/hooks/queries/use-lobby";
@@ -120,8 +124,16 @@ const TopBar = ({
 
   return (
     <header className="fixed top-0 right-0 left-0 md:left-64 z-50 bg-surface/80 backdrop-blur-xl h-16 flex justify-between items-center px-4 md:px-6 border-b border-white/5">
-      <div className="flex items-center gap-4 flex-1">
-        <div className="relative w-full max-w-md hidden lg:block">
+      <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+        <img
+          src={APP_LOGO_SRC}
+          alt=""
+          className="h-8 w-8 md:h-9 md:w-9 shrink-0 object-contain rounded-xl border border-white/10 bg-surface-container-low p-0.5"
+          width={36}
+          height={36}
+        />
+        <span className="font-headline font-extrabold text-sm text-on-surface truncate lg:hidden">{APP_NAME}</span>
+        <div className="relative w-full max-w-md hidden lg:block min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4" />
           <input
             className="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary/20 placeholder:text-on-surface-variant/50"
@@ -129,11 +141,6 @@ const TopBar = ({
             type="text"
             readOnly
           />
-        </div>
-        <div className="md:hidden flex flex-col">
-          <span className="text-sm font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline">
-            NEBULA
-          </span>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -253,9 +260,16 @@ const Sidebar = ({
 
   return (
     <aside className="hidden md:flex flex-col py-8 px-4 gap-4 h-screen w-64 border-r border-white/15 bg-surface fixed left-0 top-0 z-[60]">
-      <div className="mb-8 px-4">
-        <span className="text-xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline">
-          NEBULA CASINO
+      <div className="mb-8 px-4 flex items-center gap-3">
+        <img
+          src={APP_LOGO_SRC}
+          alt=""
+          className="h-10 w-10 object-contain rounded-xl border border-white/10 bg-surface-container-low p-1 shrink-0"
+          width={40}
+          height={40}
+        />
+        <span className="text-lg font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline leading-tight">
+          {APP_NAME}
         </span>
       </div>
       {isLoggedIn ? (
@@ -610,6 +624,11 @@ export default function App() {
 
   const searchGames = useMemo(() => gamesSearchQuery.data?.results ?? [], [gamesSearchQuery.data?.results]);
 
+  const promotionBannersFiltered = useMemo(
+    () => filterActivePromotionBanners(initQuery.data?.promotion_banners),
+    [initQuery.data?.promotion_banners],
+  );
+
   const currencyLabel =
     initQuery.data?.company_info?.currency ?? walletQuery.data?.currency ?? "ETB";
   const minDeposit = toPositiveNumber(initQuery.data?.system_config?.min_deposit_amount, 50);
@@ -698,17 +717,30 @@ export default function App() {
     }
     return (
       <div className="space-y-8">
-        <section className="relative h-48 md:h-80 rounded-2xl overflow-hidden bg-surface-container-high border border-white/5 flex items-center">
-          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/80 to-transparent z-10" />
-          <div className="relative z-20 p-6 md:p-12 max-w-lg">
-            <h1 className="text-2xl md:text-5xl font-headline font-extrabold text-white tracking-tight mb-2">
-              Welcome to <span className="text-primary">Nebula</span>
-            </h1>
-            <p className="text-on-surface-variant text-sm md:text-base mb-4">
-              Real games, wallet, and secure payments — powered by Sabi.
-            </p>
-          </div>
-        </section>
+        {promotionBannersFiltered.length > 0 ? (
+          <PromotionBannerCarousel banners={promotionBannersFiltered} />
+        ) : (
+          <section className="relative h-48 md:h-80 rounded-2xl overflow-hidden bg-surface-container-high border border-white/5 flex items-center">
+            <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/80 to-transparent z-10" />
+            <div className="relative z-20 flex items-center gap-6 p-6 md:p-12 max-w-2xl">
+              <img
+                src={APP_LOGO_SRC}
+                alt=""
+                className="h-16 w-16 md:h-24 md:w-24 object-contain rounded-2xl border border-white/10 bg-surface-container-low p-2 shrink-0"
+                width={96}
+                height={96}
+              />
+              <div>
+                <h1 className="text-2xl md:text-5xl font-headline font-extrabold text-white tracking-tight mb-2">
+                  Welcome to <span className="text-primary">{APP_NAME}</span>
+                </h1>
+                <p className="text-on-surface-variant text-sm md:text-base">
+                  Real games, wallet, and secure payments — powered by Sabi.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
         <section className="space-y-4 md:space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg md:text-2xl font-headline font-extrabold tracking-tight">Trending</h2>
@@ -761,6 +793,9 @@ export default function App() {
 
   const PromotionsPage = () => (
     <div className="space-y-8">
+      {promotionBannersFiltered.length > 0 ? (
+        <PromotionBannerCarousel banners={promotionBannersFiltered} />
+      ) : null}
       <h2 className="text-2xl md:text-4xl font-headline font-extrabold tracking-tight">Promotions & Rewards</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
         <div className="glass-panel p-5 md:p-8 rounded-2xl border border-white/5 flex items-center gap-4 md:gap-6">
@@ -1138,7 +1173,7 @@ export default function App() {
           />
         ) : null}
       </AnimatePresence>
-      <NebulaAuthModal open={authModalOpen} onClose={closeAuthModal} />
+      <NovaGamesAuthModal open={authModalOpen} onClose={closeAuthModal} />
       <DepositModal
         open={isDepositModalOpen}
         onClose={() => {

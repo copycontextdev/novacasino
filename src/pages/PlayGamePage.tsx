@@ -1,6 +1,8 @@
 import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { AnimatePresence } from "motion/react";
 import { ArrowLeft, Loader2, LogIn, RefreshCw } from "lucide-react";
+import { AppLoader } from "@/components/AppLoader";
 import { startGame } from "@/lib/api-methods/casino.api";
 import { useAuthStore } from "@/store/auth-store";
 import { useUiStore } from "@/store/ui-store";
@@ -22,6 +24,7 @@ export function PlayGamePage() {
   const modeParam = searchParams.get("mode");
   const mode: GameMode = modeParam === "real" ? "real" : "demo";
   const slug = params.gameSlug ? decodeURIComponent(params.gameSlug) : "";
+
   const [launchUrl, setLaunchUrl] = useState<string | null>(null);
   const [isRequestLoading, setIsRequestLoading] = useState(true);
   const [isIframeReady, setIsIframeReady] = useState(false);
@@ -78,6 +81,14 @@ export function PlayGamePage() {
   const isLoadingOverlayVisible = isRequestLoading || (!!launchUrl && !isIframeReady);
 
   const currencyLabel = useMemo(() => wallet?.currency ?? "ETB", [wallet?.currency]);
+
+  if (!hydrated) {
+    return (
+      <AnimatePresence mode="wait">
+        <AppLoader key="play-hydrate" />
+      </AnimatePresence>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[80] flex flex-col bg-black text-on-surface">
