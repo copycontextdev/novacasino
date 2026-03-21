@@ -3,5 +3,5 @@ export function getApiBaseUrl(): string {
   if (fromEnv && String(fromEnv).trim()) {
     return String(fromEnv).replace(/\/$/, "");
   }
-  return "https://api.sabii.games";
+  return "http://Novacasino.games";
 }
