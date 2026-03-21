@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   User,
   LogOut,
+  Phone,
+  Lock,
+  UserCircle,
   Grid2X2, 
   Dices, 
   Video, 
@@ -23,23 +26,33 @@ import {
   Rocket, 
   Trophy, 
   Zap, 
-  History, 
-  Users, 
-  Play,
+  ArrowUpRight,
+  ArrowDownLeft,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  FileUp,
+  History,
+  ChevronDown,
+  ExternalLink,
+  Copy,
+  Check,
+  Home,
   Gift,
   Award,
-  Home,
   Ticket,
   CreditCard,
   Landmark,
-  Coins
+  Coins,
+  Play,
+  Users
 } from 'lucide-react';
-import { MOCK_GAMES, MOCK_BANNERS, MOCK_WALLET, MOCK_ACTIVITY, MOCK_PROVIDERS } from './constants';
-import { CasinoGame } from './types';
+import { MOCK_GAMES, MOCK_BANNERS, MOCK_WALLET, MOCK_ACTIVITY, MOCK_PROVIDERS, MOCK_BANKS, MOCK_PLAYER_ACCOUNTS } from './constants';
+import { CasinoGame, DepositOrder, PlayerWallet, Bank, PlayerBankAccount } from './types';
 
 // --- Components ---
 
-const TopBar = ({ activeTab, wallet }: { activeTab: string, wallet: typeof MOCK_WALLET }) => {
+const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout }: { activeTab: string, wallet: typeof MOCK_WALLET, isLoggedIn: boolean, onLoginClick: () => void, onLogout: () => void }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
@@ -64,75 +77,89 @@ const TopBar = ({ activeTab, wallet }: { activeTab: string, wallet: typeof MOCK_
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1.5 bg-surface-container-highest px-3 py-1.5 rounded-full border border-white/5">
-          <Wallet className="text-tertiary w-4 h-4 fill-tertiary" />
-          <span className="font-headline font-bold text-xs md:text-sm">${wallet.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-        </div>
-        <button className="bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold px-4 py-1.5 rounded-full text-xs md:text-sm active:scale-95 transition-transform shadow-lg shadow-primary/20">
-          Deposit
-        </button>
+        {isLoggedIn ? (
+          <>
+            <div className="flex items-center gap-1.5 bg-surface-container-highest px-3 py-1.5 rounded-full border border-white/5">
+              <Wallet className="text-tertiary w-4 h-4 fill-tertiary" />
+              <span className="font-headline font-bold text-xs md:text-sm">${wallet.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+            </div>
+            <button className="bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold px-4 py-1.5 rounded-full text-xs md:text-sm active:scale-95 transition-transform shadow-lg shadow-primary/20">
+              Deposit
+            </button>
 
-        <div className="relative">
+            <div className="relative">
+              <button 
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center border border-white/5 hover:bg-surface-bright transition-colors active:scale-95"
+              >
+                <User className="w-5 h-5 text-on-surface" />
+              </button>
+
+              <AnimatePresence>
+                {isProfileOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-[-1]" 
+                      onClick={() => setIsProfileOpen(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute right-0 mt-2 w-64 bg-surface-container-high/95 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl shadow-primary/20 z-50 border border-white/10"
+                    >
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                          <User className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-headline font-bold text-sm text-on-surface">NeonPlayer</p>
+                          <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Gold Tier</p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-1 border-t border-white/10 pt-3">
+                        <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-2 px-2">Account Info</p>
+                        <div className="px-2 py-1.5">
+                          <p className="text-[10px] text-on-surface-variant uppercase font-bold">Email</p>
+                          <p className="text-xs font-semibold text-on-surface">neon.player@nebula.com</p>
+                        </div>
+                        <div className="px-2 py-1.5">
+                          <p className="text-[10px] text-on-surface-variant uppercase font-bold">Member Since</p>
+                          <p className="text-xs font-semibold text-on-surface">January 2026</p>
+                        </div>
+                      </div>
+
+                      <button 
+                        className="w-full mt-4 flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error/10 rounded-xl transition-colors font-bold text-sm"
+                        onClick={() => {
+                          setIsProfileOpen(false);
+                          onLogout();
+                        }}
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Logout</span>
+                      </button>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+          </>
+        ) : (
           <button 
-            onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center border border-white/5 hover:bg-surface-bright transition-colors active:scale-95"
+            onClick={onLoginClick}
+            className="bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold px-6 py-2 rounded-full text-sm active:scale-95 transition-transform shadow-lg shadow-primary/20"
           >
-            <User className="w-5 h-5 text-on-surface" />
+            Login / Register
           </button>
-
-          <AnimatePresence>
-            {isProfileOpen && (
-              <>
-                <div 
-                  className="fixed inset-0 z-[-1]" 
-                  onClick={() => setIsProfileOpen(false)}
-                />
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 mt-2 w-64 bg-surface-container-high/95 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl shadow-primary/20 z-50 border border-white/10"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                      <User className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-headline font-bold text-sm text-on-surface">NeonPlayer</p>
-                      <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Gold Tier</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-1 border-t border-white/10 pt-3">
-                    <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-2 px-2">Account Info</p>
-                    <div className="px-2 py-1.5">
-                      <p className="text-[10px] text-on-surface-variant uppercase font-bold">Email</p>
-                      <p className="text-xs font-semibold text-on-surface">neon.player@nebula.com</p>
-                    </div>
-                    <div className="px-2 py-1.5">
-                      <p className="text-[10px] text-on-surface-variant uppercase font-bold">Member Since</p>
-                      <p className="text-xs font-semibold text-on-surface">January 2026</p>
-                    </div>
-                  </div>
-
-                  <button 
-                    className="w-full mt-4 flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error/10 rounded-xl transition-colors font-bold text-sm"
-                    onClick={() => setIsProfileOpen(false)}
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
-        </div>
+        )}
       </div>
     </header>
   );
 };
 
-const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (t: string) => void }) => {
+const Sidebar = ({ activeTab, setActiveTab, isLoggedIn, onLoginClick }: { activeTab: string, setActiveTab: (t: string) => void, isLoggedIn: boolean, onLoginClick: () => void }) => {
   const navItems = [
     { id: 'lobby', label: 'Lobby', icon: Grid2X2 },
     { id: 'slots', label: 'Slots', icon: Dices },
@@ -147,24 +174,36 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab:
         <span className="text-xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline">NEBULA CASINO</span>
       </div>
       
-      <div className="flex items-center gap-3 px-4 mb-6">
-        <div className="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
-          <img 
-            alt="NeonPlayer Avatar" 
-            className="w-full h-full object-cover" 
-            src="https://picsum.photos/seed/avatar/100/100" 
-          />
-        </div>
-        <div>
-          <p className="font-headline font-bold text-sm text-on-surface">NeonPlayer</p>
-          <div className="flex flex-col gap-1">
-            <p className="text-[10px] uppercase tracking-widest text-tertiary-dim font-bold">Gold Tier</p>
-            <div className="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
-              <div className="h-full bg-tertiary-dim w-[65%]"></div>
+      {isLoggedIn ? (
+        <div className="flex items-center gap-3 px-4 mb-6">
+          <div className="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+            <img 
+              alt="NeonPlayer Avatar" 
+              className="w-full h-full object-cover" 
+              src="https://picsum.photos/seed/avatar/100/100" 
+            />
+          </div>
+          <div>
+            <p className="font-headline font-bold text-sm text-on-surface">NeonPlayer</p>
+            <div className="flex flex-col gap-1">
+              <p className="text-[10px] uppercase tracking-widest text-tertiary-dim font-bold">Gold Tier</p>
+              <div className="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+                <div className="h-full bg-tertiary-dim w-[65%]"></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="px-4 mb-6">
+          <button 
+            onClick={onLoginClick}
+            className="w-full py-3 bg-surface-container-high hover:bg-surface-bright border border-white/5 rounded-2xl flex items-center justify-center gap-2 text-primary font-bold text-sm transition-all active:scale-95"
+          >
+            <UserCircle className="w-5 h-5" />
+            Login / Register
+          </button>
+        </div>
+      )}
 
       <nav className="flex flex-col gap-1 flex-1">
         {navItems.map((item) => (
@@ -545,11 +584,32 @@ const PromotionsPage = () => {
   );
 };
 
-const WalletPage = ({ wallet, activity }: { wallet: typeof MOCK_WALLET, activity: typeof MOCK_ACTIVITY }) => {
+const WalletPage = ({ 
+  wallet, 
+  activity, 
+  onDepositClick, 
+  onWithdrawClick,
+  onConfirmDeposit
+}: { 
+  wallet: typeof MOCK_WALLET, 
+  activity: typeof MOCK_ACTIVITY,
+  onDepositClick: () => void,
+  onWithdrawClick: () => void,
+  onConfirmDeposit: (tx: DepositOrder) => void
+}) => {
+  const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals'>('deposits');
+
+  const filteredActivity = useMemo(() => {
+    if (activeTab === 'deposits') {
+      return activity.filter(item => parseFloat(item.amount) > 0);
+    }
+    return activity.filter(item => parseFloat(item.amount) < 0);
+  }, [activity, activeTab]);
+
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {/* Balance Card */}
-      <section className="bg-surface-container-high rounded-xl p-6 shadow-2xl relative overflow-hidden border border-white/5">
+      <section className="bg-surface-container-high rounded-3xl p-6 shadow-2xl relative overflow-hidden border border-white/5">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/20 via-primary to-primary/20"></div>
         <div className="grid grid-cols-3 gap-2">
           <div className="flex flex-col items-center justify-center border-r border-white/10 py-2">
@@ -566,77 +626,621 @@ const WalletPage = ({ wallet, activity }: { wallet: typeof MOCK_WALLET, activity
           </div>
         </div>
         <div className="flex gap-3 mt-6">
-          <button className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold py-3 rounded-full active:scale-95 transition-transform shadow-lg shadow-primary/20">
-            <CreditCard className="w-4 h-4" />
+          <button 
+            onClick={onDepositClick}
+            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold py-3.5 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-primary/20"
+          >
+            <ArrowDownLeft className="w-4 h-4" />
             Deposit
           </button>
-          <button className="flex-1 flex items-center justify-center gap-2 bg-surface-bright border border-primary/20 text-primary font-bold py-3 rounded-full active:scale-95 transition-transform">
-            <Landmark className="w-4 h-4" />
+          <button 
+            onClick={onWithdrawClick}
+            className="flex-1 flex items-center justify-center gap-2 bg-surface-bright border border-primary/20 text-primary font-bold py-3.5 rounded-2xl active:scale-95 transition-transform"
+          >
+            <ArrowUpRight className="w-4 h-4" />
             Withdraw
           </button>
         </div>
       </section>
 
-      {/* Quick Stats */}
-      <section className="grid grid-cols-2 gap-3">
-        <div className="bg-surface-container-low p-4 rounded-xl flex items-center gap-3 border-l-4 border-tertiary">
-          <div className="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary">
-            <Award className="w-5 h-5 fill-tertiary" />
-          </div>
-          <div>
-            <div className="text-[10px] text-on-surface-variant uppercase font-bold">VIP Progress</div>
-            <div className="text-sm font-bold">88% to Platinum</div>
-          </div>
-        </div>
-        <div className="bg-surface-container-low p-4 rounded-xl flex items-center gap-3 border-l-4 border-secondary">
-          <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
-            <Ticket className="w-5 h-5 fill-secondary" />
-          </div>
-          <div>
-            <div className="text-[10px] text-on-surface-variant uppercase font-bold">Raffle</div>
-            <div className="text-sm font-bold">12 Tickets</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Activity */}
+      {/* Activity Tabs */}
       <section className="space-y-4">
-        <div className="flex justify-between items-end px-1">
-          <h2 className="text-xl font-bold tracking-tight">Recent Activity</h2>
-          <button className="text-xs text-primary font-bold uppercase tracking-wider">See All</button>
-        </div>
-        
-        <div className="flex bg-surface-container-lowest p-1 rounded-full gap-1">
-          <button className="flex-1 py-2 text-xs font-bold rounded-full bg-primary/10 text-primary">All</button>
-          <button className="flex-1 py-2 text-xs font-bold rounded-full text-on-surface-variant hover:text-on-surface transition-colors">Deposits</button>
-          <button className="flex-1 py-2 text-xs font-bold rounded-full text-on-surface-variant hover:text-on-surface transition-colors">Withdrawals</button>
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-xl font-headline font-extrabold tracking-tight">Transaction History</h2>
+          <div className="flex bg-surface-container-low p-1 rounded-full border border-white/5">
+            <button 
+              onClick={() => setActiveTab('deposits')}
+              className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full transition-all ${activeTab === 'deposits' ? 'bg-primary text-on-primary shadow-md' : 'text-on-surface-variant hover:text-on-surface'}`}
+            >
+              Deposits
+            </button>
+            <button 
+              onClick={() => setActiveTab('withdrawals')}
+              className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full transition-all ${activeTab === 'withdrawals' ? 'bg-primary text-on-primary shadow-md' : 'text-on-surface-variant hover:text-on-surface'}`}
+            >
+              Withdrawals
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-2">
-          {activity.map((item) => (
-            <div key={item.uuid} className="bg-surface-container rounded-xl p-4 flex items-center justify-between group active:bg-surface-bright transition-colors border border-white/5">
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl bg-surface-bright flex items-center justify-center ${item.amount.startsWith('-') ? 'text-error' : 'text-primary'}`}>
-                  {item.bank_name.includes('Crypto') ? <Coins className="w-6 h-6" /> : <Landmark className="w-6 h-6" />}
-                </div>
-                <div>
-                  <div className="font-bold text-sm">{item.bank_name}</div>
-                  <div className="text-[10px] text-on-surface-variant uppercase tracking-tighter">
-                    {new Date(item.created_at).toLocaleDateString()} • {item.status_display}
+        <div className="space-y-3">
+          {filteredActivity.length === 0 ? (
+            <div className="bg-surface-container-low rounded-3xl p-12 flex flex-col items-center justify-center text-center border border-dashed border-white/10">
+              <History className="w-12 h-12 text-on-surface-variant/20 mb-4" />
+              <p className="text-on-surface-variant font-bold">No transactions found</p>
+              <p className="text-xs text-on-surface-variant/60 mt-1">Your cosmic history will appear here.</p>
+            </div>
+          ) : (
+            filteredActivity.map((item) => (
+              <div key={item.uuid} className="bg-surface-container rounded-2xl p-4 flex items-center justify-between group active:bg-surface-bright transition-colors border border-white/5">
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-2xl bg-surface-bright flex items-center justify-center ${parseFloat(item.amount) < 0 ? 'text-secondary' : 'text-primary'}`}>
+                    {parseFloat(item.amount) < 0 ? <ArrowUpRight className="w-6 h-6" /> : <ArrowDownLeft className="w-6 h-6" />}
+                  </div>
+                  <div>
+                    <div className="font-bold text-sm flex items-center gap-2">
+                      {item.bank_name}
+                      {item.status === 'pending' && (
+                        <span className="flex items-center gap-1 text-[8px] bg-tertiary/10 text-tertiary px-1.5 py-0.5 rounded-full uppercase tracking-widest font-black">
+                          <Clock className="w-2 h-2" />
+                          Pending
+                        </span>
+                      )}
+                      {item.status === 'completed' && (
+                        <span className="flex items-center gap-1 text-[8px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full uppercase tracking-widest font-black">
+                          <CheckCircle2 className="w-2 h-2" />
+                          Success
+                        </span>
+                      )}
+                      {item.status === 'failed' && (
+                        <span className="flex items-center gap-1 text-[8px] bg-error/10 text-error px-1.5 py-0.5 rounded-full uppercase tracking-widest font-black">
+                          <AlertCircle className="w-2 h-2" />
+                          Failed
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-on-surface-variant uppercase tracking-tighter">
+                      {new Date(item.created_at).toLocaleDateString()} • ID: #{item.uuid.toUpperCase()}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="text-right">
-                <div className={`font-bold ${item.amount.startsWith('-') ? 'text-error' : 'text-primary'}`}>
-                  {item.amount.startsWith('-') ? '' : '+'}${Math.abs(parseFloat(item.amount)).toLocaleString()}
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <div className={`font-headline font-bold ${parseFloat(item.amount) < 0 ? 'text-secondary' : 'text-primary'}`}>
+                      {parseFloat(item.amount) < 0 ? '' : '+'}${Math.abs(parseFloat(item.amount)).toLocaleString()}
+                    </div>
+                    <div className="text-[10px] text-on-surface-variant font-bold uppercase">
+                      {item.status_display}
+                    </div>
+                  </div>
+                  
+                  {item.status === 'pending' && parseFloat(item.amount) > 0 && (
+                    <button 
+                      onClick={() => onConfirmDeposit(item)}
+                      className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all active:scale-90 shadow-lg shadow-primary/10"
+                      title="Confirm Deposit"
+                    >
+                      <FileUp className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
-                <div className="text-[10px] text-on-surface-variant">ID: #{item.uuid.toUpperCase()}</div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
     </div>
+  );
+};
+
+const DepositModal = ({ isOpen, onClose, onInitiated }: { isOpen: boolean, onClose: () => void, onInitiated: (tx: any) => void }) => {
+  const [step, setStep] = useState(1);
+  const [amount, setAmount] = useState('');
+  const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<any>(null);
+
+  const handleNext = () => {
+    if (step < 3) setStep(step + 1);
+    else {
+      // Simulate creating a pending transaction
+      const newTx = {
+        uuid: `nb-${Math.floor(Math.random() * 9000) + 1000}`,
+        amount,
+        bank_name: selectedBank?.name,
+        status: 'pending',
+        created_at: new Date().toISOString(),
+        status_display: 'Pending Confirmation'
+      };
+      onInitiated(newTx);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+      >
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <h2 className="text-xl font-headline font-extrabold">New Deposit</h2>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="p-6">
+          {/* Progress Bar */}
+          <div className="flex gap-1 mb-8">
+            {[1, 2, 3].map(i => (
+              <div key={i} className={`h-1.5 flex-1 rounded-full transition-all ${step >= i ? 'bg-primary' : 'bg-white/10'}`} />
+            ))}
+          </div>
+
+          {step === 1 && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Enter Amount</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-headline font-bold text-primary">$</span>
+                <input 
+                  type="number" 
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.00"
+                  className="w-full bg-surface-container-high border-none rounded-2xl py-6 pl-10 pr-4 text-3xl font-headline font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {['100', '500', '1000', '5000', '10000', '50000'].map(val => (
+                  <button 
+                    key={val} 
+                    onClick={() => setAmount(val)}
+                    className="py-2 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold transition-all"
+                  >
+                    +${val}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Select Bank</label>
+              <div className="space-y-2">
+                {MOCK_BANKS.map(bank => (
+                  <button 
+                    key={bank.id}
+                    onClick={() => setSelectedBank(bank)}
+                    className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${selectedBank?.id === bank.id ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                        <Landmark className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="font-bold">{bank.name}</span>
+                    </div>
+                    {selectedBank?.id === bank.id && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Select Deposit Account</label>
+              <div className="space-y-2">
+                {selectedBank?.accounts.map(acc => (
+                  <button 
+                    key={acc.id}
+                    onClick={() => setSelectedAccount(acc)}
+                    className={`w-full p-4 rounded-2xl border flex flex-col gap-1 transition-all text-left ${selectedAccount?.id === acc.id ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Holder Name</span>
+                      {selectedAccount?.id === acc.id && <CheckCircle2 className="w-4 h-4 text-primary" />}
+                    </div>
+                    <div className="font-headline font-bold text-lg">{acc.holder_name}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-2">Account Number</div>
+                    <div className="font-mono text-sm tracking-widest text-on-surface">{acc.account_number}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-8 flex gap-3">
+            {step > 1 && (
+              <button 
+                onClick={() => setStep(step - 1)}
+                className="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold transition-all"
+              >
+                Back
+              </button>
+            )}
+            <button 
+              disabled={!amount || (step === 2 && !selectedBank) || (step === 3 && !selectedAccount)}
+              onClick={handleNext}
+              className="flex-[2] py-4 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-2xl font-headline font-extrabold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
+            >
+              {step === 3 ? 'Initiate Deposit' : 'Continue'}
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const DepositConfirmationModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClose: () => void, transaction: any }) => {
+  const [txId, setTxId] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUploading(true);
+    setTimeout(() => {
+      setIsUploading(false);
+      setIsSuccess(true);
+      setTimeout(onClose, 2000);
+    }, 2000);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+      >
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <h2 className="text-xl font-headline font-extrabold">Confirm Deposit</h2>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="p-6">
+          {isSuccess ? (
+            <div className="py-12 flex flex-col items-center text-center animate-in zoom-in-95">
+              <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-10 h-10 text-primary" />
+              </div>
+              <h3 className="text-2xl font-headline font-extrabold mb-2">Confirmation Sent!</h3>
+              <p className="text-on-surface-variant text-sm">Our cosmic agents will verify your deposit shortly.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Basic Info */}
+              <div className="bg-white/5 rounded-2xl p-4 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Amount</span>
+                  <span className="font-headline font-bold text-primary text-lg">${parseFloat(transaction.amount).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Bank</span>
+                  <span className="text-sm font-bold">{transaction.bank_name}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Order ID</span>
+                  <span className="text-[10px] font-mono font-bold">#{transaction.uuid.toUpperCase()}</span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Transaction ID / Reference</label>
+                  <input 
+                    required
+                    value={txId}
+                    onChange={(e) => setTxId(e.target.value)}
+                    placeholder="Enter the ID from your bank receipt"
+                    className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Upload Receipt (Optional)</label>
+                  <div className="relative group">
+                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" />
+                    <div className="w-full bg-surface-container-high border-2 border-dashed border-white/10 rounded-2xl py-8 flex flex-col items-center justify-center gap-2 group-hover:border-primary/30 transition-all">
+                      <FileUp className="w-8 h-8 text-on-surface-variant/40 group-hover:text-primary transition-colors" />
+                      <span className="text-xs font-bold text-on-surface-variant">Click or drag receipt image</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                disabled={isUploading || !txId}
+                className="w-full py-4 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-2xl font-headline font-extrabold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
+              >
+                {isUploading ? 'Uploading...' : 'Submit Confirmation'}
+              </button>
+            </form>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const WithdrawModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  const [amount, setAmount] = useState('');
+  const [selectedAccount, setSelectedAccount] = useState<PlayerBankAccount | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsSuccess(true);
+      setTimeout(onClose, 2000);
+    }, 2000);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+      >
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <h2 className="text-xl font-headline font-extrabold">Withdraw Funds</h2>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="p-6">
+          {isSuccess ? (
+            <div className="py-12 flex flex-col items-center text-center animate-in zoom-in-95">
+              <div className="w-20 h-20 rounded-full bg-secondary/20 flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-10 h-10 text-secondary" />
+              </div>
+              <h3 className="text-2xl font-headline font-extrabold mb-2">Withdrawal Initiated!</h3>
+              <p className="text-on-surface-variant text-sm">Your funds will be processed within 24 hours.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-4">
+                <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Enter Amount</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-headline font-bold text-secondary">$</span>
+                  <input 
+                    required
+                    type="number" 
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="0.00"
+                    className="w-full bg-surface-container-high border-none rounded-2xl py-6 pl-10 pr-4 text-3xl font-headline font-bold focus:ring-2 focus:ring-secondary/20 transition-all"
+                  />
+                </div>
+                <div className="flex justify-between px-1">
+                  <span className="text-[10px] font-bold text-on-surface-variant uppercase">Available: $11,250.00</span>
+                  <button type="button" onClick={() => setAmount('11250')} className="text-[10px] font-bold text-secondary uppercase hover:underline">Max</button>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Receive to Account</label>
+                <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 scrollbar-hide">
+                  {MOCK_PLAYER_ACCOUNTS.map(acc => (
+                    <button 
+                      key={acc.id}
+                      type="button"
+                      onClick={() => setSelectedAccount(acc)}
+                      className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${selectedAccount?.id === acc.id ? 'bg-secondary/10 border-secondary shadow-lg shadow-secondary/10' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                          <Landmark className="w-5 h-5 text-secondary" />
+                        </div>
+                        <div className="text-left">
+                          <div className="font-bold text-sm">{acc.name}</div>
+                          <div className="text-[10px] text-on-surface-variant font-mono">{acc.number}</div>
+                        </div>
+                      </div>
+                      {selectedAccount?.id === acc.id && <CheckCircle2 className="w-5 h-5 text-secondary" />}
+                    </button>
+                  ))}
+                </div>
+                <button type="button" className="w-full py-3 border border-dashed border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-on-surface-variant hover:bg-white/5 transition-all">
+                  + Add New Account
+                </button>
+              </div>
+
+              <button 
+                disabled={isLoading || !amount || !selectedAccount}
+                className="w-full py-4 bg-gradient-to-r from-secondary to-secondary-dim text-on-secondary rounded-2xl font-headline font-extrabold shadow-lg shadow-secondary/20 active:scale-95 transition-all disabled:opacity-50"
+              >
+                {isLoading ? 'Processing...' : 'Confirm Withdrawal'}
+              </button>
+            </form>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const AuthModal = ({ isOpen, onClose, onLoginSuccess }: { isOpen: boolean, onClose: () => void, onLoginSuccess: () => void }) => {
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      if (mode !== 'forgot') {
+        onLoginSuccess();
+        onClose();
+      } else {
+        setMode('login');
+      }
+    }, 1500);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/10"
+      >
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 z-[210] w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest/60 backdrop-blur-md text-on-surface hover:bg-surface-bright active:scale-90 transition-all duration-300"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="p-8">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-dim p-1 mx-auto mb-4 shadow-lg shadow-primary-dim/20">
+              <div className="w-full h-full rounded-xl bg-surface-container-lowest flex items-center justify-center">
+                <Rocket className="text-primary w-8 h-8 fill-primary" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-headline font-extrabold text-white tracking-tight">
+              {mode === 'login' && 'Welcome Back'}
+              {mode === 'register' && 'Join the Nebula'}
+              {mode === 'forgot' && 'Reset Password'}
+            </h2>
+            <p className="text-on-surface-variant text-sm mt-1">
+              {mode === 'login' && 'Login to access your high-stakes dashboard'}
+              {mode === 'register' && 'Create an account to start your cosmic journey'}
+              {mode === 'forgot' && 'Enter your phone to receive a reset code'}
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {mode === 'register' && (
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Full Name</label>
+                <div className="relative">
+                  <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/50" />
+                  <input 
+                    required
+                    type="text"
+                    placeholder="John Doe"
+                    className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/30"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Phone Number</label>
+              <div className="relative">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/50" />
+                <input 
+                  required
+                  type="tel"
+                  placeholder="+1 (555) 000-0000"
+                  className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/30"
+                />
+              </div>
+            </div>
+
+            {mode !== 'forgot' && (
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/50" />
+                  <input 
+                    required
+                    type="password"
+                    placeholder="••••••••"
+                    className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/30"
+                  />
+                </div>
+                {mode === 'login' && (
+                  <button 
+                    type="button"
+                    onClick={() => setMode('forgot')}
+                    className="text-[10px] font-bold text-primary hover:underline px-1"
+                  >
+                    Forgot Password?
+                  </button>
+                )}
+              </div>
+            )}
+
+            <button 
+              disabled={isLoading}
+              className="w-full py-4 bg-gradient-to-r from-primary to-primary-dim rounded-full text-on-primary font-headline font-extrabold text-md shadow-lg shadow-primary-dim/20 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 mt-4"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-on-primary/30 border-t-on-primary rounded-full animate-spin" />
+                  Processing...
+                </div>
+              ) : (
+                <>
+                  {mode === 'login' && 'Login Now'}
+                  {mode === 'register' && 'Create Account'}
+                  {mode === 'forgot' && 'Send Reset Code'}
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 text-center">
+            {mode === 'login' ? (
+              <p className="text-xs text-on-surface-variant">
+                Don't have an account?{' '}
+                <button onClick={() => setMode('register')} className="text-primary font-bold hover:underline">Register</button>
+              </p>
+            ) : (
+              <p className="text-xs text-on-surface-variant">
+                Already have an account?{' '}
+                <button onClick={() => setMode('login')} className="text-primary font-bold hover:underline">Login</button>
+              </p>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -645,6 +1249,14 @@ const WalletPage = ({ wallet, activity }: { wallet: typeof MOCK_WALLET, activity
 export default function App() {
   const [activeTab, setActiveTab] = useState('lobby');
   const [selectedGame, setSelectedGame] = useState<CasinoGame | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  
+  // Wallet Modal States
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<any>(null);
 
   // Scroll to top on tab change
   useEffect(() => {
@@ -658,7 +1270,18 @@ export default function App() {
       case 'promotions':
         return <PromotionsPage />;
       case 'wallet':
-        return <WalletPage wallet={MOCK_WALLET} activity={MOCK_ACTIVITY} />;
+        return (
+          <WalletPage 
+            wallet={MOCK_WALLET} 
+            activity={MOCK_ACTIVITY} 
+            onDepositClick={() => setIsDepositModalOpen(true)}
+            onWithdrawClick={() => setIsWithdrawModalOpen(true)}
+            onConfirmDeposit={(tx) => {
+              setSelectedTx(tx);
+              setIsConfirmModalOpen(true);
+            }}
+          />
+        );
       case 'search':
         return (
           <div className="space-y-6">
@@ -686,10 +1309,21 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen bg-surface">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        isLoggedIn={isLoggedIn}
+        onLoginClick={() => setIsAuthModalOpen(true)}
+      />
       
       <main className="flex-1 md:ml-64 pb-32 md:pb-8 w-full max-w-full">
-        <TopBar activeTab={activeTab} wallet={MOCK_WALLET} />
+        <TopBar 
+          activeTab={activeTab} 
+          wallet={MOCK_WALLET} 
+          isLoggedIn={isLoggedIn}
+          onLoginClick={() => setIsAuthModalOpen(true)}
+          onLogout={() => setIsLoggedIn(false)}
+        />
         
         <div className="pt-20 px-4 md:pt-24 md:px-8 max-w-full overflow-x-hidden">
           <AnimatePresence mode="wait">
@@ -711,6 +1345,49 @@ export default function App() {
       <AnimatePresence>
         {selectedGame && (
           <GameModal game={selectedGame} onClose={() => setSelectedGame(null)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isAuthModalOpen && (
+          <AuthModal 
+            isOpen={isAuthModalOpen} 
+            onClose={() => setIsAuthModalOpen(false)}
+            onLoginSuccess={() => setIsLoggedIn(true)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isDepositModalOpen && (
+          <DepositModal 
+            isOpen={isDepositModalOpen} 
+            onClose={() => setIsDepositModalOpen(false)}
+            onInitiated={(tx) => {
+              setIsDepositModalOpen(false);
+              setSelectedTx(tx);
+              setIsConfirmModalOpen(true);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isConfirmModalOpen && (
+          <DepositConfirmationModal 
+            isOpen={isConfirmModalOpen} 
+            onClose={() => setIsConfirmModalOpen(false)}
+            transaction={selectedTx}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isWithdrawModalOpen && (
+          <WithdrawModal 
+            isOpen={isWithdrawModalOpen} 
+            onClose={() => setIsWithdrawModalOpen(false)}
+          />
         )}
       </AnimatePresence>
     </div>

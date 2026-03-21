@@ -132,6 +132,29 @@ export const MOCK_WALLET: PlayerWallet = {
   is_active: true,
 };
 
+export const MOCK_BANKS: Bank[] = [
+  { 
+    id: 1, 
+    name: 'Nebula Global Bank', 
+    accounts: [
+      { id: 1, holder_name: 'Nebula Admin 1', account_number: '1000 2345 6789' },
+      { id: 2, holder_name: 'Nebula Admin 2', account_number: '1000 9876 5432' }
+    ] 
+  },
+  { 
+    id: 2, 
+    name: 'Cosmos Crypto Bank', 
+    accounts: [
+      { id: 3, holder_name: 'Cosmos Treasury', account_number: '0x71C...3A2' }
+    ] 
+  }
+];
+
+export const MOCK_PLAYER_ACCOUNTS: PlayerBankAccount[] = [
+  { id: 1, name: 'Personal Savings', account_number: '5555 1234 5678', bank_name: 'Chase' },
+  { id: 2, name: 'Business Account', account_number: '9999 8888 7777', bank_name: 'Wells Fargo' }
+];
+
 export const MOCK_ACTIVITY: DepositOrder[] = [
   {
     uuid: "nb-9821",
@@ -142,7 +165,7 @@ export const MOCK_ACTIVITY: DepositOrder[] = [
     deposited_by_agent_phone: null,
     account_number: "xxxx-9821",
     account_name: "NeonPlayer",
-    bank_name: "Bank Transfer",
+    bank_name: "Nebula Global Bank",
     amount: "2500.00",
     status: "completed",
     status_display: "Completed",
@@ -161,14 +184,33 @@ export const MOCK_ACTIVITY: DepositOrder[] = [
     deposited_by_agent_phone: null,
     account_number: "bc1q...",
     account_name: "Crypto Wallet",
-    bank_name: "Crypto Withdrawal",
-    amount: "-500.00",
-    status: "processing",
-    status_display: "Processing",
+    bank_name: "Cosmos Crypto Bank",
+    amount: "500.00",
+    status: "pending",
+    status_display: "Pending Confirmation",
     reference_number: "REF-9744",
     receipt: null,
     expires_at: "2026-03-22T22:10:14Z",
     created_at: "2026-03-21T09:12:00Z",
     updated_at: "2026-03-21T09:15:00Z",
+  },
+  {
+    uuid: "nb-9655",
+    user_name: "NeonPlayer",
+    user_phone: "123456789",
+    agent_nickname: "System",
+    deposited_by_agent_nickname: null,
+    deposited_by_agent_phone: null,
+    account_number: "xxxx-5678",
+    account_name: "Personal Savings",
+    bank_name: "Withdrawal",
+    amount: "-1200.00",
+    status: "completed",
+    status_display: "Completed",
+    reference_number: "REF-9655",
+    receipt: null,
+    expires_at: "2026-03-22T22:10:14Z",
+    created_at: "2026-03-20T11:00:00Z",
+    updated_at: "2026-03-20T11:30:00Z",
   }
 ];

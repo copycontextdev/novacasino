@@ -78,19 +78,24 @@ export interface PlayerWallet {
 }
 
 export interface Bank {
-  uuid: string;
-  code: string;
+  id: number | string;
+  uuid?: string;
+  code?: string;
   name: string;
-  order: number;
-  logo: string | null;
-  transaction_support: string;
-  is_active: boolean;
+  order?: number;
+  logo?: string | null;
+  transaction_support?: string;
+  is_active?: boolean;
+  accounts?: { id: number | string; holder_name: string; account_number: string }[];
 }
 
 export interface PlayerBankAccount {
-  uuid: string;
+  id: number | string;
+  uuid?: string;
   bank_name: string;
   account_number: string;
-  account_name: string;
-  is_active: boolean;
+  account_name?: string;
+  name?: string;
+  number?: string;
+  is_active?: boolean;
 }
