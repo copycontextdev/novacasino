@@ -1,10 +1,23 @@
-import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { queryClient } from "@/lib/query-client";
+import { SabiBootstrap } from "@/components/SabiBootstrap";
+import App from "./App";
+import { PlayGamePage } from "./pages/PlayGamePage";
+import "./index.css";
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <SabiBootstrap />
+        <Routes>
+          <Route path="/play/:gameSlug" element={<PlayGamePage />} />
+          <Route path="/*" element={<App />} />
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
   </StrictMode>,
 );

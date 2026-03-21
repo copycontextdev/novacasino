@@ -3,29 +3,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
+import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "motion/react";
+import {
   User,
   LogOut,
   Phone,
-  Lock,
   UserCircle,
-  Grid2X2, 
-  Dices, 
-  Video, 
-  Gamepad2, 
-  Star, 
-  Settings, 
-  HelpCircle, 
-  Search, 
-  Wallet, 
-  Bell, 
-  ChevronRight, 
-  X, 
-  Rocket, 
-  Trophy, 
-  Zap, 
+  Grid2X2,
+  Dices,
+  Video,
+  Gamepad2,
+  Star,
+  Settings,
+  HelpCircle,
+  Search,
+  Wallet,
+  X,
+  Rocket,
+  Trophy,
+  Zap,
   ArrowUpRight,
   ArrowDownLeft,
   CheckCircle2,
@@ -33,146 +32,140 @@ import {
   AlertCircle,
   FileUp,
   History,
-  ChevronDown,
-  ExternalLink,
-  Copy,
-  Check,
   Home,
   Gift,
   Award,
-  Ticket,
-  CreditCard,
-  Landmark,
-  Coins,
   Play,
-  Users,
   Plus,
   Edit,
   Trash2,
   Mail,
   ShieldCheck,
-  Loader2
-} from 'lucide-react';
-import { MOCK_GAMES, MOCK_BANNERS, MOCK_WALLET, MOCK_ACTIVITY, MOCK_PROVIDERS, MOCK_BANKS, MOCK_PLAYER_ACCOUNTS } from './constants';
-import { CasinoGame, DepositOrder, PlayerWallet, Bank, PlayerBankAccount } from './types';
+  Loader2,
+  Landmark,
+} from "lucide-react";
+import { NebulaAuthModal } from "@/components/auth/NebulaAuthModal";
+import { useAuthStore } from "@/store/auth-store";
+import { useUiStore } from "@/store/ui-store";
+import { useLobby } from "@/hooks/queries/use-lobby";
+import { useTopGames } from "@/hooks/queries/use-top-games";
+import { useProviders } from "@/hooks/queries/use-providers";
+import { useGames } from "@/hooks/queries/use-games";
+import { useInit } from "@/hooks/queries/use-init";
+import { useWallet } from "@/hooks/queries/use-wallet";
+import {
+  useMyDepositOrders,
+  useMyWithdrawalOrders,
+  useUserBankInfoList,
+} from "@/hooks/queries/use-payment-queries";
+import { useCreateDeposit, useUpdateDeposit } from "@/hooks/mutations/use-deposit";
+import {
+  useCreateWithdrawal,
+  useAddUserBankInfo,
+} from "@/hooks/mutations/use-withdrawal";
+import { useUpdateMember } from "@/hooks/mutations/use-update-member";
+import { getAgentBanks, getAgentBankInfo } from "@/lib/api-methods/payment.api";
+import {
+  toArray,
+  toPositiveNumber,
+  extractEnvelopeData,
+} from "@/lib/payment-utils";
+import { formatBalance } from "@/lib/format";
+import type {
+  SabiGame,
+  SabiGameCategory,
+  SabiProvider,
+  SabiDepositOrder,
+  SabiWithdrawalOrder,
+  SabiUserBankInfo,
+  SabiPaymentBank,
+  SabiAgentBankInfo,
+} from "@/types/api.types";
 
-// --- Components ---
+function resolveProviderName(game: SabiGame, providers: SabiProvider[]): string {
+  const key = String(game.provider);
+  const p = providers.find(
+    (item) =>
+      item.uuid === key || String(item.id) === key || item.name.toLowerCase() === key.toLowerCase(),
+  );
+  if (p) return p.name;
+  if (typeof game.provider === "string") return game.provider;
+  return "Provider";
+}
 
-const PageLoader = () => (
-  <motion.div 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    className="fixed inset-0 z-[300] bg-surface flex flex-col items-center justify-center gap-6"
-  >
-    <div className="relative">
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.2, 1],
-          opacity: [0.5, 1, 0.5]
-        }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        className="w-24 h-24 rounded-full bg-primary/20 blur-2xl absolute -inset-4"
-      />
-      <div className="relative flex flex-col items-center">
-        <span className="text-4xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline mb-2">NEBULA</span>
-        <div className="flex items-center gap-2">
-          <Loader2 className="w-5 h-5 text-primary animate-spin" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-on-surface-variant">Initializing Systems</span>
-        </div>
-      </div>
-    </div>
-  </motion.div>
-);
-
-const SectionLoader = ({ message = "Loading content..." }: { message?: string }) => (
-  <div className="w-full py-12 flex flex-col items-center justify-center gap-4">
-    <div className="relative">
-      <div className="w-12 h-12 rounded-full border-2 border-primary/10 border-t-primary animate-spin" />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-      </div>
-    </div>
-    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant animate-pulse">{message}</p>
-  </div>
-);
-
-const SkeletonCard = () => (
-  <div className="aspect-[3/4] rounded-2xl bg-surface-container-highest animate-pulse overflow-hidden relative">
-    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-    <div className="absolute bottom-3 left-3 right-3 space-y-2">
-      <div className="h-3 w-2/3 bg-white/10 rounded-full" />
-      <div className="h-2 w-1/2 bg-white/5 rounded-full" />
-    </div>
-  </div>
-);
-
-const SkeletonTransaction = () => (
-  <div className="p-4 bg-surface-container-low rounded-2xl border border-white/5 flex items-center justify-between animate-pulse">
-    <div className="flex items-center gap-4">
-      <div className="w-10 h-10 rounded-xl bg-white/5" />
-      <div className="space-y-2">
-        <div className="h-3 w-24 bg-white/10 rounded-full" />
-        <div className="h-2 w-16 bg-white/5 rounded-full" />
-      </div>
-    </div>
-    <div className="space-y-2 text-right">
-      <div className="h-3 w-16 bg-white/10 rounded-full ml-auto" />
-      <div className="h-2 w-12 bg-white/5 rounded-full ml-auto" />
-    </div>
-  </div>
-);
-
-const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout, onProfileClick }: { activeTab: string, wallet: typeof MOCK_WALLET, isLoggedIn: boolean, onLoginClick: () => void, onLogout: () => void, onProfileClick: () => void }) => {
+const TopBar = ({
+  walletBalanceLabel,
+  walletLoading,
+  isLoggedIn,
+  onLoginClick,
+  onLogout,
+  onProfileClick,
+  onDepositClick,
+}: {
+  walletBalanceLabel: string;
+  walletLoading: boolean;
+  isLoggedIn: boolean;
+  onLoginClick: () => void;
+  onLogout: () => void;
+  onProfileClick: () => void;
+  onDepositClick: () => void;
+}) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const member = useAuthStore((s) => s.member);
+  const displayName =
+    member?.name ||
+    [member?.first_name, member?.last_name].filter(Boolean).join(" ") ||
+    member?.username ||
+    "Player";
 
   return (
     <header className="fixed top-0 right-0 left-0 md:left-64 z-50 bg-surface/80 backdrop-blur-xl h-16 flex justify-between items-center px-4 md:px-6 border-b border-white/5">
       <div className="flex items-center gap-4 flex-1">
         <div className="relative w-full max-w-md hidden lg:block">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4" />
-          <input 
-            className="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary/20 placeholder:text-on-surface-variant/50" 
-            placeholder="Search games, providers..." 
+          <input
+            className="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary/20 placeholder:text-on-surface-variant/50"
+            placeholder="Search games, providers..."
             type="text"
+            readOnly
           />
         </div>
         <div className="md:hidden flex flex-col">
-          <span className="text-sm font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline">NEBULA</span>
-          <div className="flex items-center gap-1">
-            <span className="text-[8px] text-tertiary-dim font-bold uppercase">Gold</span>
-            <div className="w-12 h-1 bg-surface-container-highest rounded-full">
-              <div className="h-full bg-tertiary-dim w-[65%]"></div>
-            </div>
-          </div>
+          <span className="text-sm font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline">
+            NEBULA
+          </span>
         </div>
       </div>
       <div className="flex items-center gap-2">
         {isLoggedIn ? (
           <>
-            <div className="flex items-center gap-1.5 bg-surface-container-highest px-3 py-1.5 rounded-full border border-white/5">
-              <Wallet className="text-tertiary w-4 h-4 fill-tertiary" />
-              <span className="font-headline font-bold text-xs md:text-sm">${wallet.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+            <div className="flex items-center gap-1.5 bg-surface-container-highest px-3 py-1.5 rounded-full border border-white/5 min-w-[5rem] justify-center">
+              <Wallet className="text-tertiary w-4 h-4 fill-tertiary shrink-0" />
+              {walletLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              ) : (
+                <span className="font-headline font-bold text-xs md:text-sm">{walletBalanceLabel}</span>
+              )}
             </div>
-            <button className="bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold px-4 py-1.5 rounded-full text-xs md:text-sm active:scale-95 transition-transform shadow-lg shadow-primary/20">
+            <button
+              type="button"
+              onClick={onDepositClick}
+              className="bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold px-4 py-1.5 rounded-full text-xs md:text-sm active:scale-95 transition-transform shadow-lg shadow-primary/20"
+            >
               Deposit
             </button>
-
             <div className="relative">
-              <button 
+              <button
+                type="button"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center border border-white/5 hover:bg-surface-bright transition-colors active:scale-95"
               >
                 <User className="w-5 h-5 text-on-surface" />
               </button>
-
               <AnimatePresence>
                 {isProfileOpen && (
                   <>
-                    <div 
-                      className="fixed inset-0 z-[-1]" 
-                      onClick={() => setIsProfileOpen(false)}
-                    />
+                    <div className="fixed inset-0 z-[-1]" onClick={() => setIsProfileOpen(false)} />
                     <motion.div
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -184,25 +177,15 @@ const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout, onProfi
                           <User className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                          <p className="font-headline font-bold text-sm text-on-surface">NeonPlayer</p>
-                          <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Gold Tier</p>
+                          <p className="font-headline font-bold text-sm text-on-surface">{displayName}</p>
+                          <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
+                            {member?.phone_number ?? ""}
+                          </p>
                         </div>
                       </div>
-                      
-                      <div className="space-y-1 border-t border-white/10 pt-3">
-                        <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-2 px-2">Account Info</p>
-                        <div className="px-2 py-1.5">
-                          <p className="text-[10px] text-on-surface-variant uppercase font-bold">Email</p>
-                          <p className="text-xs font-semibold text-on-surface">neon.player@nebula.com</p>
-                        </div>
-                        <div className="px-2 py-1.5">
-                          <p className="text-[10px] text-on-surface-variant uppercase font-bold">Member Since</p>
-                          <p className="text-xs font-semibold text-on-surface">January 2026</p>
-                        </div>
-                      </div>
-
-                      <button 
-                        className="w-full mt-4 flex items-center gap-3 px-3 py-2.5 text-primary hover:bg-primary/10 rounded-xl transition-colors font-bold text-sm"
+                      <button
+                        type="button"
+                        className="w-full mt-1 flex items-center gap-3 px-3 py-2.5 text-primary hover:bg-primary/10 rounded-xl transition-colors font-bold text-sm"
                         onClick={() => {
                           setIsProfileOpen(false);
                           onProfileClick();
@@ -211,8 +194,8 @@ const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout, onProfi
                         <UserCircle className="w-4 h-4" />
                         <span>View Profile</span>
                       </button>
-
-                      <button 
+                      <button
+                        type="button"
                         className="w-full mt-1 flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error/10 rounded-xl transition-colors font-bold text-sm"
                         onClick={() => {
                           setIsProfileOpen(false);
@@ -229,7 +212,8 @@ const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout, onProfi
             </div>
           </>
         ) : (
-          <button 
+          <button
+            type="button"
             onClick={onLoginClick}
             className="bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold px-6 py-2 rounded-full text-sm active:scale-95 transition-transform shadow-lg shadow-primary/20"
           >
@@ -241,44 +225,53 @@ const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout, onProfi
   );
 };
 
-const Sidebar = ({ activeTab, setActiveTab, isLoggedIn, onLoginClick }: { activeTab: string, setActiveTab: (t: string) => void, isLoggedIn: boolean, onLoginClick: () => void }) => {
+const Sidebar = ({
+  activeTab,
+  setActiveTab,
+  isLoggedIn,
+  onLoginClick,
+}: {
+  activeTab: string;
+  setActiveTab: (t: string) => void;
+  isLoggedIn: boolean;
+  onLoginClick: () => void;
+}) => {
+  const member = useAuthStore((s) => s.member);
+  const displayName =
+    member?.name ||
+    [member?.first_name, member?.last_name].filter(Boolean).join(" ") ||
+    "Player";
+
   const navItems = [
-    { id: 'lobby', label: 'Lobby', icon: Grid2X2 },
-    { id: 'slots', label: 'Slots', icon: Dices },
-    { id: 'live', label: 'Live Casino', icon: Video },
-    { id: 'sports', label: 'Sports', icon: Gamepad2 },
-    { id: 'vip', label: 'VIP Club', icon: Star },
-    ...(isLoggedIn ? [{ id: 'profile', label: 'Profile', icon: UserCircle }] : []),
+    { id: "lobby", label: "Lobby", icon: Grid2X2 },
+    { id: "slots", label: "Slots", icon: Dices },
+    { id: "live", label: "Live Casino", icon: Video },
+    { id: "sports", label: "Sports", icon: Gamepad2 },
+    { id: "vip", label: "VIP Club", icon: Star },
+    ...(isLoggedIn ? [{ id: "profile", label: "Profile", icon: UserCircle }] : []),
   ];
 
   return (
     <aside className="hidden md:flex flex-col py-8 px-4 gap-4 h-screen w-64 border-r border-white/15 bg-surface fixed left-0 top-0 z-[60]">
       <div className="mb-8 px-4">
-        <span className="text-xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline">NEBULA CASINO</span>
+        <span className="text-xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline">
+          NEBULA CASINO
+        </span>
       </div>
-      
       {isLoggedIn ? (
         <div className="flex items-center gap-3 px-4 mb-6">
-          <div className="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
-            <img 
-              alt="NeonPlayer Avatar" 
-              className="w-full h-full object-cover" 
-              src="https://picsum.photos/seed/avatar/100/100" 
-            />
+          <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center">
+            <UserCircle className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <p className="font-headline font-bold text-sm text-on-surface">NeonPlayer</p>
-            <div className="flex flex-col gap-1">
-              <p className="text-[10px] uppercase tracking-widest text-tertiary-dim font-bold">Gold Tier</p>
-              <div className="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
-                <div className="h-full bg-tertiary-dim w-[65%]"></div>
-              </div>
-            </div>
+            <p className="font-headline font-bold text-sm text-on-surface">{displayName}</p>
+            <p className="text-[10px] uppercase tracking-widest text-tertiary-dim font-bold">Member</p>
           </div>
         </div>
       ) : (
         <div className="px-4 mb-6">
-          <button 
+          <button
+            type="button"
             onClick={onLoginClick}
             className="w-full py-3 bg-surface-container-high hover:bg-surface-bright border border-white/5 rounded-2xl flex items-center justify-center gap-2 text-primary font-bold text-sm transition-all active:scale-95"
           >
@@ -287,37 +280,35 @@ const Sidebar = ({ activeTab, setActiveTab, isLoggedIn, onLoginClick }: { active
           </button>
         </div>
       )}
-
       <nav className="flex flex-col gap-1 flex-1">
         {navItems.map((item) => (
           <button
             key={item.id}
+            type="button"
             onClick={() => setActiveTab(item.id)}
             className={`flex items-center gap-3 px-4 py-3 font-semibold text-sm rounded-full transition-all duration-200 ${
-              activeTab === item.id 
-                ? 'bg-primary/10 text-primary translate-x-1' 
-                : 'text-on-surface-variant hover:text-on-surface hover:bg-white/5'
+              activeTab === item.id
+                ? "bg-primary/10 text-primary translate-x-1"
+                : "text-on-surface-variant hover:text-on-surface hover:bg-white/5"
             }`}
           >
             <item.icon className="w-5 h-5" />
             <span>{item.label}</span>
           </button>
         ))}
-        
-        <div className="mt-8 px-4 py-4 bg-surface-container-high rounded-lg">
-          <p className="text-[10px] text-on-surface-variant font-bold uppercase mb-2">Refer & Earn</p>
-          <button className="w-full py-2 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-full text-xs font-bold shadow-lg">
-            Invite Friends
-          </button>
-        </div>
       </nav>
-
       <div className="flex flex-col gap-1 border-t border-white/10 pt-4">
-        <button className="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-on-surface hover:bg-white/5 rounded-full transition-colors font-semibold text-sm">
+        <button
+          type="button"
+          className="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-on-surface hover:bg-white/5 rounded-full transition-colors font-semibold text-sm"
+        >
           <Settings className="w-5 h-5" />
           <span>Settings</span>
         </button>
-        <button className="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-on-surface hover:bg-white/5 rounded-full transition-colors font-semibold text-sm">
+        <button
+          type="button"
+          className="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-on-surface hover:bg-white/5 rounded-full transition-colors font-semibold text-sm"
+        >
           <HelpCircle className="w-5 h-5" />
           <span>Support</span>
         </button>
@@ -326,26 +317,34 @@ const Sidebar = ({ activeTab, setActiveTab, isLoggedIn, onLoginClick }: { active
   );
 };
 
-const BottomNav = ({ activeTab, setActiveTab, isLoggedIn }: { activeTab: string, setActiveTab: (t: string) => void, isLoggedIn: boolean }) => {
+const BottomNav = ({
+  activeTab,
+  setActiveTab,
+  isLoggedIn,
+}: {
+  activeTab: string;
+  setActiveTab: (t: string) => void;
+  isLoggedIn: boolean;
+}) => {
   const items = [
-    { id: 'lobby', label: 'Home', icon: Home },
-    { id: 'search', label: 'Search', icon: Search },
-    { id: 'wallet', label: 'Wallet', icon: Wallet },
-    { id: 'promotions', label: 'Promos', icon: Gift },
-    ...(isLoggedIn ? [{ id: 'profile', label: 'Profile', icon: UserCircle }] : []),
+    { id: "lobby", label: "Home", icon: Home },
+    { id: "search", label: "Search", icon: Search },
+    { id: "wallet", label: "Wallet", icon: Wallet },
+    { id: "promotions", label: "Promos", icon: Gift },
+    ...(isLoggedIn ? [{ id: "profile", label: "Profile", icon: UserCircle }] : []),
   ];
-
   return (
     <nav className="md:hidden fixed bottom-4 left-4 right-4 h-16 bg-surface-container-low/95 backdrop-blur-xl z-50 rounded-2xl border border-primary/20 shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex items-center justify-around px-2">
       {items.map((item) => (
         <button
           key={item.id}
+          type="button"
           onClick={() => setActiveTab(item.id)}
           className={`flex flex-col items-center justify-center p-2 transition-all ${
-            activeTab === item.id ? 'text-primary' : 'text-on-surface-variant/60'
+            activeTab === item.id ? "text-primary" : "text-on-surface-variant/60"
           }`}
         >
-          <item.icon className={`w-6 h-6 ${activeTab === item.id ? 'fill-primary/20' : ''}`} />
+          <item.icon className={`w-6 h-6 ${activeTab === item.id ? "fill-primary/20" : ""}`} />
           <span className="font-label text-[9px] font-bold uppercase mt-0.5">{item.label}</span>
         </button>
       ))}
@@ -353,1461 +352,765 @@ const BottomNav = ({ activeTab, setActiveTab, isLoggedIn }: { activeTab: string,
   );
 };
 
-const GameCard = ({ game, onClick }: { game: CasinoGame, onClick: () => void, key?: string }) => {
-  return (
-    <motion.div 
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={onClick}
-      className="group relative aspect-[3/4] rounded-xl overflow-hidden bg-surface-container-highest cursor-pointer border border-white/5"
-    >
-      <img 
-        alt={game.name} 
-        className="w-full h-full object-cover transition-transform duration-500" 
-        src={game.default_logo || 'https://picsum.photos/seed/game/300/400'} 
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-      
-      {game.label && (
-        <div className="absolute top-2 left-2 flex gap-2">
-          <span className="glass-panel px-1.5 py-0.5 rounded text-[8px] font-bold text-tertiary border border-tertiary/20">
-            {game.label}
-          </span>
-        </div>
-      )}
-      
-      <div className="absolute bottom-3 left-3 right-3 md:bottom-4 md:left-4 md:right-4">
-        <p className="font-headline font-extrabold text-[10px] md:text-sm text-white mb-0.5 md:mb-1 truncate">
-          {game.name}
-        </p>
-        <p className="text-[8px] md:text-[10px] text-on-surface-variant font-bold uppercase tracking-widest truncate">
-          {MOCK_PROVIDERS.find(p => p.id === game.provider)?.name || 'Nebula Games'}
-        </p>
+const GameCard = ({
+  game,
+  providerName,
+  onClick,
+}: {
+  game: SabiGame;
+  providerName: string;
+  onClick: () => void;
+}) => (
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={onClick}
+    className="group relative aspect-[3/4] rounded-xl overflow-hidden bg-surface-container-highest cursor-pointer border border-white/5"
+  >
+    <img
+      alt={game.name}
+      className="w-full h-full object-cover transition-transform duration-500"
+      src={game.default_logo || undefined}
+      referrerPolicy="no-referrer"
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+    {game.label ? (
+      <div className="absolute top-2 left-2 flex gap-2">
+        <span className="glass-panel px-1.5 py-0.5 rounded text-[8px] font-bold text-tertiary border border-tertiary/20">
+          {game.label}
+        </span>
       </div>
-    </motion.div>
-  );
-};
+    ) : null}
+    <div className="absolute bottom-3 left-3 right-3 md:bottom-4 md:left-4 md:right-4">
+      <p className="font-headline font-extrabold text-[10px] md:text-sm text-white mb-0.5 md:mb-1 truncate">
+        {game.name}
+      </p>
+      <p className="text-[8px] md:text-[10px] text-on-surface-variant font-bold uppercase tracking-widest truncate">
+        {providerName}
+      </p>
+    </div>
+  </motion.div>
+);
 
-const GameModal = ({ game, onClose }: { game: CasinoGame | null, onClose: () => void }) => {
+const GameModal = ({
+  game,
+  onClose,
+  onPlayReal,
+  onPlayDemo,
+  similarGames,
+  providers,
+}: {
+  game: SabiGame | null;
+  onClose: () => void;
+  onPlayReal: () => void;
+  onPlayDemo: () => void;
+  similarGames: SabiGame[];
+  providers: SabiProvider[];
+}) => {
   if (!game) return null;
-
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/80 backdrop-blur-sm px-0 md:px-4"
     >
-      <motion.div 
-        initial={{ y: '100%' }}
+      <motion.div
+        initial={{ y: "100%" }}
         animate={{ y: 0 }}
-        exit={{ y: '100%' }}
+        exit={{ y: "100%" }}
         className="relative w-full max-w-lg bg-surface-container rounded-t-3xl md:rounded-3xl overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.6)] flex flex-col max-h-[90vh]"
       >
-        <button 
+        <button
+          type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 z-[110] w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest/60 backdrop-blur-md text-on-surface hover:bg-surface-bright active:scale-90 transition-all duration-300"
+          className="absolute top-4 right-4 z-[110] w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest/60 backdrop-blur-md text-on-surface hover:bg-surface-bright"
         >
           <X className="w-5 h-5" />
         </button>
-
         <div className="relative w-full aspect-[4/3] bg-surface-container-lowest flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent z-10"></div>
-          <div className="absolute inset-0 opacity-60">
-            <div className="w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary-dim/30 via-secondary-container/10 to-transparent"></div>
-          </div>
-          <img 
-            alt={game.name} 
-            className="w-full h-full object-cover" 
-            src={game.default_logo || 'https://picsum.photos/seed/game-hero/800/600'} 
+          <img
+            alt={game.name}
+            className="w-full h-full object-cover"
+            src={game.default_logo || undefined}
+            referrerPolicy="no-referrer"
           />
           <div className="absolute bottom-6 left-6 z-20 flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-dim p-1 shadow-lg shadow-primary-dim/20">
-              <div className="w-full h-full rounded-xl bg-surface-container-lowest flex items-center justify-center">
-                <Rocket className="text-primary w-8 h-8 fill-primary" />
-              </div>
-            </div>
             <div>
               <h1 className="font-headline text-2xl font-extrabold text-white tracking-tight">{game.name}</h1>
-              <p className="text-primary text-sm font-semibold flex items-center gap-1">
-                < Award className="w-4 h-4 fill-primary" />
-                Nebula Originals
-              </p>
+              <p className="text-primary text-sm font-semibold">{resolveProviderName(game, providers)}</p>
             </div>
           </div>
         </div>
-
-        <div className="px-6 pb-8 pt-2 flex flex-col gap-8 overflow-y-auto">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-surface-container-high rounded-2xl p-4 border border-white/5 flex flex-col gap-1">
-              <span className="text-on-surface-variant text-xs font-bold uppercase tracking-widest">RTP</span>
-              <div className="flex items-end gap-1">
-                <span className="text-2xl font-headline font-bold text-on-surface">96.8</span>
-                <span className="text-primary font-bold mb-1">%</span>
-              </div>
-            </div>
-            <div className="bg-surface-container-high rounded-2xl p-4 border border-white/5 flex flex-col gap-1">
-              <span className="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Volatility</span>
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-headline font-bold text-tertiary">Very High</span>
-                <span className="flex gap-0.5">
-                  <div className="w-1 h-3 rounded-full bg-tertiary"></div>
-                  <div className="w-1 h-3 rounded-full bg-tertiary"></div>
-                  <div className="w-1 h-3 rounded-full bg-tertiary"></div>
-                </span>
-              </div>
-            </div>
-          </div>
-
+        <div className="px-6 pb-8 pt-2 flex flex-col gap-6 overflow-y-auto">
           <div className="flex flex-col gap-3">
-            <button className="w-full py-5 bg-gradient-to-r from-primary to-primary-dim rounded-full text-on-primary font-headline font-extrabold text-lg shadow-[0_10px_30px_rgba(99,102,241,0.4)] active:scale-95 transition-transform duration-200 flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={onPlayReal}
+              className="w-full py-5 bg-gradient-to-r from-primary to-primary-dim rounded-full text-on-primary font-headline font-extrabold text-lg shadow-[0_10px_30px_rgba(99,102,241,0.4)] active:scale-95 transition-transform flex items-center justify-center gap-2"
+            >
               <Play className="w-6 h-6 fill-on-primary" />
               Play Now
             </button>
-            <button className="w-full py-4 bg-transparent border-2 border-primary/20 rounded-full text-primary font-headline font-bold text-md hover:bg-primary/5 active:scale-95 transition-all duration-200">
-              Play Demo
-            </button>
+            {game.demo_support ? (
+              <button
+                type="button"
+                onClick={onPlayDemo}
+                className="w-full py-4 bg-transparent border-2 border-primary/20 rounded-full text-primary font-headline font-bold text-md hover:bg-primary/5 active:scale-95 transition-all"
+              >
+                Play Demo
+              </button>
+            ) : null}
           </div>
-
-          <div className="flex items-center justify-between text-on-surface-variant px-2">
-            <div className="flex flex-col items-center gap-1">
-              <Gamepad2 className="w-5 h-5 text-primary/60" />
-              <span className="text-[10px] font-bold uppercase tracking-tighter">Mines Game</span>
-            </div>
-            <div className="h-8 w-[1px] bg-white/10"></div>
-            <div className="flex flex-col items-center gap-1">
-              <Users className="w-5 h-5 text-primary/60" />
-              <span className="text-[10px] font-bold uppercase tracking-tighter">1.2k Active</span>
-            </div>
-            <div className="h-8 w-[1px] bg-white/10"></div>
-            <div className="flex flex-col items-center gap-1">
-              <History className="w-5 h-5 text-primary/60" />
-              <span className="text-[10px] font-bold uppercase tracking-tighter">Instant Play</span>
-            </div>
-          </div>
-
-          {/* Similar Games */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between px-2">
-              <h3 className="font-headline font-bold text-on-surface">Similar Games</h3>
-              <span className="text-primary text-xs font-bold uppercase tracking-wider">Explore All</span>
-            </div>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {MOCK_GAMES.filter(g => g.uuid !== game.uuid).map(sg => (
-                <div key={sg.uuid} className="flex-none w-32 group cursor-pointer">
-                  <div className="aspect-square rounded-3xl overflow-hidden bg-surface-container-highest mb-2 relative ring-2 ring-transparent group-hover:ring-primary/40 transition-all">
-                    <img 
-                      alt={sg.name} 
-                      className="w-full h-full object-cover" 
-                      src={sg.default_logo || 'https://picsum.photos/seed/similar/200/200'} 
-                    />
+          {similarGames.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              <h3 className="font-headline font-bold text-on-surface px-2">Similar Games</h3>
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                {similarGames.map((sg) => (
+                  <div key={sg.uuid} className="flex-none w-32">
+                    <div className="aspect-square rounded-3xl overflow-hidden bg-surface-container-highest mb-2">
+                      <img
+                        alt={sg.name}
+                        className="w-full h-full object-cover"
+                        src={sg.default_logo || undefined}
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
+                    <p className="text-xs font-bold text-on-surface text-center truncate px-1">{sg.name}</p>
                   </div>
-                  <p className="text-xs font-bold text-on-surface text-center truncate px-1">{sg.name}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-// --- Pages ---
-
-const LobbyPage = ({ onGameClick }: { onGameClick: (g: CasinoGame) => void }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const trendingGames = MOCK_GAMES.filter(g => g.is_top_game);
-  const allGames = MOCK_GAMES;
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-10">
-        <div className="h-48 md:h-80 rounded-2xl bg-surface-container-high animate-pulse border border-white/5" />
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="h-8 w-48 bg-surface-container-high rounded-full animate-pulse" />
-            <div className="h-4 w-20 bg-surface-container-high rounded-full animate-pulse" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
-            {[...Array(5)].map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        </div>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="h-8 w-40 bg-surface-container-high rounded-full animate-pulse" />
-            <div className="h-4 w-20 bg-surface-container-high rounded-full animate-pulse" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
-            {[...Array(10)].map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-8">
-      {/* Hero Banner */}
-      <section className="relative h-48 md:h-80 rounded-2xl overflow-hidden bg-surface-container-high group border border-white/5">
-        <img 
-          alt="Giveaway Banner" 
-          className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[2s]" 
-          src={MOCK_BANNERS[0].image || 'https://picsum.photos/seed/casino/1200/600'} 
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/40 to-transparent"></div>
-        <div className="relative h-full flex flex-col justify-center p-6 md:p-12 z-10 max-w-md md:max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-2 py-1 bg-tertiary/20 text-tertiary rounded-full border border-tertiary/30 mb-2 md:mb-4 w-fit">
-            <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
-            <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest">Live Giveaway</span>
-          </div>
-          <h1 className="text-2xl md:text-6xl font-headline font-extrabold tracking-tighter mb-2 md:mb-4 leading-[1.1] text-white">
-            $50,000 <br/><span className="text-primary">WEEKLY NEBULA</span>
-          </h1>
-          <div className="flex gap-3 md:gap-4 items-center">
-            <div className="flex flex-col items-center">
-              <span className="text-xl md:text-3xl font-headline font-black text-white leading-none">04</span>
-              <span className="text-[8px] md:text-[10px] font-bold uppercase text-on-surface-variant">Days</span>
-            </div>
-            <span className="text-xl md:text-3xl font-headline font-black text-white/50 leading-none mb-3">:</span>
-            <div className="flex flex-col items-center">
-              <span className="text-xl md:text-3xl font-headline font-black text-white leading-none">12</span>
-              <span className="text-[8px] md:text-[10px] font-bold uppercase text-on-surface-variant">Hrs</span>
-            </div>
-            <span className="text-xl md:text-3xl font-headline font-black text-white/50 leading-none mb-3">:</span>
-            <div className="flex flex-col items-center">
-              <span className="text-xl md:text-3xl font-headline font-black text-white leading-none">45</span>
-              <span className="text-[8px] md:text-[10px] font-bold uppercase text-on-surface-variant">Mins</span>
-            </div>
-          </div>
-          <button className="mt-4 md:mt-8 bg-white text-surface px-6 py-2 md:px-8 md:py-3 rounded-full text-xs md:text-base font-bold w-fit hover:bg-primary transition-colors shadow-lg">
-            Enter Draw
-          </button>
-        </div>
-      </section>
-
-      {/* Winners Ticker */}
-      <section className="overflow-hidden py-1 -mx-4">
-        <div className="animate-marquee whitespace-nowrap">
-          <div className="flex items-center gap-3 md:gap-4 px-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="flex items-center gap-2 glass-panel px-3 py-1.5 rounded-full border border-white/5">
-                <Trophy className="w-3 h-3 text-primary" />
-                <span className="text-[10px] font-bold text-on-surface">Player_{i}</span>
-                <span className="text-[10px] text-tertiary font-bold">${(Math.random() * 5000).toFixed(0)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Trending Games */}
-      <section className="space-y-4 md:space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg md:text-2xl font-headline font-extrabold tracking-tight">Trending Games</h2>
-          <button className="text-primary text-xs md:text-sm font-bold flex items-center gap-1 hover:underline">
-            View All
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
-          {trendingGames.map(game => (
-            <GameCard key={game.uuid} game={game} onClick={() => onGameClick(game)} />
-          ))}
-        </div>
-      </section>
-
-      {/* Categories & All Games */}
-      <section className="space-y-4 md:space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg md:text-2xl font-headline font-extrabold tracking-tight">All Games</h2>
-          <button className="text-primary text-xs md:text-sm font-bold flex items-center gap-1 hover:underline">
-            View All
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-        
-        <nav className="flex items-center gap-2 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
-          {[
-            { label: 'Featured', icon: Star, active: true },
-            { label: 'Slots', icon: Dices },
-            { label: 'Live', icon: Video },
-            { label: 'Mines', icon: Zap },
-            { label: 'Crash', icon: Rocket },
-          ].map((cat) => (
-            <button 
-              key={cat.label}
-              className={`px-5 py-2.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-2 whitespace-nowrap transition-all ${
-                cat.active 
-                  ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' 
-                  : 'bg-surface-container-high text-on-surface hover:bg-surface-bright border border-white/5'
-              }`}
-            >
-              <cat.icon className="w-4 h-4" />
-              {cat.label}
-            </button>
-          ))}
-        </nav>
-
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-6">
-          {allGames.map(game => (
-            <GameCard key={game.uuid} game={game} onClick={() => onGameClick(game)} />
-          ))}
-        </div>
-      </section>
-    </div>
-  );
-};
-
-const PromotionsPage = () => {
-  return (
-    <div className="space-y-8">
-      <h2 className="text-2xl md:text-4xl font-headline font-extrabold tracking-tight">Promotions & Rewards</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-        <div className="glass-panel p-5 md:p-8 rounded-2xl border border-white/5 flex items-center gap-4 md:gap-6 group hover:border-primary/20 transition-all">
-          <div className="w-16 h-16 md:w-24 md:h-24 shrink-0 rounded-full bg-primary/10 flex items-center justify-center neon-glow">
-            <Gift className="w-8 h-8 md:w-12 md:h-12 text-primary fill-primary/20" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm md:text-xl font-headline font-extrabold mb-1 truncate">Daily Rewards</h3>
-            <p className="text-[10px] md:text-sm text-on-surface-variant mb-2 md:mb-4 line-clamp-2">Login daily to claim your bonus spins and nebula dust.</p>
-            <button className="text-[8px] md:text-xs font-bold uppercase tracking-widest text-primary group-hover:translate-x-1 transition-transform inline-flex items-center gap-1 md:gap-2">
-              Claim Now <ChevronRight className="w-3 h-3" />
-            </button>
-          </div>
-        </div>
-
-        <div className="glass-panel p-5 md:p-8 rounded-2xl border border-white/5 flex items-center gap-4 md:gap-6 group hover:border-tertiary/20 transition-all">
-          <div className="w-16 h-16 md:w-24 md:h-24 shrink-0 rounded-full bg-tertiary/10 flex items-center justify-center shadow-[0_0_20px_rgba(255,224,131,0.2)]">
-            <Award className="w-8 h-8 md:w-12 md:h-12 text-tertiary fill-tertiary/20" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm md:text-xl font-headline font-extrabold mb-1 truncate">VIP Rewards</h3>
-            <p className="text-[10px] md:text-sm text-on-surface-variant mb-2 md:mb-4 line-clamp-2">Level up to unlock exclusive weekly cashback and high stakes events.</p>
-            <button className="text-[8px] md:text-xs font-bold uppercase tracking-widest text-tertiary group-hover:translate-x-1 transition-transform inline-flex items-center gap-1 md:gap-2">
-              Upgrade Tier <ChevronRight className="w-3 h-3" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const WalletPage = ({ 
-  wallet, 
-  activity, 
-  onDepositClick, 
-  onWithdrawClick,
-  onConfirmDeposit
-}: { 
-  wallet: typeof MOCK_WALLET, 
-  activity: typeof MOCK_ACTIVITY,
-  onDepositClick: () => void,
-  onWithdrawClick: () => void,
-  onConfirmDeposit: (tx: DepositOrder) => void
-}) => {
-  const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals'>('deposits');
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, [activeTab]);
-
-  const filteredActivity = useMemo(() => {
-    if (activeTab === 'deposits') {
-      return activity.filter(item => parseFloat(item.amount) > 0);
-    }
-    return activity.filter(item => parseFloat(item.amount) < 0);
-  }, [activity, activeTab]);
-
-  return (
-    <div className="space-y-6 max-w-2xl mx-auto">
-      {/* Balance Card */}
-      <section className="bg-surface-container-high rounded-3xl p-6 shadow-2xl relative overflow-hidden border border-white/5">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/20 via-primary to-primary/20"></div>
-        <div className="grid grid-cols-3 gap-2">
-          <div className="flex flex-col items-center justify-center border-r border-white/10 py-2">
-            <span className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total</span>
-            <span className="text-lg font-extrabold text-primary">${wallet.balance.toLocaleString()}</span>
-          </div>
-          <div className="flex flex-col items-center justify-center border-r border-white/10 py-2">
-            <span className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Bonus</span>
-            <span className="text-lg font-extrabold text-tertiary">${wallet.non_withdrawable_balance}</span>
-          </div>
-          <div className="flex flex-col items-center justify-center py-2">
-            <span className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Withdrawable</span>
-            <span className="text-lg font-extrabold text-secondary">${wallet.withdrawable_balance}</span>
-          </div>
-        </div>
-        <div className="flex gap-3 mt-6">
-          <button 
-            onClick={onDepositClick}
-            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold py-3.5 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-primary/20"
-          >
-            <ArrowDownLeft className="w-4 h-4" />
-            Deposit
-          </button>
-          <button 
-            onClick={onWithdrawClick}
-            className="flex-1 flex items-center justify-center gap-2 bg-surface-bright border border-primary/20 text-primary font-bold py-3.5 rounded-2xl active:scale-95 transition-transform"
-          >
-            <ArrowUpRight className="w-4 h-4" />
-            Withdraw
-          </button>
-        </div>
-      </section>
-
-      {/* Activity Tabs */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-xl font-headline font-extrabold tracking-tight">Transaction History</h2>
-          <div className="flex bg-surface-container-low p-1 rounded-full border border-white/5">
-            <button 
-              onClick={() => setActiveTab('deposits')}
-              className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full transition-all ${activeTab === 'deposits' ? 'bg-primary text-on-primary shadow-md' : 'text-on-surface-variant hover:text-on-surface'}`}
-            >
-              Deposits
-            </button>
-            <button 
-              onClick={() => setActiveTab('withdrawals')}
-              className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full transition-all ${activeTab === 'withdrawals' ? 'bg-primary text-on-primary shadow-md' : 'text-on-surface-variant hover:text-on-surface'}`}
-            >
-              Withdrawals
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          {isLoading ? (
-            <div className="space-y-3">
-              {[...Array(5)].map((_, i) => <SkeletonTransaction key={i} />)}
-            </div>
-          ) : filteredActivity.length === 0 ? (
-            <div className="bg-surface-container-low rounded-3xl p-12 flex flex-col items-center justify-center text-center border border-dashed border-white/10">
-              <History className="w-12 h-12 text-on-surface-variant/20 mb-4" />
-              <p className="text-on-surface-variant font-bold">No transactions found</p>
-              <p className="text-xs text-on-surface-variant/60 mt-1">Your cosmic history will appear here.</p>
-            </div>
-          ) : (
-            filteredActivity.map((item) => (
-              <div key={item.uuid} className="bg-surface-container rounded-2xl p-4 flex items-center justify-between group active:bg-surface-bright transition-colors border border-white/5">
-                <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-2xl bg-surface-bright flex items-center justify-center ${parseFloat(item.amount) < 0 ? 'text-secondary' : 'text-primary'}`}>
-                    {parseFloat(item.amount) < 0 ? <ArrowUpRight className="w-6 h-6" /> : <ArrowDownLeft className="w-6 h-6" />}
-                  </div>
-                  <div>
-                    <div className="font-bold text-sm flex items-center gap-2">
-                      {item.bank_name}
-                      {item.status === 'pending' && (
-                        <span className="flex items-center gap-1 text-[8px] bg-tertiary/10 text-tertiary px-1.5 py-0.5 rounded-full uppercase tracking-widest font-black">
-                          <Clock className="w-2 h-2" />
-                          Pending
-                        </span>
-                      )}
-                      {item.status === 'completed' && (
-                        <span className="flex items-center gap-1 text-[8px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full uppercase tracking-widest font-black">
-                          <CheckCircle2 className="w-2 h-2" />
-                          Success
-                        </span>
-                      )}
-                      {item.status === 'failed' && (
-                        <span className="flex items-center gap-1 text-[8px] bg-error/10 text-error px-1.5 py-0.5 rounded-full uppercase tracking-widest font-black">
-                          <AlertCircle className="w-2 h-2" />
-                          Failed
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-[10px] text-on-surface-variant uppercase tracking-tighter">
-                      {new Date(item.created_at).toLocaleDateString()} • ID: #{item.uuid.toUpperCase()}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <div className={`font-headline font-bold ${parseFloat(item.amount) < 0 ? 'text-secondary' : 'text-primary'}`}>
-                      {parseFloat(item.amount) < 0 ? '' : '+'}${Math.abs(parseFloat(item.amount)).toLocaleString()}
-                    </div>
-                    <div className="text-[10px] text-on-surface-variant font-bold uppercase">
-                      {item.status_display}
-                    </div>
-                  </div>
-                  
-                  {item.status === 'pending' && parseFloat(item.amount) > 0 && (
-                    <button 
-                      onClick={() => onConfirmDeposit(item)}
-                      className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all active:scale-90 shadow-lg shadow-primary/10"
-                      title="Confirm Deposit"
-                    >
-                      <FileUp className="w-5 h-5" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
-    </div>
-  );
-};
-
-const DepositModal = ({ isOpen, onClose, onInitiated }: { isOpen: boolean, onClose: () => void, onInitiated: (tx: any) => void }) => {
-  const [step, setStep] = useState(1);
-  const [amount, setAmount] = useState('');
-  const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
-  const [selectedAccount, setSelectedAccount] = useState<any>(null);
-
-  const handleNext = () => {
-    if (step < 2) setStep(step + 1);
-    else {
-      // Simulate creating a pending transaction
-      const newTx = {
-        uuid: `nb-${Math.floor(Math.random() * 9000) + 1000}`,
-        amount,
-        bank_name: selectedBank?.name,
-        status: 'pending',
-        created_at: new Date().toISOString(),
-        status_display: 'Pending Confirmation'
-      };
-      onInitiated(newTx);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
-    >
-      <motion.div 
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
-      >
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-xl font-headline font-extrabold">New Deposit</h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="p-6">
-          {/* Progress Bar */}
-          <div className="flex gap-1 mb-8">
-            {[1, 2].map(i => (
-              <div key={i} className={`h-1.5 flex-1 rounded-full transition-all ${step >= i ? 'bg-primary' : 'bg-white/10'}`} />
-            ))}
-          </div>
-
-          {step === 1 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-              <div className="space-y-4">
-                <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Enter Amount</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-headline font-bold text-primary">$</span>
-                  <input 
-                    type="number" 
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full bg-surface-container-high border-none rounded-2xl py-6 pl-10 pr-4 text-3xl font-headline font-bold focus:ring-2 focus:ring-primary/20 transition-all"
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {['100', '500', '1000', '5000', '10000', '50000'].map(val => (
-                    <button 
-                      key={val} 
-                      onClick={() => setAmount(val)}
-                      className="py-2 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold transition-all"
-                    >
-                      +${val}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Select Bank</label>
-                <div className="space-y-2 max-h-[240px] overflow-y-auto pr-2 scrollbar-hide">
-                  {MOCK_BANKS.map(bank => (
-                    <button 
-                      key={bank.id}
-                      onClick={() => setSelectedBank(bank)}
-                      className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${selectedBank?.id === bank.id ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                          <Landmark className="w-5 h-5 text-primary" />
-                        </div>
-                        <span className="font-bold">{bank.name}</span>
-                      </div>
-                      {selectedBank?.id === bank.id && <CheckCircle2 className="w-5 h-5 text-primary" />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Select Deposit Account</label>
-              <div className="space-y-2">
-                {selectedBank?.accounts?.map(acc => (
-                  <button 
-                    key={acc.id}
-                    onClick={() => setSelectedAccount(acc)}
-                    className={`w-full p-4 rounded-2xl border flex flex-col gap-1 transition-all text-left ${selectedAccount?.id === acc.id ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Holder Name</span>
-                      {selectedAccount?.id === acc.id && <CheckCircle2 className="w-4 h-4 text-primary" />}
-                    </div>
-                    <div className="font-headline font-bold text-lg">{acc.holder_name}</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-2">Account Number</div>
-                    <div className="font-mono text-sm tracking-widest text-on-surface">{acc.account_number}</div>
-                  </button>
                 ))}
               </div>
             </div>
-          )}
-
-          <div className="mt-8 flex gap-3">
-            {step > 1 && (
-              <button 
-                onClick={() => setStep(step - 1)}
-                className="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold transition-all"
-              >
-                Back
-              </button>
-            )}
-            <button 
-              disabled={!amount || !selectedBank || (step === 2 && !selectedAccount)}
-              onClick={handleNext}
-              className="flex-[2] py-4 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-2xl font-headline font-extrabold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
-            >
-              {step === 2 ? 'Initiate Deposit' : 'Continue'}
-            </button>
-          </div>
+          ) : null}
         </div>
       </motion.div>
     </motion.div>
   );
 };
 
-const DepositConfirmationModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClose: () => void, transaction: any }) => {
-  const [txId, setTxId] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsUploading(true);
-    setTimeout(() => {
-      setIsUploading(false);
-      setIsSuccess(true);
-      setTimeout(onClose, 2000);
-    }, 2000);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
-    >
-      <motion.div 
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
-      >
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-xl font-headline font-extrabold">Confirm Deposit</h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="p-6">
-          {isSuccess ? (
-            <div className="py-12 flex flex-col items-center text-center animate-in zoom-in-95">
-              <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-10 h-10 text-primary" />
-              </div>
-              <h3 className="text-2xl font-headline font-extrabold mb-2">Confirmation Sent!</h3>
-              <p className="text-on-surface-variant text-sm">Our cosmic agents will verify your deposit shortly.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Basic Info */}
-              <div className="bg-white/5 rounded-2xl p-4 space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Amount</span>
-                  <span className="font-headline font-bold text-primary text-lg">${parseFloat(transaction.amount).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Bank</span>
-                  <span className="text-sm font-bold">{transaction.bank_name}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Order ID</span>
-                  <span className="text-[10px] font-mono font-bold">#{transaction.uuid.toUpperCase()}</span>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Transaction ID / Reference</label>
-                  <input 
-                    required
-                    value={txId}
-                    onChange={(e) => setTxId(e.target.value)}
-                    placeholder="Enter the ID from your bank receipt"
-                    className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Upload Receipt (Optional)</label>
-                  <div className="relative group">
-                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                    <div className="w-full bg-surface-container-high border-2 border-dashed border-white/10 rounded-2xl py-8 flex flex-col items-center justify-center gap-2 group-hover:border-primary/30 transition-all">
-                      <FileUp className="w-8 h-8 text-on-surface-variant/40 group-hover:text-primary transition-colors" />
-                      <span className="text-xs font-bold text-on-surface-variant">Click or drag receipt image</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button 
-                disabled={isUploading || !txId}
-                className="w-full py-4 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-2xl font-headline font-extrabold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
-              >
-                {isUploading ? 'Uploading...' : 'Submit Confirmation'}
-              </button>
-            </form>
-          )}
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-const WithdrawModal = ({ isOpen, onClose, setActiveTab }: { isOpen: boolean, onClose: () => void, setActiveTab: (t: string) => void }) => {
-  const [amount, setAmount] = useState('');
-  const [selectedAccount, setSelectedAccount] = useState<PlayerBankAccount | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(true);
-      setTimeout(onClose, 2000);
-    }, 2000);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
-    >
-      <motion.div 
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
-      >
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-xl font-headline font-extrabold">Withdraw Funds</h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="p-6">
-          {isSuccess ? (
-            <div className="py-12 flex flex-col items-center text-center animate-in zoom-in-95">
-              <div className="w-20 h-20 rounded-full bg-secondary/20 flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-10 h-10 text-secondary" />
-              </div>
-              <h3 className="text-2xl font-headline font-extrabold mb-2">Withdrawal Initiated!</h3>
-              <p className="text-on-surface-variant text-sm">Your funds will be processed within 24 hours.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-4">
-                <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Enter Amount</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-headline font-bold text-secondary">$</span>
-                  <input 
-                    required
-                    type="number" 
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full bg-surface-container-high border-none rounded-2xl py-6 pl-10 pr-4 text-3xl font-headline font-bold focus:ring-2 focus:ring-secondary/20 transition-all"
-                  />
-                </div>
-                <div className="flex justify-between px-1">
-                  <span className="text-[10px] font-bold text-on-surface-variant uppercase">Available: $11,250.00</span>
-                  <button type="button" onClick={() => setAmount('11250')} className="text-[10px] font-bold text-secondary uppercase hover:underline">Max</button>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Receive to Account</label>
-                <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 scrollbar-hide">
-                  {MOCK_PLAYER_ACCOUNTS.map(acc => (
-                    <button 
-                      key={acc.id}
-                      type="button"
-                      onClick={() => setSelectedAccount(acc)}
-                      className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${selectedAccount?.id === acc.id ? 'bg-secondary/10 border-secondary shadow-lg shadow-secondary/10' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                          <Landmark className="w-5 h-5 text-secondary" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-bold text-sm">{acc.account_name}</div>
-                          <div className="text-[10px] text-on-surface-variant font-mono">{acc.account_number}</div>
-                        </div>
-                      </div>
-                      {selectedAccount?.id === acc.id && <CheckCircle2 className="w-5 h-5 text-secondary" />}
-                    </button>
-                  ))}
-                </div>
-                <button 
-                  type="button" 
-                  onClick={() => {
-                    onClose();
-                    setActiveTab('profile');
-                  }}
-                  className="w-full py-3 border border-dashed border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-on-surface-variant hover:bg-white/5 transition-all"
-                >
-                  + Add New Account
-                </button>
-              </div>
-
-              <button 
-                disabled={isLoading || !amount || !selectedAccount}
-                className="w-full py-4 bg-gradient-to-r from-secondary to-secondary-dim text-on-secondary rounded-2xl font-headline font-extrabold shadow-lg shadow-secondary/20 active:scale-95 transition-all disabled:opacity-50"
-              >
-                {isLoading ? 'Processing...' : 'Confirm Withdrawal'}
-              </button>
-            </form>
-          )}
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-const ProfilePage = ({ 
-  onEditProfile, 
-  onAddAccount, 
-  onEditAccount,
-  onDeleteAccount
-}: { 
-  onEditProfile: () => void, 
-  onAddAccount: () => void,
-  onEditAccount: (acc: PlayerBankAccount) => void,
-  onDeleteAccount: (acc: PlayerBankAccount) => void
-}) => {
-  return (
-    <div className="space-y-8 max-w-2xl mx-auto">
-      {/* Profile Header */}
-      <section className="bg-surface-container-high rounded-3xl p-6 shadow-2xl relative overflow-hidden border border-white/5">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/20 via-primary to-primary/20"></div>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
-              <UserCircle className="w-10 h-10" />
-            </div>
-            <div>
-              <h2 className="text-xl font-headline font-extrabold">NeonPlayer</h2>
-              <div className="flex items-center gap-2 text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">
-                <ShieldCheck className="w-3 h-3 text-primary" />
-                Verified Account
-              </div>
-            </div>
-          </div>
-          <button 
-            onClick={onEditProfile}
-            className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
-          >
-            <Edit className="w-4 h-4 text-on-surface-variant" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-surface-container rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-              <Phone className="w-4 h-4 text-on-surface-variant" />
-            </div>
-            <div>
-              <div className="text-[8px] uppercase tracking-widest text-on-surface-variant font-bold">Phone</div>
-              <div className="text-sm font-bold">+1 234 567 890</div>
-            </div>
-          </div>
-          <div className="bg-surface-container rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-              <Mail className="w-4 h-4 text-on-surface-variant" />
-            </div>
-            <div>
-              <div className="text-[8px] uppercase tracking-widest text-on-surface-variant font-bold">Email</div>
-              <div className="text-sm font-bold">neon.player@cosmic.com</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Bank Accounts */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-xl font-headline font-extrabold tracking-tight">My Bank Accounts</h2>
-          <button 
-            onClick={onAddAccount}
-            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:underline"
-          >
-            <Plus className="w-3 h-3" />
-            Add New
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          {MOCK_PLAYER_ACCOUNTS.map(acc => (
-            <div key={acc.id} className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-surface-bright flex items-center justify-center text-secondary">
-                  <Landmark className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="font-bold text-sm">{acc.account_name}</div>
-                  <div className="text-[10px] text-on-surface-variant uppercase tracking-tighter">
-                    {acc.bank_name} • {acc.account_number}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => onEditAccount(acc)}
-                  className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
-                >
-                  <Edit className="w-4 h-4 text-on-surface-variant" />
-                </button>
-                <button 
-                  onClick={() => onDeleteAccount(acc)}
-                  className="w-9 h-9 rounded-full bg-error/10 flex items-center justify-center hover:bg-error/20 transition-colors"
-                >
-                  <Trash2 className="w-4 h-4 text-error" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Security Info */}
-      <section className="bg-surface-container-low rounded-3xl p-6 border border-white/5">
-        <h3 className="text-sm font-headline font-extrabold mb-4">Security & Settings</h3>
-        <div className="space-y-2">
-          <button className="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors">
-            <div className="flex items-center gap-3">
-              <Lock className="w-4 h-4 text-on-surface-variant" />
-              <span className="text-sm font-bold">Change Password</span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-on-surface-variant" />
-          </button>
-          <button className="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors">
-            <div className="flex items-center gap-3">
-              <ShieldCheck className="w-4 h-4 text-on-surface-variant" />
-              <span className="text-sm font-bold">Two-Factor Authentication</span>
-            </div>
-            <div className="text-[10px] font-bold text-error uppercase">Disabled</div>
-          </button>
-        </div>
-      </section>
-    </div>
-  );
-};
-
-const AddAccountModal = ({ 
-  isOpen, 
-  onClose, 
-  editingAccount 
-}: { 
-  isOpen: boolean, 
-  onClose: () => void, 
-  editingAccount?: PlayerBankAccount | null 
-}) => {
-  const [bankName, setBankName] = useState('');
-  const [holderName, setHolderName] = useState('');
-  const [accNumber, setAccNumber] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (editingAccount) {
-      setBankName(editingAccount.bank_name);
-      setHolderName(editingAccount.account_name || '');
-      setAccNumber(editingAccount.account_number);
-    } else {
-      setBankName('');
-      setHolderName('');
-      setAccNumber('');
-    }
-  }, [editingAccount]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      onClose();
-    }, 1500);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
-    >
-      <motion.div 
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
-      >
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-xl font-headline font-extrabold">{editingAccount ? 'Edit Account' : 'Add Bank Account'}</h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Bank Name</label>
-              <input 
-                required
-                value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
-                placeholder="e.g. Chase, Wells Fargo"
-                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Account Holder Name</label>
-              <input 
-                required
-                value={holderName}
-                onChange={(e) => setHolderName(e.target.value)}
-                placeholder="Full name as on bank record"
-                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Account Number</label>
-              <input 
-                required
-                value={accNumber}
-                onChange={(e) => setAccNumber(e.target.value)}
-                placeholder="Enter account number"
-                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-          </div>
-
-          <button 
-            disabled={isLoading}
-            className="w-full py-4 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-2xl font-headline font-extrabold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
-          >
-            {isLoading ? 'Saving...' : (editingAccount ? 'Update Account' : 'Add Account')}
-          </button>
-        </form>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
-  const [name, setName] = useState('NeonPlayer');
-  const [email, setEmail] = useState('neon.player@cosmic.com');
-  const [phone, setPhone] = useState('+1 234 567 890');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      onClose();
-    }, 1500);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
-    >
-      <motion.div 
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
-      >
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-xl font-headline font-extrabold">Edit Profile</h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Display Name</label>
-              <input 
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Email Address</label>
-              <input 
-                required
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Phone Number</label>
-              <input 
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-          </div>
-
-          <button 
-            disabled={isLoading}
-            className="w-full py-4 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-2xl font-headline font-extrabold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
-          >
-            {isLoading ? 'Saving...' : 'Update Profile'}
-          </button>
-        </form>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-const AuthModal = ({ isOpen, onClose, onLoginSuccess }: { isOpen: boolean, onClose: () => void, onLoginSuccess: () => void }) => {
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      if (mode !== 'forgot') {
-        onLoginSuccess();
-        onClose();
-      } else {
-        setMode('login');
+function useLobbyGamesFiltered(
+  lobbyCategories: SabiGameCategory[],
+  navTab: string,
+  categoryFilter: string,
+): { trending: SabiGame[]; gridGames: SabiGame[] } {
+  return useMemo(() => {
+    const flat: SabiGame[] = [];
+    const seen = new Set<string>();
+    for (const cat of lobbyCategories) {
+      for (const g of cat.games) {
+        if (!seen.has(g.uuid)) {
+          seen.add(g.uuid);
+          flat.push(g);
+        }
       }
-    }, 1500);
-  };
+    }
 
-  if (!isOpen) return null;
+    const byNav = (games: SabiGame[]) => {
+      const n = navTab.toLowerCase();
+      if (n === "slots")
+        return games.filter(
+          (g) =>
+            g.name.toLowerCase().includes("slot") ||
+            lobbyCategories.some(
+              (c) =>
+                (c.slug?.toLowerCase().includes("slot") || c.name.toLowerCase().includes("slot")) &&
+                c.games.some((x) => x.uuid === g.uuid),
+            ),
+        );
+      if (n === "live")
+        return games.filter(
+          (g) =>
+            lobbyCategories.some(
+              (c) =>
+                (c.slug?.toLowerCase().includes("live") || c.name.toLowerCase().includes("live")) &&
+                c.games.some((x) => x.uuid === g.uuid),
+            ) || g.name.toLowerCase().includes("live"),
+        );
+      if (n === "sports")
+        return games.filter(
+          (g) =>
+            lobbyCategories.some(
+              (c) =>
+                (c.slug?.toLowerCase().includes("sport") || c.name.toLowerCase().includes("sport")) &&
+                c.games.some((x) => x.uuid === g.uuid),
+            ) || g.name.toLowerCase().includes("sport"),
+        );
+      return games;
+    };
 
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
-    >
-      <motion.div 
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/10"
-      >
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 z-[210] w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest/60 backdrop-blur-md text-on-surface hover:bg-surface-bright active:scale-90 transition-all duration-300"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    let base = byNav(flat);
+    if (categoryFilter && categoryFilter !== "All") {
+      const cat = lobbyCategories.find((c) => c.name === categoryFilter);
+      base = cat ? cat.games : base;
+    }
 
-        <div className="p-8">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-dim p-1 mx-auto mb-4 shadow-lg shadow-primary-dim/20">
-              <div className="w-full h-full rounded-xl bg-surface-container-lowest flex items-center justify-center">
-                <Rocket className="text-primary w-8 h-8 fill-primary" />
-              </div>
-            </div>
-            <h2 className="text-2xl font-headline font-extrabold text-white tracking-tight">
-              {mode === 'login' && 'Welcome Back'}
-              {mode === 'register' && 'Join the Nebula'}
-              {mode === 'forgot' && 'Reset Password'}
-            </h2>
-            <p className="text-on-surface-variant text-sm mt-1">
-              {mode === 'login' && 'Login to access your high-stakes dashboard'}
-              {mode === 'register' && 'Create an account to start your cosmic journey'}
-              {mode === 'forgot' && 'Enter your phone to receive a reset code'}
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === 'register' && (
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Full Name</label>
-                <div className="relative">
-                  <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/50" />
-                  <input 
-                    required
-                    type="text"
-                    placeholder="John Doe"
-                    className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/30"
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Phone Number</label>
-              <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/50" />
-                <input 
-                  required
-                  type="tel"
-                  placeholder="+1 (555) 000-0000"
-                  className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/30"
-                />
-              </div>
-            </div>
-
-            {mode !== 'forgot' && (
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/50" />
-                  <input 
-                    required
-                    type="password"
-                    placeholder="••••••••"
-                    className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/30"
-                  />
-                </div>
-                {mode === 'login' && (
-                  <button 
-                    type="button"
-                    onClick={() => setMode('forgot')}
-                    className="text-[10px] font-bold text-primary hover:underline px-1"
-                  >
-                    Forgot Password?
-                  </button>
-                )}
-              </div>
-            )}
-
-            <button 
-              disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-primary to-primary-dim rounded-full text-on-primary font-headline font-extrabold text-md shadow-lg shadow-primary-dim/20 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 mt-4"
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-on-primary/30 border-t-on-primary rounded-full animate-spin" />
-                  Processing...
-                </div>
-              ) : (
-                <>
-                  {mode === 'login' && 'Login Now'}
-                  {mode === 'register' && 'Create Account'}
-                  {mode === 'forgot' && 'Send Reset Code'}
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="mt-8 text-center">
-            {mode === 'login' ? (
-              <p className="text-xs text-on-surface-variant">
-                Don't have an account?{' '}
-                <button onClick={() => setMode('register')} className="text-primary font-bold hover:underline">Register</button>
-              </p>
-            ) : (
-              <p className="text-xs text-on-surface-variant">
-                Already have an account?{' '}
-                <button onClick={() => setMode('login')} className="text-primary font-bold hover:underline">Login</button>
-              </p>
-            )}
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-// --- Main App ---
+    const trending = flat.filter((g) => g.is_top_game).slice(0, 20);
+    return {
+      trending: trending.length ? trending : base.slice(0, 12),
+      gridGames: base,
+    };
+  }, [lobbyCategories, navTab, categoryFilter]);
+}
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('lobby');
-  const [selectedGame, setSelectedGame] = useState<CasinoGame | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isAppLoading, setIsAppLoading] = useState(true);
-  
-  // Wallet Modal States
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const hydrated = useAuthStore((s) => s.hydrated);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const member = useAuthStore((s) => s.member);
+  const logout = useAuthStore((s) => s.logout);
+  const authModalOpen = useUiStore((s) => s.authModalOpen);
+  const openAuthModal = useUiStore((s) => s.openAuthModal);
+  const closeAuthModal = useUiStore((s) => s.closeAuthModal);
+
+  const [activeTab, setActiveTab] = useState("lobby");
+  const [selectedGame, setSelectedGame] = useState<SabiGame | null>(null);
+  const [lobbyCategoryFilter, setLobbyCategoryFilter] = useState("All");
+  const [searchInput, setSearchInput] = useState("");
+
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [selectedTx, setSelectedTx] = useState<any>(null);
+  const [confirmOrder, setConfirmOrder] = useState<SabiDepositOrder | null>(null);
 
-  // Profile Modal States
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
-  const [editingAccount, setEditingAccount] = useState<PlayerBankAccount | null>(null);
 
-  // Scroll to top on tab change
+  const initQuery = useInit();
+  const lobbyQuery = useLobby();
+  const topGamesQuery = useTopGames();
+  const providersQuery = useProviders();
+  const walletQuery = useWallet();
+  const depositsQuery = useMyDepositOrders();
+  const withdrawalsQuery = useMyWithdrawalOrders();
+  const userBanksQuery = useUserBankInfoList();
+
+  const gamesSearchQuery = useGames(
+    searchInput.trim().length >= 2 ? { name: searchInput.trim() } : undefined,
+  );
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "wallet" || tab === "profile" || tab === "lobby") setActiveTab(tab);
+  }, [searchParams]);
+
+  const lobbyCategories = lobbyQuery.data ?? [];
+  const providers = useMemo(
+    () => toArray<SabiProvider>(providersQuery.data),
+    [providersQuery.data],
+  );
+  const { trending: trendingGames, gridGames: lobbyGridGames } = useLobbyGamesFiltered(
+    lobbyCategories,
+    activeTab,
+    lobbyCategoryFilter,
+  );
+
+  const topFromApi = useMemo(() => topGamesQuery.data?.results ?? [], [topGamesQuery.data?.results]);
+  const displayTrending = topFromApi.length ? topFromApi : trendingGames;
+
+  const searchGames = useMemo(() => gamesSearchQuery.data?.results ?? [], [gamesSearchQuery.data?.results]);
+
+  const currencyLabel =
+    initQuery.data?.company_info?.currency ?? walletQuery.data?.currency ?? "ETB";
+  const minDeposit = toPositiveNumber(initQuery.data?.system_config?.min_deposit_amount, 50);
+  const maxDeposit = toPositiveNumber(initQuery.data?.system_config?.max_deposit_amount, 1_000_000);
+
+  const walletBalanceLabel = walletQuery.data
+    ? `${currencyLabel} ${formatBalance(walletQuery.data.balance)}`
+    : `${currencyLabel} 0.00`;
+
+  const createDeposit = useCreateDeposit();
+  const updateDeposit = useUpdateDeposit();
+  const createWithdrawal = useCreateWithdrawal();
+  const addUserBank = useAddUserBankInfo();
+  const updateMember = useUpdateMember();
+
+  const depositModalOpen = isDepositModalOpen && hydrated && isAuthenticated;
+  const depositBanksQuery = useQuery({
+    queryKey: ["deposit-modal-banks"],
+    queryFn: () => getAgentBanks({ type: "deposit" }),
+    enabled: depositModalOpen,
+    staleTime: 60_000,
+  });
+  const [depositAmount, setDepositAmount] = useState("");
+  const [selectedBankUuid, setSelectedBankUuid] = useState("");
+  const [selectedBankInfoUuid, setSelectedBankInfoUuid] = useState("");
+  const depositBanks = useMemo(() => toArray<SabiPaymentBank>(depositBanksQuery.data), [depositBanksQuery.data]);
+  const amountNum = Number(depositAmount);
+  const bankInfoQuery = useQuery({
+    queryKey: ["deposit-modal-bank-info", selectedBankUuid, amountNum],
+    queryFn: () => getAgentBankInfo(selectedBankUuid, { amount: depositAmount }),
+    enabled: depositModalOpen && !!selectedBankUuid && Number.isFinite(amountNum) && amountNum > 0,
+    staleTime: 15_000,
+  });
+  const bankInfoOptions = useMemo(
+    () => bankInfoQuery.data?.results ?? [],
+    [bankInfoQuery.data?.results],
+  );
+  const effectiveBankInfoUuid = useMemo(() => {
+    if (selectedBankInfoUuid && bankInfoOptions.some((i) => i.uuid === selectedBankInfoUuid))
+      return selectedBankInfoUuid;
+    return bankInfoOptions[0]?.uuid ?? "";
+  }, [bankInfoOptions, selectedBankInfoUuid]);
+
+  const categoryChips = useMemo(() => {
+    const names = lobbyCategories.map((c) => c.name).filter(Boolean);
+    return ["All", ...names.slice(0, 8)];
+  }, [lobbyCategories]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [activeTab]);
 
-  // Initial App Load Simulation
-  useEffect(() => {
-    const timer = setTimeout(() => setIsAppLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  const openLogin = () => openAuthModal();
+
+  const deposits = depositsQuery.data?.results ?? [];
+  const withdrawals = withdrawalsQuery.data?.results ?? [];
+  const userBanks = useMemo(() => toArray<SabiUserBankInfo>(userBanksQuery.data), [userBanksQuery.data]);
+
+  const navigatePlay = (game: SabiGame, mode: "real" | "demo") => {
+    setSelectedGame(null);
+    navigate(`/play/${encodeURIComponent(game.slug)}?mode=${mode}`);
+  };
+
+  const LobbyPage = () => {
+    if (lobbyQuery.isLoading) {
+      return (
+        <div className="flex flex-col items-center justify-center py-24 gap-3">
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
+          <p className="text-on-surface-variant text-sm font-bold">Loading lobby…</p>
+        </div>
+      );
+    }
+    if (lobbyQuery.isError) {
+      return (
+        <div className="rounded-2xl border border-error/30 bg-error/10 p-6 text-center">
+          <p className="text-error font-bold">Could not load games</p>
+          <button
+            type="button"
+            onClick={() => lobbyQuery.refetch()}
+            className="mt-4 rounded-full bg-primary px-4 py-2 text-on-primary font-bold text-sm"
+          >
+            Retry
+          </button>
+        </div>
+      );
+    }
+    return (
+      <div className="space-y-8">
+        <section className="relative h-48 md:h-80 rounded-2xl overflow-hidden bg-surface-container-high border border-white/5 flex items-center">
+          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/80 to-transparent z-10" />
+          <div className="relative z-20 p-6 md:p-12 max-w-lg">
+            <h1 className="text-2xl md:text-5xl font-headline font-extrabold text-white tracking-tight mb-2">
+              Welcome to <span className="text-primary">Nebula</span>
+            </h1>
+            <p className="text-on-surface-variant text-sm md:text-base mb-4">
+              Real games, wallet, and secure payments — powered by Sabi.
+            </p>
+          </div>
+        </section>
+        <section className="space-y-4 md:space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg md:text-2xl font-headline font-extrabold tracking-tight">Trending</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
+            {displayTrending.map((game) => (
+              <GameCard
+                key={game.uuid}
+                game={game}
+                providerName={resolveProviderName(game, providers)}
+                onClick={() => setSelectedGame(game)}
+              />
+            ))}
+          </div>
+        </section>
+        <section className="space-y-4 md:space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg md:text-2xl font-headline font-extrabold tracking-tight">All Games</h2>
+          </div>
+          <nav className="flex items-center gap-2 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
+            {categoryChips.map((label) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => setLobbyCategoryFilter(label)}
+                className={`px-5 py-2.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap transition-all ${
+                  lobbyCategoryFilter === label
+                    ? "bg-primary text-on-primary shadow-lg shadow-primary/20"
+                    : "bg-surface-container-high text-on-surface hover:bg-surface-bright border border-white/5"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-6">
+            {lobbyGridGames.map((game) => (
+              <GameCard
+                key={game.uuid}
+                game={game}
+                providerName={resolveProviderName(game, providers)}
+                onClick={() => setSelectedGame(game)}
+              />
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  };
+
+  const PromotionsPage = () => (
+    <div className="space-y-8">
+      <h2 className="text-2xl md:text-4xl font-headline font-extrabold tracking-tight">Promotions & Rewards</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+        <div className="glass-panel p-5 md:p-8 rounded-2xl border border-white/5 flex items-center gap-4 md:gap-6">
+          <Gift className="w-12 h-12 text-primary shrink-0" />
+          <div>
+            <h3 className="text-sm md:text-xl font-headline font-extrabold mb-1">Daily Rewards</h3>
+            <p className="text-[10px] md:text-sm text-on-surface-variant">Login daily for bonus opportunities.</p>
+          </div>
+        </div>
+        <div className="glass-panel p-5 md:p-8 rounded-2xl border border-white/5 flex items-center gap-4 md:gap-6">
+          <Award className="w-12 h-12 text-tertiary shrink-0" />
+          <div>
+            <h3 className="text-sm md:text-xl font-headline font-extrabold mb-1">VIP Rewards</h3>
+            <p className="text-[10px] md:text-sm text-on-surface-variant">Level up for exclusive perks.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const WalletPage = () => {
+    const [subTab, setSubTab] = useState<"deposits" | "withdrawals">("deposits");
+    const w = walletQuery.data;
+
+    if (!isAuthenticated) {
+      return (
+        <div className="text-center py-16">
+          <p className="text-on-surface-variant font-bold mb-4">Login to view your wallet</p>
+          <button
+            type="button"
+            onClick={openLogin}
+            className="rounded-full bg-gradient-to-r from-primary to-primary-dim px-6 py-3 text-on-primary font-bold"
+          >
+            Login
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6 max-w-2xl mx-auto">
+        <section className="bg-surface-container-high rounded-3xl p-6 shadow-2xl relative overflow-hidden border border-white/5">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="flex flex-col items-center justify-center border-r border-white/10 py-2">
+              <span className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total</span>
+              <span className="text-lg font-extrabold text-primary">
+                {w ? `${currencyLabel} ${formatBalance(w.balance)}` : "—"}
+              </span>
+            </div>
+            <div className="flex flex-col items-center justify-center border-r border-white/10 py-2">
+              <span className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Bonus</span>
+              <span className="text-lg font-extrabold text-tertiary">
+                {w?.non_withdrawable_balance != null
+                  ? formatBalance(w.non_withdrawable_balance)
+                  : "—"}
+              </span>
+            </div>
+            <div className="flex flex-col items-center justify-center py-2">
+              <span className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Withdrawable</span>
+              <span className="text-lg font-extrabold text-secondary">
+                {w?.withdrawable_balance != null ? formatBalance(w.withdrawable_balance) : "—"}
+              </span>
+            </div>
+          </div>
+          <div className="flex gap-3 mt-6">
+            <button
+              type="button"
+              onClick={() => setIsDepositModalOpen(true)}
+              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold py-3.5 rounded-2xl"
+            >
+              <ArrowDownLeft className="w-4 h-4" />
+              Deposit
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsWithdrawModalOpen(true)}
+              className="flex-1 flex items-center justify-center gap-2 bg-surface-bright border border-primary/20 text-primary font-bold py-3.5 rounded-2xl"
+            >
+              <ArrowUpRight className="w-4 h-4" />
+              Withdraw
+            </button>
+          </div>
+        </section>
+        <section className="space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-xl font-headline font-extrabold tracking-tight">History</h2>
+            <div className="flex bg-surface-container-low p-1 rounded-full border border-white/5">
+              <button
+                type="button"
+                onClick={() => setSubTab("deposits")}
+                className={`px-4 py-1.5 text-[10px] font-bold uppercase rounded-full ${
+                  subTab === "deposits" ? "bg-primary text-on-primary" : "text-on-surface-variant"
+                }`}
+              >
+                Deposits
+              </button>
+              <button
+                type="button"
+                onClick={() => setSubTab("withdrawals")}
+                className={`px-4 py-1.5 text-[10px] font-bold uppercase rounded-full ${
+                  subTab === "withdrawals" ? "bg-primary text-on-primary" : "text-on-surface-variant"
+                }`}
+              >
+                Withdrawals
+              </button>
+            </div>
+          </div>
+          {subTab === "deposits" ? (
+            <div className="space-y-3">
+              {depositsQuery.isLoading ? (
+                <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
+              ) : deposits.length === 0 ? (
+                <p className="text-center text-on-surface-variant py-8">No deposits yet</p>
+              ) : (
+                deposits.map((item) => (
+                  <div
+                    key={item.uuid}
+                    className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5"
+                  >
+                    <div>
+                      <p className="font-bold text-sm">{item.bank_name ?? "Deposit"}</p>
+                      <p className="text-[10px] text-on-surface-variant">
+                        {item.created_at ? new Date(item.created_at).toLocaleString() : ""}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-headline font-bold text-primary">+{formatBalance(item.amount)}</p>
+                      <p className="text-[10px] text-on-surface-variant">{item.status_display ?? item.status}</p>
+                    </div>
+                    {item.status === "pending" && !item.reference_number ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setConfirmOrder(item);
+                          setIsConfirmModalOpen(true);
+                        }}
+                        className="ml-2 w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center"
+                        title="Confirm"
+                      >
+                        <FileUp className="w-5 h-5" />
+                      </button>
+                    ) : null}
+                  </div>
+                ))
+              )}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {withdrawalsQuery.isLoading ? (
+                <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
+              ) : withdrawals.length === 0 ? (
+                <p className="text-center text-on-surface-variant py-8">No withdrawals yet</p>
+              ) : (
+                withdrawals.map((item) => (
+                  <div
+                    key={item.uuid ?? String(item.amount)}
+                    className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5"
+                  >
+                    <div>
+                      <p className="font-bold text-sm">Withdrawal</p>
+                      <p className="text-[10px] text-on-surface-variant">
+                        {item.created_at ? new Date(item.created_at).toLocaleString() : ""}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-headline font-bold text-secondary">-{formatBalance(item.amount ?? 0)}</p>
+                      <p className="text-[10px] text-on-surface-variant">{item.status_display ?? item.status}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </section>
+      </div>
+    );
+  };
+
+  const SearchPage = () => (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-headline font-extrabold">Search Games</h2>
+      <div className="relative w-full">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-5 h-5" />
+        <input
+          className="w-full bg-surface-container-high border-none rounded-2xl py-4 pl-12 pr-4 text-lg focus:ring-2 focus:ring-primary/20"
+          placeholder="Type at least 2 characters…"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+      </div>
+      {gamesSearchQuery.isFetching ? (
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          {searchGames.map((game) => (
+            <GameCard
+              key={game.uuid}
+              game={game}
+              providerName={resolveProviderName(game, providers)}
+              onClick={() => setSelectedGame(game)}
+            />
+          ))}
+        </div>
+      )}
+      {searchInput.trim().length >= 2 && !gamesSearchQuery.isFetching && searchGames.length === 0 ? (
+        <p className="text-on-surface-variant text-center py-8">No games found</p>
+      ) : null}
+    </div>
+  );
+
+  const ProfilePage = () => {
+    if (!isAuthenticated || !member) {
+      return (
+        <div className="text-center py-16">
+          <button
+            type="button"
+            onClick={openLogin}
+            className="rounded-full bg-gradient-to-r from-primary to-primary-dim px-6 py-3 text-on-primary font-bold"
+          >
+            Login
+          </button>
+        </div>
+      );
+    }
+    return (
+      <div className="space-y-8 max-w-2xl mx-auto">
+        <section className="bg-surface-container-high rounded-3xl p-6 border border-white/5">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <UserCircle className="w-12 h-12 text-primary" />
+              <div>
+                <h2 className="text-xl font-headline font-extrabold">
+                  {member.name || [member.first_name, member.last_name].filter(Boolean).join(" ") || "Player"}
+                </h2>
+                <p className="text-[10px] text-on-surface-variant flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-primary" />
+                  Verified
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsEditProfileModalOpen(true)}
+              className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-surface-container rounded-2xl p-4 flex items-center gap-3">
+              <Phone className="w-4 h-4 text-on-surface-variant" />
+              <div>
+                <div className="text-[8px] uppercase text-on-surface-variant font-bold">Phone</div>
+                <div className="text-sm font-bold">{member.phone_number}</div>
+              </div>
+            </div>
+            <div className="bg-surface-container rounded-2xl p-4 flex items-center gap-3">
+              <Mail className="w-4 h-4 text-on-surface-variant" />
+              <div>
+                <div className="text-[8px] uppercase text-on-surface-variant font-bold">Email</div>
+                <div className="text-sm font-bold">{member.email ?? "—"}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-xl font-headline font-extrabold">My Bank Accounts</h2>
+            <button
+              type="button"
+              onClick={() => setIsAddAccountModalOpen(true)}
+              className="flex items-center gap-2 text-[10px] font-bold uppercase text-primary"
+            >
+              <Plus className="w-3 h-3" />
+              Add New
+            </button>
+          </div>
+          <div className="space-y-3">
+            {userBanksQuery.isLoading ? (
+              <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+            ) : (
+              userBanks.map((acc) => (
+                <div
+                  key={acc.uuid}
+                  className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5"
+                >
+                  <div className="flex items-center gap-4">
+                    <Landmark className="w-6 h-6 text-secondary" />
+                    <div>
+                      <div className="font-bold text-sm">{acc.account_name}</div>
+                      <div className="text-[10px] text-on-surface-variant">
+                        {acc.bank_name ?? acc.bank} • {acc.account_number}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+      </div>
+    );
+  };
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'lobby':
-        return <LobbyPage onGameClick={setSelectedGame} />;
-      case 'promotions':
+      case "lobby":
+      case "slots":
+      case "live":
+      case "sports":
+      case "vip":
+        return <LobbyPage />;
+      case "promotions":
         return <PromotionsPage />;
-      case 'wallet':
-        return (
-          <WalletPage 
-            wallet={MOCK_WALLET} 
-            activity={MOCK_ACTIVITY} 
-            onDepositClick={() => setIsDepositModalOpen(true)}
-            onWithdrawClick={() => setIsWithdrawModalOpen(true)}
-            onConfirmDeposit={(tx) => {
-              setSelectedTx(tx);
-              setIsConfirmModalOpen(true);
-            }}
-          />
-        );
-      case 'search':
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-headline font-extrabold">Search Games</h2>
-            <div className="relative w-full">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-5 h-5" />
-              <input 
-                className="w-full bg-surface-container-high border-none rounded-2xl py-4 pl-12 pr-4 text-lg focus:ring-2 focus:ring-primary/20 placeholder:text-on-surface-variant/50" 
-                placeholder="Search for games, providers..." 
-                autoFocus
-                type="text"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              {MOCK_GAMES.slice(0, 4).map(game => (
-                <GameCard key={game.uuid} game={game} onClick={() => setSelectedGame(game)} />
-              ))}
-            </div>
-          </div>
-        );
-      case 'profile':
-        return (
-          <ProfilePage 
-            onEditProfile={() => setIsEditProfileModalOpen(true)}
-            onAddAccount={() => {
-              setEditingAccount(null);
-              setIsAddAccountModalOpen(true);
-            }}
-            onEditAccount={(acc) => {
-              setEditingAccount(acc);
-              setIsAddAccountModalOpen(true);
-            }}
-            onDeleteAccount={(acc) => {
-              if (confirm(`Are you sure you want to delete ${acc.account_name}?`)) {
-                // Handle delete
-              }
-            }}
-          />
-        );
+      case "wallet":
+        return <WalletPage />;
+      case "search":
+        return <SearchPage />;
+      case "profile":
+        return <ProfilePage />;
       default:
-        return <LobbyPage onGameClick={setSelectedGame} />;
+        return <LobbyPage />;
     }
   };
 
+  const similarForModal = selectedGame
+    ? displayTrending.filter((g) => g.uuid !== selectedGame.uuid).slice(0, 8)
+    : [];
+
   return (
     <div className="flex min-h-screen bg-surface">
-      <AnimatePresence>
-        {isAppLoading && <PageLoader />}
-      </AnimatePresence>
-
-      <Sidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        isLoggedIn={isLoggedIn}
-        onLoginClick={() => setIsAuthModalOpen(true)}
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isLoggedIn={isAuthenticated}
+        onLoginClick={openLogin}
       />
-      
       <main className="flex-1 md:ml-64 pb-32 md:pb-8 w-full max-w-full">
-        <TopBar 
-          activeTab={activeTab} 
-          wallet={MOCK_WALLET} 
-          isLoggedIn={isLoggedIn}
-          onLoginClick={() => setIsAuthModalOpen(true)}
-          onLogout={() => setIsLoggedIn(false)}
-          onProfileClick={() => setActiveTab('profile')}
+        <TopBar
+          walletBalanceLabel={walletBalanceLabel}
+          walletLoading={isAuthenticated && walletQuery.isLoading}
+          isLoggedIn={isAuthenticated}
+          onLoginClick={openLogin}
+          onLogout={logout}
+          onProfileClick={() => setActiveTab("profile")}
+          onDepositClick={() => {
+            if (!isAuthenticated) openLogin();
+            else setIsDepositModalOpen(true);
+          }}
         />
-        
         <div className="pt-20 px-4 md:pt-24 md:px-8 max-w-full overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div
@@ -1822,77 +1125,490 @@ export default function App() {
           </AnimatePresence>
         </div>
       </main>
-
-      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} isLoggedIn={isLoggedIn} />
-
+      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} isLoggedIn={isAuthenticated} />
       <AnimatePresence>
-        {selectedGame && (
-          <GameModal game={selectedGame} onClose={() => setSelectedGame(null)} />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {isAuthModalOpen && (
-          <AuthModal 
-            isOpen={isAuthModalOpen} 
-            onClose={() => setIsAuthModalOpen(false)}
-            onLoginSuccess={() => setIsLoggedIn(true)}
+        {selectedGame ? (
+          <GameModal
+            game={selectedGame}
+            onClose={() => setSelectedGame(null)}
+            onPlayReal={() => navigatePlay(selectedGame, "real")}
+            onPlayDemo={() => navigatePlay(selectedGame, "demo")}
+            similarGames={similarForModal}
+            providers={providers}
           />
-        )}
+        ) : null}
       </AnimatePresence>
-
-      <AnimatePresence>
-        {isDepositModalOpen && (
-          <DepositModal 
-            isOpen={isDepositModalOpen} 
-            onClose={() => setIsDepositModalOpen(false)}
-            onInitiated={(tx) => {
-              setIsDepositModalOpen(false);
-              setSelectedTx(tx);
-              setIsConfirmModalOpen(true);
-            }}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {isConfirmModalOpen && (
-          <DepositConfirmationModal 
-            isOpen={isConfirmModalOpen} 
-            onClose={() => setIsConfirmModalOpen(false)}
-            transaction={selectedTx}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {isWithdrawModalOpen && (
-          <WithdrawModal 
-            isOpen={isWithdrawModalOpen} 
-            onClose={() => setIsWithdrawModalOpen(false)}
-            setActiveTab={setActiveTab}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {isEditProfileModalOpen && (
-          <EditProfileModal 
-            isOpen={isEditProfileModalOpen} 
-            onClose={() => setIsEditProfileModalOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {isAddAccountModalOpen && (
-          <AddAccountModal 
-            isOpen={isAddAccountModalOpen} 
-            onClose={() => setIsAddAccountModalOpen(false)}
-            editingAccount={editingAccount}
-          />
-        )}
-      </AnimatePresence>
+      <NebulaAuthModal open={authModalOpen} onClose={closeAuthModal} />
+      <DepositModal
+        open={isDepositModalOpen}
+        onClose={() => {
+          setIsDepositModalOpen(false);
+          setDepositAmount("");
+          setSelectedBankUuid("");
+          setSelectedBankInfoUuid("");
+        }}
+        currencyLabel={currencyLabel}
+        minDeposit={minDeposit}
+        maxDeposit={maxDeposit}
+        depositBanks={depositBanks}
+        bankInfoOptions={bankInfoOptions}
+        amountValue={depositAmount}
+        onAmountChange={setDepositAmount}
+        selectedBankUuid={selectedBankUuid}
+        onBankChange={(id) => {
+          setSelectedBankUuid(id);
+          setSelectedBankInfoUuid("");
+        }}
+        selectedBankInfoUuid={effectiveBankInfoUuid}
+        onBankInfoChange={setSelectedBankInfoUuid}
+        isCreating={createDeposit.isPending}
+        onCreate={() => {
+          const parsed = Number(depositAmount);
+          if (!effectiveBankInfoUuid || !Number.isFinite(parsed) || parsed < minDeposit || parsed > maxDeposit)
+            return;
+          createDeposit.mutate(
+            { amount: depositAmount, agent_bank_info_id: effectiveBankInfoUuid },
+            {
+              onSuccess: (res) => {
+                const order = extractEnvelopeData<SabiDepositOrder>(res);
+                if (order) {
+                  setIsDepositModalOpen(false);
+                  setConfirmOrder(order);
+                  setIsConfirmModalOpen(true);
+                }
+                depositsQuery.refetch();
+              },
+            },
+          );
+        }}
+      />
+      <DepositConfirmationModal
+        open={isConfirmModalOpen}
+        order={confirmOrder}
+        onClose={() => {
+          setIsConfirmModalOpen(false);
+          setConfirmOrder(null);
+        }}
+        isSubmitting={updateDeposit.isPending}
+        onSubmit={(reference, file) => {
+          if (!confirmOrder?.uuid) return;
+          updateDeposit.mutate(
+            { uuid: confirmOrder.uuid, body: { reference_number: reference, receipt: file ?? undefined } },
+            {
+              onSuccess: () => {
+                setIsConfirmModalOpen(false);
+                setConfirmOrder(null);
+                walletQuery.refetch();
+                depositsQuery.refetch();
+              },
+            },
+          );
+        }}
+      />
+      <WithdrawModal
+        open={isWithdrawModalOpen}
+        onClose={() => setIsWithdrawModalOpen(false)}
+        userBanks={userBanks}
+        withdrawable={walletQuery.data?.withdrawable_balance}
+        currencyLabel={currencyLabel}
+        isSubmitting={createWithdrawal.isPending}
+        onSubmit={(amount, bankUuid) => {
+          createWithdrawal.mutate(
+            { amount, bank_info_id: bankUuid },
+            {
+              onSuccess: () => {
+                setIsWithdrawModalOpen(false);
+                walletQuery.refetch();
+                withdrawalsQuery.refetch();
+              },
+            },
+          );
+        }}
+        onAddAccount={() => {
+          setIsWithdrawModalOpen(false);
+          setIsAddAccountModalOpen(true);
+        }}
+      />
+      {member ? (
+        <EditProfileModal
+          open={isEditProfileModalOpen}
+          member={member}
+          onClose={() => setIsEditProfileModalOpen(false)}
+          isSubmitting={updateMember.isPending}
+          onSave={(body) => updateMember.mutate(body, { onSuccess: () => setIsEditProfileModalOpen(false) })}
+        />
+      ) : null}
+      <AddAccountModal
+        open={isAddAccountModalOpen}
+        onClose={() => setIsAddAccountModalOpen(false)}
+        onSuccess={() => {
+          setIsAddAccountModalOpen(false);
+          userBanksQuery.refetch();
+        }}
+      />
     </div>
+  );
+}
+
+function DepositModal({
+  open,
+  onClose,
+  currencyLabel,
+  minDeposit,
+  maxDeposit,
+  depositBanks,
+  bankInfoOptions,
+  amountValue,
+  onAmountChange,
+  selectedBankUuid,
+  onBankChange,
+  selectedBankInfoUuid,
+  onBankInfoChange,
+  isCreating,
+  onCreate,
+}: {
+  open: boolean;
+  onClose: () => void;
+  currencyLabel: string;
+  minDeposit: number;
+  maxDeposit: number;
+  depositBanks: SabiPaymentBank[];
+  bankInfoOptions: SabiAgentBankInfo[];
+  amountValue: string;
+  onAmountChange: (v: string) => void;
+  selectedBankUuid: string;
+  onBankChange: (v: string) => void;
+  selectedBankInfoUuid: string;
+  onBankInfoChange: (v: string) => void;
+  isCreating: boolean;
+  onCreate: () => void;
+}) {
+  if (!open) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden border border-white/10 max-h-[90vh] overflow-y-auto"
+      >
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <h2 className="text-xl font-headline font-extrabold">Deposit</h2>
+          <button type="button" onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="p-6 space-y-4">
+          <p className="text-[10px] text-on-surface-variant font-bold uppercase">
+            Limits: {currencyLabel} {minDeposit} – {maxDeposit}
+          </p>
+          <label className="block space-y-1">
+            <span className="text-[10px] font-bold uppercase text-on-surface-variant">Amount</span>
+            <input
+              type="number"
+              className="w-full bg-surface-container-high rounded-2xl py-3 px-4 text-on-surface border border-white/5"
+              value={amountValue}
+              onChange={(e) => onAmountChange(e.target.value)}
+            />
+          </label>
+          <label className="block space-y-1">
+            <span className="text-[10px] font-bold uppercase text-on-surface-variant">Bank</span>
+            <select
+              className="w-full bg-surface-container-high rounded-2xl py-3 px-4 text-on-surface border border-white/5"
+              value={selectedBankUuid}
+              onChange={(e) => onBankChange(e.target.value)}
+            >
+              <option value="">Select bank</option>
+              {depositBanks.map((b) => (
+                <option key={b.uuid} value={b.uuid}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block space-y-1">
+            <span className="text-[10px] font-bold uppercase text-on-surface-variant">Receiving account</span>
+            <select
+              className="w-full bg-surface-container-high rounded-2xl py-3 px-4 text-on-surface border border-white/5"
+              value={selectedBankInfoUuid}
+              onChange={(e) => onBankInfoChange(e.target.value)}
+            >
+              <option value="">Select account</option>
+              {bankInfoOptions.map((info) => (
+                <option key={info.uuid} value={info.uuid}>
+                  {info.account_name} — {info.account_number}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            disabled={isCreating}
+            onClick={onCreate}
+            className="w-full py-4 rounded-full bg-gradient-to-r from-primary to-primary-dim text-on-primary font-extrabold disabled:opacity-50"
+          >
+            {isCreating ? "Creating…" : "Create deposit order"}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function DepositConfirmationModal({
+  open,
+  order,
+  onClose,
+  onSubmit,
+  isSubmitting,
+}: {
+  open: boolean;
+  order: SabiDepositOrder | null;
+  onClose: () => void;
+  onSubmit: (reference: string, file: File | null) => void;
+  isSubmitting: boolean;
+}) {
+  const [reference, setReference] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  if (!open || !order) return null;
+  return (
+    <motion.div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+      <motion.div className="relative w-full max-w-md bg-surface-container rounded-3xl border border-white/10 p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-headline font-extrabold">Confirm deposit</h2>
+          <button type="button" onClick={onClose}>
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="space-y-3 text-sm mb-4">
+          <p>
+            <span className="text-on-surface-variant">Amount:</span>{" "}
+            <span className="font-bold text-primary">{formatBalance(order.amount)}</span>
+          </p>
+          <p>
+            <span className="text-on-surface-variant">Bank:</span> {order.bank_name}
+          </p>
+        </div>
+        <input
+          className="w-full bg-surface-container-high rounded-2xl py-3 px-4 mb-3 border border-white/5"
+          placeholder="Transaction reference"
+          value={reference}
+          onChange={(e) => setReference(e.target.value)}
+        />
+        <input
+          type="file"
+          className="w-full text-xs text-on-surface-variant mb-4"
+          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        />
+        <button
+          type="button"
+          disabled={isSubmitting || !reference.trim()}
+          onClick={() => onSubmit(reference.trim(), file)}
+          className="w-full py-4 rounded-full bg-gradient-to-r from-primary to-primary-dim text-on-primary font-extrabold disabled:opacity-50"
+        >
+          {isSubmitting ? "Submitting…" : "Submit"}
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function WithdrawModal({
+  open,
+  onClose,
+  userBanks,
+  withdrawable,
+  currencyLabel,
+  isSubmitting,
+  onSubmit,
+  onAddAccount,
+}: {
+  open: boolean;
+  onClose: () => void;
+  userBanks: SabiUserBankInfo[];
+  withdrawable?: string | number;
+  currencyLabel: string;
+  isSubmitting: boolean;
+  onSubmit: (amount: string, bankUuid: string) => void;
+  onAddAccount: () => void;
+}) {
+  const [amount, setAmount] = useState("");
+  const [selected, setSelected] = useState("");
+  if (!open) return null;
+  const maxStr = withdrawable != null ? String(withdrawable) : "";
+  return (
+    <motion.div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+      <motion.div className="relative w-full max-w-md bg-surface-container rounded-3xl border border-white/10 p-6">
+        <div className="flex justify-between mb-4">
+          <h2 className="text-xl font-headline font-extrabold">Withdraw</h2>
+          <button type="button" onClick={onClose}>
+            <X />
+          </button>
+        </div>
+        <p className="text-xs text-on-surface-variant mb-2">
+          Available: {currencyLabel} {withdrawable != null ? formatBalance(withdrawable) : "—"}
+        </p>
+        <input
+          type="number"
+          className="w-full bg-surface-container-high rounded-2xl py-3 px-4 mb-3 border border-white/5"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+        <div className="space-y-2 max-h-48 overflow-y-auto mb-3">
+          {userBanks.map((b) => (
+            <button
+              key={b.uuid}
+              type="button"
+              onClick={() => setSelected(b.uuid)}
+              className={`w-full p-3 rounded-2xl border text-left ${
+                selected === b.uuid ? "border-primary bg-primary/10" : "border-white/10 bg-white/5"
+              }`}
+            >
+              <div className="font-bold text-sm">{b.account_name}</div>
+              <div className="text-[10px] text-on-surface-variant">{b.account_number}</div>
+            </button>
+          ))}
+        </div>
+        <button type="button" onClick={onAddAccount} className="w-full py-2 mb-3 text-xs font-bold text-primary border border-dashed border-white/20 rounded-2xl">
+          + Add bank account
+        </button>
+        <button
+          type="button"
+          disabled={isSubmitting || !amount || !selected}
+          onClick={() => onSubmit(amount, selected)}
+          className="w-full py-4 rounded-full bg-gradient-to-r from-secondary to-primary-dim text-white font-extrabold disabled:opacity-50"
+        >
+          {isSubmitting ? "…" : "Confirm withdrawal"}
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function EditProfileModal({
+  open,
+  member,
+  onClose,
+  onSave,
+  isSubmitting,
+}: {
+  open: boolean;
+  member: NonNullable<ReturnType<typeof useAuthStore.getState>["member"]>;
+  onClose: () => void;
+  onSave: (b: { first_name?: string; last_name?: string; email?: string }) => void;
+  isSubmitting: boolean;
+}) {
+  const [first, setFirst] = useState(member?.first_name ?? "");
+  const [last, setLast] = useState(member?.last_name ?? "");
+  const [email, setEmail] = useState(member?.email ?? "");
+  useEffect(() => {
+    if (open && member) {
+      setFirst(member.first_name ?? "");
+      setLast(member.last_name ?? "");
+      setEmail(member.email ?? "");
+    }
+  }, [open, member]);
+  if (!open) return null;
+  return (
+    <motion.div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 px-4">
+      <div className="w-full max-w-md bg-surface-container rounded-3xl border border-white/10 p-6">
+        <div className="flex justify-between mb-4">
+          <h2 className="text-xl font-headline font-extrabold">Edit profile</h2>
+          <button type="button" onClick={onClose}>
+            <X />
+          </button>
+        </div>
+        <div className="space-y-3">
+          <input className="w-full bg-surface-container-high rounded-2xl py-3 px-4 border border-white/5" value={first} onChange={(e) => setFirst(e.target.value)} placeholder="First name" />
+          <input className="w-full bg-surface-container-high rounded-2xl py-3 px-4 border border-white/5" value={last} onChange={(e) => setLast(e.target.value)} placeholder="Last name" />
+          <input className="w-full bg-surface-container-high rounded-2xl py-3 px-4 border border-white/5" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" />
+        </div>
+        <button
+          type="button"
+          disabled={isSubmitting}
+          onClick={() => onSave({ first_name: first, last_name: last, email })}
+          className="w-full mt-4 py-4 rounded-full bg-gradient-to-r from-primary to-primary-dim text-on-primary font-extrabold"
+        >
+          Save
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+function AddAccountModal({
+  open,
+  onClose,
+  onSuccess,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [bankUuid, setBankUuid] = useState("");
+  const [accountName, setAccountName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const banksQuery = useQuery({
+    queryKey: ["withdraw-banks-modal"],
+    queryFn: () => getAgentBanks({ type: "withdraw" }),
+    enabled: open,
+  });
+  const banks = useMemo(() => toArray<SabiPaymentBank>(banksQuery.data), [banksQuery.data]);
+  const addBank = useAddUserBankInfo();
+
+  if (!open) return null;
+  return (
+    <motion.div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 px-4">
+      <div className="w-full max-w-md bg-surface-container rounded-3xl border border-white/10 p-6">
+        <div className="flex justify-between mb-4">
+          <h2 className="text-xl font-headline font-extrabold">Add bank account</h2>
+          <button type="button" onClick={onClose}>
+            <X />
+          </button>
+        </div>
+        <select
+          className="w-full bg-surface-container-high rounded-2xl py-3 px-4 mb-3 border border-white/5"
+          value={bankUuid}
+          onChange={(e) => setBankUuid(e.target.value)}
+        >
+          <option value="">Select bank</option>
+          {banks.map((b) => (
+            <option key={b.uuid} value={b.uuid}>
+              {b.name}
+            </option>
+          ))}
+        </select>
+        <input
+          className="w-full bg-surface-container-high rounded-2xl py-3 px-4 mb-3 border border-white/5"
+          placeholder="Account holder name"
+          value={accountName}
+          onChange={(e) => setAccountName(e.target.value)}
+        />
+        <input
+          className="w-full bg-surface-container-high rounded-2xl py-3 px-4 mb-3 border border-white/5"
+          placeholder="Account number"
+          value={accountNumber}
+          onChange={(e) => setAccountNumber(e.target.value)}
+        />
+        <button
+          type="button"
+          disabled={addBank.isPending || !bankUuid || !accountName || !accountNumber}
+          onClick={() =>
+            addBank.mutate(
+              { bank: bankUuid, account_name: accountName, account_number: accountNumber },
+              { onSuccess: () => onSuccess() },
+            )
+          }
+          className="w-full py-4 rounded-full bg-gradient-to-r from-primary to-primary-dim text-on-primary font-extrabold disabled:opacity-50"
+        >
+          {addBank.isPending ? "Saving…" : "Save"}
+        </button>
+      </div>
+    </motion.div>
   );
 }
