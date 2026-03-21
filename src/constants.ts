@@ -151,8 +151,8 @@ export const MOCK_BANKS: Bank[] = [
 ];
 
 export const MOCK_PLAYER_ACCOUNTS: PlayerBankAccount[] = [
-  { id: 1, name: 'Personal Savings', account_number: '5555 1234 5678', bank_name: 'Chase' },
-  { id: 2, name: 'Business Account', account_number: '9999 8888 7777', bank_name: 'Wells Fargo' }
+  { id: 1, account_name: 'Personal Savings', account_number: '5555 1234 5678', bank_name: 'Chase' },
+  { id: 2, account_name: 'Business Account', account_number: '9999 8888 7777', bank_name: 'Wells Fargo' }
 ];
 
 export const MOCK_ACTIVITY: DepositOrder[] = [

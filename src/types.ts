@@ -91,11 +91,8 @@ export interface Bank {
 
 export interface PlayerBankAccount {
   id: number | string;
-  uuid?: string;
   bank_name: string;
   account_number: string;
-  account_name?: string;
-  name?: string;
-  number?: string;
+  account_name: string;
   is_active?: boolean;
 }

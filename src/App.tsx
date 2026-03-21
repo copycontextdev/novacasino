@@ -45,14 +45,19 @@ import {
   Landmark,
   Coins,
   Play,
-  Users
+  Users,
+  Plus,
+  Edit,
+  Trash2,
+  Mail,
+  ShieldCheck
 } from 'lucide-react';
 import { MOCK_GAMES, MOCK_BANNERS, MOCK_WALLET, MOCK_ACTIVITY, MOCK_PROVIDERS, MOCK_BANKS, MOCK_PLAYER_ACCOUNTS } from './constants';
 import { CasinoGame, DepositOrder, PlayerWallet, Bank, PlayerBankAccount } from './types';
 
 // --- Components ---
 
-const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout }: { activeTab: string, wallet: typeof MOCK_WALLET, isLoggedIn: boolean, onLoginClick: () => void, onLogout: () => void }) => {
+const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout, onProfileClick }: { activeTab: string, wallet: typeof MOCK_WALLET, isLoggedIn: boolean, onLoginClick: () => void, onLogout: () => void, onProfileClick: () => void }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
@@ -131,7 +136,18 @@ const TopBar = ({ activeTab, wallet, isLoggedIn, onLoginClick, onLogout }: { act
                       </div>
 
                       <button 
-                        className="w-full mt-4 flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error/10 rounded-xl transition-colors font-bold text-sm"
+                        className="w-full mt-4 flex items-center gap-3 px-3 py-2.5 text-primary hover:bg-primary/10 rounded-xl transition-colors font-bold text-sm"
+                        onClick={() => {
+                          setIsProfileOpen(false);
+                          onProfileClick();
+                        }}
+                      >
+                        <UserCircle className="w-4 h-4" />
+                        <span>View Profile</span>
+                      </button>
+
+                      <button 
+                        className="w-full mt-1 flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error/10 rounded-xl transition-colors font-bold text-sm"
                         onClick={() => {
                           setIsProfileOpen(false);
                           onLogout();
@@ -166,6 +182,7 @@ const Sidebar = ({ activeTab, setActiveTab, isLoggedIn, onLoginClick }: { active
     { id: 'live', label: 'Live Casino', icon: Video },
     { id: 'sports', label: 'Sports', icon: Gamepad2 },
     { id: 'vip', label: 'VIP Club', icon: Star },
+    ...(isLoggedIn ? [{ id: 'profile', label: 'Profile', icon: UserCircle }] : []),
   ];
 
   return (
@@ -243,12 +260,13 @@ const Sidebar = ({ activeTab, setActiveTab, isLoggedIn, onLoginClick }: { active
   );
 };
 
-const BottomNav = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (t: string) => void }) => {
+const BottomNav = ({ activeTab, setActiveTab, isLoggedIn }: { activeTab: string, setActiveTab: (t: string) => void, isLoggedIn: boolean }) => {
   const items = [
     { id: 'lobby', label: 'Home', icon: Home },
     { id: 'search', label: 'Search', icon: Search },
     { id: 'wallet', label: 'Wallet', icon: Wallet },
     { id: 'promotions', label: 'Promos', icon: Gift },
+    ...(isLoggedIn ? [{ id: 'profile', label: 'Profile', icon: UserCircle }] : []),
   ];
 
   return (
@@ -740,7 +758,7 @@ const DepositModal = ({ isOpen, onClose, onInitiated }: { isOpen: boolean, onClo
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
 
   const handleNext = () => {
-    if (step < 3) setStep(step + 1);
+    if (step < 2) setStep(step + 1);
     else {
       // Simulate creating a pending transaction
       const newTx = {
@@ -780,66 +798,66 @@ const DepositModal = ({ isOpen, onClose, onInitiated }: { isOpen: boolean, onClo
         <div className="p-6">
           {/* Progress Bar */}
           <div className="flex gap-1 mb-8">
-            {[1, 2, 3].map(i => (
+            {[1, 2].map(i => (
               <div key={i} className={`h-1.5 flex-1 rounded-full transition-all ${step >= i ? 'bg-primary' : 'bg-white/10'}`} />
             ))}
           </div>
 
           {step === 1 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Enter Amount</label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-headline font-bold text-primary">$</span>
-                <input 
-                  type="number" 
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="0.00"
-                  className="w-full bg-surface-container-high border-none rounded-2xl py-6 pl-10 pr-4 text-3xl font-headline font-bold focus:ring-2 focus:ring-primary/20 transition-all"
-                />
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+              <div className="space-y-4">
+                <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Enter Amount</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-headline font-bold text-primary">$</span>
+                  <input 
+                    type="number" 
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="0.00"
+                    className="w-full bg-surface-container-high border-none rounded-2xl py-6 pl-10 pr-4 text-3xl font-headline font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {['100', '500', '1000', '5000', '10000', '50000'].map(val => (
+                    <button 
+                      key={val} 
+                      onClick={() => setAmount(val)}
+                      className="py-2 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold transition-all"
+                    >
+                      +${val}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-3 gap-2">
-                {['100', '500', '1000', '5000', '10000', '50000'].map(val => (
-                  <button 
-                    key={val} 
-                    onClick={() => setAmount(val)}
-                    className="py-2 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold transition-all"
-                  >
-                    +${val}
-                  </button>
-                ))}
+
+              <div className="space-y-4">
+                <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Select Bank</label>
+                <div className="space-y-2 max-h-[240px] overflow-y-auto pr-2 scrollbar-hide">
+                  {MOCK_BANKS.map(bank => (
+                    <button 
+                      key={bank.id}
+                      onClick={() => setSelectedBank(bank)}
+                      className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${selectedBank?.id === bank.id ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                          <Landmark className="w-5 h-5 text-primary" />
+                        </div>
+                        <span className="font-bold">{bank.name}</span>
+                      </div>
+                      {selectedBank?.id === bank.id && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
 
           {step === 2 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Select Bank</label>
-              <div className="space-y-2">
-                {MOCK_BANKS.map(bank => (
-                  <button 
-                    key={bank.id}
-                    onClick={() => setSelectedBank(bank)}
-                    className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${selectedBank?.id === bank.id ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                        <Landmark className="w-5 h-5 text-primary" />
-                      </div>
-                      <span className="font-bold">{bank.name}</span>
-                    </div>
-                    {selectedBank?.id === bank.id && <CheckCircle2 className="w-5 h-5 text-primary" />}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
               <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Select Deposit Account</label>
               <div className="space-y-2">
-                {selectedBank?.accounts.map(acc => (
+                {selectedBank?.accounts?.map(acc => (
                   <button 
                     key={acc.id}
                     onClick={() => setSelectedAccount(acc)}
@@ -868,11 +886,11 @@ const DepositModal = ({ isOpen, onClose, onInitiated }: { isOpen: boolean, onClo
               </button>
             )}
             <button 
-              disabled={!amount || (step === 2 && !selectedBank) || (step === 3 && !selectedAccount)}
+              disabled={!amount || !selectedBank || (step === 2 && !selectedAccount)}
               onClick={handleNext}
               className="flex-[2] py-4 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-2xl font-headline font-extrabold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
             >
-              {step === 3 ? 'Initiate Deposit' : 'Continue'}
+              {step === 2 ? 'Initiate Deposit' : 'Continue'}
             </button>
           </div>
         </div>
@@ -983,7 +1001,7 @@ const DepositConfirmationModal = ({ isOpen, onClose, transaction }: { isOpen: bo
   );
 };
 
-const WithdrawModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+const WithdrawModal = ({ isOpen, onClose, setActiveTab }: { isOpen: boolean, onClose: () => void, setActiveTab: (t: string) => void }) => {
   const [amount, setAmount] = useState('');
   const [selectedAccount, setSelectedAccount] = useState<PlayerBankAccount | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -1066,15 +1084,22 @@ const WithdrawModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => vo
                           <Landmark className="w-5 h-5 text-secondary" />
                         </div>
                         <div className="text-left">
-                          <div className="font-bold text-sm">{acc.name}</div>
-                          <div className="text-[10px] text-on-surface-variant font-mono">{acc.number}</div>
+                          <div className="font-bold text-sm">{acc.account_name}</div>
+                          <div className="text-[10px] text-on-surface-variant font-mono">{acc.account_number}</div>
                         </div>
                       </div>
                       {selectedAccount?.id === acc.id && <CheckCircle2 className="w-5 h-5 text-secondary" />}
                     </button>
                   ))}
                 </div>
-                <button type="button" className="w-full py-3 border border-dashed border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-on-surface-variant hover:bg-white/5 transition-all">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    onClose();
+                    setActiveTab('profile');
+                  }}
+                  className="w-full py-3 border border-dashed border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-on-surface-variant hover:bg-white/5 transition-all"
+                >
                   + Add New Account
                 </button>
               </div>
@@ -1088,6 +1113,319 @@ const WithdrawModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => vo
             </form>
           )}
         </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const ProfilePage = ({ 
+  onEditProfile, 
+  onAddAccount, 
+  onEditAccount,
+  onDeleteAccount
+}: { 
+  onEditProfile: () => void, 
+  onAddAccount: () => void,
+  onEditAccount: (acc: PlayerBankAccount) => void,
+  onDeleteAccount: (acc: PlayerBankAccount) => void
+}) => {
+  return (
+    <div className="space-y-8 max-w-2xl mx-auto">
+      {/* Profile Header */}
+      <section className="bg-surface-container-high rounded-3xl p-6 shadow-2xl relative overflow-hidden border border-white/5">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/20 via-primary to-primary/20"></div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+              <UserCircle className="w-10 h-10" />
+            </div>
+            <div>
+              <h2 className="text-xl font-headline font-extrabold">NeonPlayer</h2>
+              <div className="flex items-center gap-2 text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">
+                <ShieldCheck className="w-3 h-3 text-primary" />
+                Verified Account
+              </div>
+            </div>
+          </div>
+          <button 
+            onClick={onEditProfile}
+            className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+          >
+            <Edit className="w-4 h-4 text-on-surface-variant" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-surface-container rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Phone className="w-4 h-4 text-on-surface-variant" />
+            </div>
+            <div>
+              <div className="text-[8px] uppercase tracking-widest text-on-surface-variant font-bold">Phone</div>
+              <div className="text-sm font-bold">+1 234 567 890</div>
+            </div>
+          </div>
+          <div className="bg-surface-container rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+              <Mail className="w-4 h-4 text-on-surface-variant" />
+            </div>
+            <div>
+              <div className="text-[8px] uppercase tracking-widest text-on-surface-variant font-bold">Email</div>
+              <div className="text-sm font-bold">neon.player@cosmic.com</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Bank Accounts */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-xl font-headline font-extrabold tracking-tight">My Bank Accounts</h2>
+          <button 
+            onClick={onAddAccount}
+            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:underline"
+          >
+            <Plus className="w-3 h-3" />
+            Add New
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {MOCK_PLAYER_ACCOUNTS.map(acc => (
+            <div key={acc.id} className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-surface-bright flex items-center justify-center text-secondary">
+                  <Landmark className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="font-bold text-sm">{acc.account_name}</div>
+                  <div className="text-[10px] text-on-surface-variant uppercase tracking-tighter">
+                    {acc.bank_name} • {acc.account_number}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => onEditAccount(acc)}
+                  className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                >
+                  <Edit className="w-4 h-4 text-on-surface-variant" />
+                </button>
+                <button 
+                  onClick={() => onDeleteAccount(acc)}
+                  className="w-9 h-9 rounded-full bg-error/10 flex items-center justify-center hover:bg-error/20 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4 text-error" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Security Info */}
+      <section className="bg-surface-container-low rounded-3xl p-6 border border-white/5">
+        <h3 className="text-sm font-headline font-extrabold mb-4">Security & Settings</h3>
+        <div className="space-y-2">
+          <button className="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors">
+            <div className="flex items-center gap-3">
+              <Lock className="w-4 h-4 text-on-surface-variant" />
+              <span className="text-sm font-bold">Change Password</span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-on-surface-variant" />
+          </button>
+          <button className="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="w-4 h-4 text-on-surface-variant" />
+              <span className="text-sm font-bold">Two-Factor Authentication</span>
+            </div>
+            <div className="text-[10px] font-bold text-error uppercase">Disabled</div>
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+const AddAccountModal = ({ 
+  isOpen, 
+  onClose, 
+  editingAccount 
+}: { 
+  isOpen: boolean, 
+  onClose: () => void, 
+  editingAccount?: PlayerBankAccount | null 
+}) => {
+  const [bankName, setBankName] = useState('');
+  const [holderName, setHolderName] = useState('');
+  const [accNumber, setAccNumber] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (editingAccount) {
+      setBankName(editingAccount.bank_name);
+      setHolderName(editingAccount.account_name || '');
+      setAccNumber(editingAccount.account_number);
+    } else {
+      setBankName('');
+      setHolderName('');
+      setAccNumber('');
+    }
+  }, [editingAccount]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      onClose();
+    }, 1500);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+      >
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <h2 className="text-xl font-headline font-extrabold">{editingAccount ? 'Edit Account' : 'Add Bank Account'}</h2>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Bank Name</label>
+              <input 
+                required
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
+                placeholder="e.g. Chase, Wells Fargo"
+                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Account Holder Name</label>
+              <input 
+                required
+                value={holderName}
+                onChange={(e) => setHolderName(e.target.value)}
+                placeholder="Full name as on bank record"
+                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Account Number</label>
+              <input 
+                required
+                value={accNumber}
+                onChange={(e) => setAccNumber(e.target.value)}
+                placeholder="Enter account number"
+                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+            </div>
+          </div>
+
+          <button 
+            disabled={isLoading}
+            className="w-full py-4 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-2xl font-headline font-extrabold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
+          >
+            {isLoading ? 'Saving...' : (editingAccount ? 'Update Account' : 'Add Account')}
+          </button>
+        </form>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  const [name, setName] = useState('NeonPlayer');
+  const [email, setEmail] = useState('neon.player@cosmic.com');
+  const [phone, setPhone] = useState('+1 234 567 890');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      onClose();
+    }, 1500);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+      >
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <h2 className="text-xl font-headline font-extrabold">Edit Profile</h2>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Display Name</label>
+              <input 
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Email Address</label>
+              <input 
+                required
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Phone Number</label>
+              <input 
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+            </div>
+          </div>
+
+          <button 
+            disabled={isLoading}
+            className="w-full py-4 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-2xl font-headline font-extrabold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
+          >
+            {isLoading ? 'Saving...' : 'Update Profile'}
+          </button>
+        </form>
       </motion.div>
     </motion.div>
   );
@@ -1258,6 +1596,11 @@ export default function App() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedTx, setSelectedTx] = useState<any>(null);
 
+  // Profile Modal States
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
+  const [editingAccount, setEditingAccount] = useState<PlayerBankAccount | null>(null);
+
   // Scroll to top on tab change
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -1302,6 +1645,25 @@ export default function App() {
             </div>
           </div>
         );
+      case 'profile':
+        return (
+          <ProfilePage 
+            onEditProfile={() => setIsEditProfileModalOpen(true)}
+            onAddAccount={() => {
+              setEditingAccount(null);
+              setIsAddAccountModalOpen(true);
+            }}
+            onEditAccount={(acc) => {
+              setEditingAccount(acc);
+              setIsAddAccountModalOpen(true);
+            }}
+            onDeleteAccount={(acc) => {
+              if (confirm(`Are you sure you want to delete ${acc.account_name}?`)) {
+                // Handle delete
+              }
+            }}
+          />
+        );
       default:
         return <LobbyPage onGameClick={setSelectedGame} />;
     }
@@ -1323,6 +1685,7 @@ export default function App() {
           isLoggedIn={isLoggedIn}
           onLoginClick={() => setIsAuthModalOpen(true)}
           onLogout={() => setIsLoggedIn(false)}
+          onProfileClick={() => setActiveTab('profile')}
         />
         
         <div className="pt-20 px-4 md:pt-24 md:px-8 max-w-full overflow-x-hidden">
@@ -1340,7 +1703,7 @@ export default function App() {
         </div>
       </main>
 
-      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} isLoggedIn={isLoggedIn} />
 
       <AnimatePresence>
         {selectedGame && (
@@ -1387,6 +1750,26 @@ export default function App() {
           <WithdrawModal 
             isOpen={isWithdrawModalOpen} 
             onClose={() => setIsWithdrawModalOpen(false)}
+            setActiveTab={setActiveTab}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isEditProfileModalOpen && (
+          <EditProfileModal 
+            isOpen={isEditProfileModalOpen} 
+            onClose={() => setIsEditProfileModalOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isAddAccountModalOpen && (
+          <AddAccountModal 
+            isOpen={isAddAccountModalOpen} 
+            onClose={() => setIsAddAccountModalOpen(false)}
+            editingAccount={editingAccount}
           />
         )}
       </AnimatePresence>
