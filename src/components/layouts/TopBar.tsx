@@ -72,7 +72,7 @@ const TopBar = ({
             <button
               type="button"
               onClick={onDepositClick}
-              className="bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold px-4 py-1.5 rounded-full text-xs md:text-sm active:scale-95 transition-transform shadow-lg shadow-primary/20"
+              className="bg-surface-bright border border-primary/40 hover:border-primary/70 text-primary font-black px-5 py-2 rounded-full text-xs md:text-sm active:scale-95 transition-all shadow-xl shadow-primary/10 uppercase tracking-wider"
             >
               Deposit
             </button>

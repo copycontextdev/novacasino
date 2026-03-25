@@ -29,6 +29,8 @@ interface DepositModalProps {
   onBankInfoChange: (v: string) => void;
   isCreating: boolean;
   isLoadingBankInfo?: boolean;
+  amountError?: string | null;
+  canCreate?: boolean;
   onCreate: () => void;
 }
 
@@ -48,6 +50,8 @@ const DepositModal = ({
   onBankInfoChange,
   isCreating,
   isLoadingBankInfo,
+  amountError,
+  canCreate = true,
   onCreate,
 }: DepositModalProps) => {
 
@@ -158,12 +162,15 @@ const DepositModal = ({
         
           <button
             type="button"
-            disabled={isCreating}
+            disabled={isCreating || !canCreate}
             onClick={onCreate}
             className="w-full mt-4 py-4 rounded-full bg-gradient-to-r from-primary to-primary-dim text-on-primary font-extrabold disabled:opacity-50"
           >
             {isCreating ? "Creating…" : "Create deposit order"}
           </button>
+          {amountError ? (
+            <p className="mt-3 text-sm font-medium text-error">{amountError}</p>
+          ) : null}
           </Fieldset>
         </div>
       </motion.div>

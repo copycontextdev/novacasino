@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import type { SabiUserBankInfo } from "@/types/api.types";
 import { formatBalance } from "@/lib/format";
+import { getWithdrawalAmountError } from "@/lib/payment-validation";
 
 interface WithdrawModalProps {
   open: boolean;
@@ -15,6 +16,8 @@ interface WithdrawModalProps {
   userBanks: SabiUserBankInfo[];
   withdrawable?: string | number;
   currencyLabel: string;
+  minWithdraw: number;
+  maxWithdraw: number;
   isSubmitting: boolean;
   onSubmit: (amount: string, bankUuid: string) => void;
   onAddAccount: () => void;
@@ -26,12 +29,28 @@ const WithdrawModal = ({
   userBanks,
   withdrawable,
   currencyLabel,
+  minWithdraw,
+  maxWithdraw,
   isSubmitting,
   onSubmit,
   onAddAccount,
 }: WithdrawModalProps) => {
   const [amount, setAmount] = useState("");
   const [selected, setSelected] = useState("");
+
+  useEffect(() => {
+    if (!open) {
+      setAmount("");
+      setSelected("");
+    }
+  }, [open]);
+
+  const amountError = useMemo(
+    () => getWithdrawalAmountError(amount, minWithdraw, maxWithdraw, withdrawable, currencyLabel),
+    [amount, currencyLabel, maxWithdraw, minWithdraw, withdrawable],
+  );
+  const canSubmit = !!amount && !!selected && !amountError && !isSubmitting;
+
   if (!open) return null;
   return (
     <motion.div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
@@ -45,6 +64,9 @@ const WithdrawModal = ({
         <p className="text-xs text-on-surface-variant mb-2">
           Available: {currencyLabel} {withdrawable != null ? formatBalance(withdrawable) : "—"}
         </p>
+        <p className="text-xs text-on-surface-variant mb-3">
+          Limits: {currencyLabel} {minWithdraw} - {maxWithdraw}
+        </p>
         <input
           type="number"
           className="w-full bg-surface-container-high rounded-2xl py-3 px-4 mb-3 border border-white/5"
@@ -52,6 +74,9 @@ const WithdrawModal = ({
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
+        {amountError ? (
+          <p className="mb-3 text-sm font-medium text-error">{amountError}</p>
+        ) : null}
         <div className="space-y-2 max-h-48 overflow-y-auto mb-3">
           {userBanks.map((b) => (
             <button
@@ -72,7 +97,7 @@ const WithdrawModal = ({
         </button>
         <button
           type="button"
-          disabled={isSubmitting || !amount || !selected}
+          disabled={!canSubmit}
           onClick={() => onSubmit(amount, selected)}
           className="w-full py-4 rounded-full bg-gradient-to-r from-secondary to-primary-dim text-white font-extrabold disabled:opacity-50"
         >

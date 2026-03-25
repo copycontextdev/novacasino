@@ -86,7 +86,7 @@ function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCa
               <button
                 type="button"
                 onClick={onDepositClick}
-                className="flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-black py-3 px-6 rounded-2xl shadow-xl shadow-primary/30 active:scale-95 transition-all duration-200"
+                className="flex items-center justify-center gap-2 bg-surface-bright border-2 border-primary/40 hover:border-primary/80 text-primary font-black py-2.5 px-6 rounded-2xl shadow-2xl shadow-primary/10 active:scale-95 transition-all duration-200"
               >
                 <ArrowDownLeft className="w-5 h-5 stroke-[3]" />
                 <span className="text-xs uppercase tracking-wider">Deposit</span>

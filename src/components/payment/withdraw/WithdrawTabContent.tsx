@@ -78,7 +78,7 @@ export default function WithdrawTabContent({
               <button
                 type="button"
                 onClick={onWithdrawClick}
-                className="flex items-center justify-center gap-2 bg-surface-bright border border-secondary/30 hover:border-secondary/60 text-secondary font-black py-3 px-6 rounded-2xl shadow-xl active:scale-95 transition-all duration-200"
+                className="flex items-center justify-center gap-2 bg-surface-bright border-2 border-secondary/40 hover:border-secondary/80 text-secondary font-black py-2.5 px-6 rounded-2xl shadow-2xl shadow-secondary/10 active:scale-95 transition-all duration-200"
               >
                 <ArrowUpRight className="w-5 h-5 stroke-[3]" />
                 <span className="text-xs uppercase tracking-wider">Withdraw</span>
