@@ -105,10 +105,31 @@ export default function App() {
     searchInput.trim().length >= 2 ? { name: searchInput.trim() } : undefined,
   );
 
+  const handleTabChange = (tab: string) => {
+    if ((tab === "wallet" || tab === "profile") && !isAuthenticated) {
+      openAuthModal();
+      return;
+    }
+
+    setActiveTab(tab);
+  };
+
   useEffect(() => {
     const tab = searchParams.get("tab");
-    if (tab === "wallet" || tab === "profile" || tab === "lobby") setActiveTab(tab);
-  }, [searchParams]);
+    if (tab === "wallet" || tab === "profile") {
+      if (!isAuthenticated) {
+        openAuthModal();
+        return;
+      }
+
+      setActiveTab(tab);
+      return;
+    }
+
+    if (tab === "lobby") {
+      setActiveTab(tab);
+    }
+  }, [isAuthenticated, openAuthModal, searchParams]);
 
   const lobbyCategories = lobbyQuery.data ?? [];
   const providers = useMemo(
@@ -289,7 +310,7 @@ export default function App() {
     <div className="flex min-h-screen bg-surface">
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         isLoggedIn={isAuthenticated}
         onLoginClick={openLogin}
       />
@@ -300,7 +321,7 @@ export default function App() {
           isLoggedIn={isAuthenticated}
           onLoginClick={openLogin}
           onLogout={logout}
-          onProfileClick={() => setActiveTab("profile")}
+          onProfileClick={() => handleTabChange("profile")}
           onDepositClick={() => {
             if (!isAuthenticated) openLogin();
             else setIsDepositModalOpen(true);
@@ -320,13 +341,20 @@ export default function App() {
           </AnimatePresence>
         </div>
       </main>
-      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} isLoggedIn={isAuthenticated} />
+      <BottomNav activeTab={activeTab} setActiveTab={handleTabChange} isLoggedIn={isAuthenticated} />
       <AnimatePresence>
         {selectedGame ? (
           <GameModal
             game={selectedGame}
             onClose={() => setSelectedGame(null)}
-            onPlayReal={() => navigatePlay(selectedGame, "real")}
+            onPlayReal={() => {
+              if (!isAuthenticated) {
+                openLogin();
+                return;
+              }
+
+              navigatePlay(selectedGame, "real");
+            }}
             onPlayDemo={() => navigatePlay(selectedGame, "demo")}
             similarGames={similarForModal}
             providers={providers}

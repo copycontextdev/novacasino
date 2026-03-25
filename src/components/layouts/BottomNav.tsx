@@ -18,7 +18,7 @@ const BottomNav = ({ activeTab, setActiveTab, isLoggedIn }: BottomNavProps) => {
     { id: "search", label: "Search", icon: Search },
     { id: "wallet", label: "Wallet", icon: Wallet },
     { id: "promotions", label: "Promos", icon: Gift },
-    ...(isLoggedIn ? [{ id: "profile", label: "Profile", icon: UserCircle }] : []),
+    { id: "profile", label: "Profile", icon: UserCircle },
   ];
   return (
     <nav className="md:hidden fixed bottom-4 left-4 right-4 h-16 bg-surface-container-low/95 backdrop-blur-xl z-50 rounded-2xl border border-primary/20 shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex items-center justify-around px-2">

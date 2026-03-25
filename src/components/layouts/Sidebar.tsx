@@ -36,7 +36,7 @@ const Sidebar = ({
     { id: "live", label: "Live Casino", icon: Video },
     { id: "sports", label: "Sports", icon: Gamepad2 },
     { id: "vip", label: "VIP Club", icon: Star },
-    ...(isLoggedIn ? [{ id: "profile", label: "Profile", icon: UserCircle }] : []),
+    { id: "profile", label: "Profile", icon: UserCircle },
   ];
 
   return (

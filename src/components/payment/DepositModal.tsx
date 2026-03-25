@@ -7,6 +7,7 @@ import React from "react";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import type { SabiPaymentBank, SabiAgentBankInfo } from "@/types/api.types";
+import DepositSelectionCard from "./deposit/DepositSelectionCard";
 
 interface DepositModalProps {
   open: boolean;
@@ -105,6 +106,13 @@ const DepositModal = ({
               ))}
             </select>
           </label>
+
+          <DepositSelectionCard 
+          account_name=""
+          account_number=""
+          bank_name=""
+          amount=""
+          />
           <button
             type="button"
             disabled={isCreating}
