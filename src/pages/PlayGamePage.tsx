@@ -21,6 +21,7 @@ export function PlayGamePage() {
   const openAuthModal = useUiStore((s) => s.openAuthModal);
   const balance = useBalanceStore((s) => s.balance);
   const currency = useBalanceStore((s) => s.currency);
+  const hasLoadedInitialBalance = useBalanceStore((s) => s.hasLoadedInitialBalance);
 
   const modeParam = searchParams.get("mode");
   const mode: GameMode = modeParam === "real" ? "real" : "demo";
@@ -82,6 +83,13 @@ export function PlayGamePage() {
   const isLoadingOverlayVisible = isRequestLoading || (!!launchUrl && !isIframeReady);
 
   const currencyLabel = currency ?? "ETB";
+  const balanceLabel =
+    hasLoadedInitialBalance && balance != null
+      ? `${currencyLabel} ${formatBalance(balance)}`
+      : `${currencyLabel} 0.00`;
+  const handleBack = () => {
+    navigate("/?tab=lobby", { replace: true });
+  };
 
   if (!hydrated) {
     return (
@@ -97,7 +105,7 @@ export function PlayGamePage() {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/15"
             aria-label="Back"
           >
@@ -114,8 +122,8 @@ export function PlayGamePage() {
         <div className="flex items-center gap-2">
           {isAuthenticated ? (
             <>
-              <p className="hidden text-[11px] font-semibold text-primary sm:block">
-                {currencyLabel} {formatBalance(balance)}
+              <p className="max-w-[8.5rem] truncate text-[10px] font-semibold text-primary sm:max-w-none sm:text-[11px]">
+                {balanceLabel}
               </p>
               <button
                 type="button"
