@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import { getAgentBanks } from "@/lib/api-methods/payment.api";
 import { toArray } from "@/lib/payment-utils";
 import { useAddUserBankInfo } from "@/hooks/mutations/use-withdrawal";
-import type { SabiPaymentBank } from "@/types/api.types";
+import type { SabiPaymentBank, SabiUserBankInfo } from "@/types/api.types";
 
 interface AddAccountModalProps {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (account: SabiUserBankInfo) => void;
 }
 
 const AddAccountModal = ({
@@ -35,6 +35,19 @@ const AddAccountModal = ({
 
   const banks = useMemo(() => toArray<SabiPaymentBank>(banksQuery.data), [banksQuery.data]);
   const addBank = useAddUserBankInfo();
+
+  useEffect(() => {
+    if (!open) {
+      setBankUuid("");
+      setAccountName("");
+      setAccountNumber("");
+      return;
+    }
+
+    if (!bankUuid && banks.length > 0) {
+      setBankUuid(banks[0]?.uuid ?? "");
+    }
+  }, [bankUuid, banks, open]);
 
   if (!open) return null;
 
@@ -59,6 +72,12 @@ const AddAccountModal = ({
             </option>
           ))}
         </select>
+        {banksQuery.isLoading ? (
+          <p className="mb-3 text-sm text-on-surface-variant">Loading banks…</p>
+        ) : null}
+        {banksQuery.isError ? (
+          <p className="mb-3 text-sm font-medium text-error">Could not load bank list.</p>
+        ) : null}
         <input
           className="w-full bg-surface-container-high rounded-2xl py-3 px-4 mb-3 border border-white/5"
           placeholder="Account holder name"
@@ -73,17 +92,37 @@ const AddAccountModal = ({
         />
         <button
           type="button"
-          disabled={addBank.isPending || !bankUuid || !accountName || !accountNumber}
+          disabled={
+            addBank.isPending ||
+            banksQuery.isLoading ||
+            !bankUuid ||
+            !accountName.trim() ||
+            !accountNumber.trim()
+          }
           onClick={() =>
             addBank.mutate(
-              { bank: bankUuid, account_name: accountName, account_number: accountNumber },
-              { onSuccess: () => onSuccess() },
+              {
+                bank: bankUuid,
+                account_name: accountName.trim(),
+                account_number: accountNumber.trim(),
+              },
+              {
+                onSuccess: (account) => {
+                  setBankUuid("");
+                  setAccountName("");
+                  setAccountNumber("");
+                  onSuccess(account);
+                },
+              },
             )
           }
           className="w-full py-4 rounded-full bg-gradient-to-r from-primary to-primary-dim text-on-primary font-extrabold disabled:opacity-50"
         >
           {addBank.isPending ? "Saving…" : "Save"}
         </button>
+        {addBank.isError ? (
+          <p className="mt-3 text-sm font-medium text-error">Could not save this bank account.</p>
+        ) : null}
       </div>
     </motion.div>
   );

@@ -66,6 +66,7 @@ const WalletSection = () => {
   const [depositAmount, setDepositAmount] = useState("");
   const [selectedBankUuid, setSelectedBankUuid] = useState("");
   const [selectedBankInfoUuid, setSelectedBankInfoUuid] = useState("");
+  const [preferredWithdrawBankUuid, setPreferredWithdrawBankUuid] = useState<string | null>(null);
   const [confirmOrder, setConfirmOrder] = useState<SabiDepositOrder | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
@@ -138,6 +139,14 @@ const WalletSection = () => {
   const closeWithdrawModal = () => {
     closeWalletModal();
   };
+
+  React.useEffect(() => {
+    if (!withdrawModalOpen) {
+      return;
+    }
+
+    void userBanksQuery.refetch();
+  }, [userBanksQuery, withdrawModalOpen]);
 
   if (!isAuthenticated) {
     return (
@@ -315,6 +324,12 @@ const WalletSection = () => {
         currencyLabel={currencyLabel}
         minWithdraw={minWithdraw}
         maxWithdraw={maxWithdraw}
+        isLoadingBanks={userBanksQuery.isLoading || userBanksQuery.isFetching}
+        hasBankLoadError={userBanksQuery.isError}
+        onRefreshBanks={() => {
+          void userBanksQuery.refetch();
+        }}
+        initialSelectedBankUuid={preferredWithdrawBankUuid}
         isSubmitting={createWithdrawal.isPending}
         onSubmit={(amount, bankUuid) => {
           createWithdrawal.mutate(
@@ -337,9 +352,10 @@ const WalletSection = () => {
       <AddAccountModal
         open={isAddAccountModalOpen}
         onClose={() => setIsAddAccountModalOpen(false)}
-        onSuccess={() => {
+        onSuccess={(account) => {
+          setPreferredWithdrawBankUuid(account.uuid);
           setIsAddAccountModalOpen(false);
-          userBanksQuery.refetch();
+          void userBanksQuery.refetch();
           openWalletModal("withdraw");
         }}
       />

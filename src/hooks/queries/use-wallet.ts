@@ -4,13 +4,23 @@ import { useAuthStore } from "@/store/auth-store";
 
 export const WALLET_QUERY_KEY = ["wallet"] as const;
 
-export function useWallet() {
+interface UseWalletOptions {
+  enabled?: boolean;
+  refetchInterval?: number | false;
+  refetchOnWindowFocus?: boolean;
+  refetchIntervalInBackground?: boolean;
+}
+
+export function useWallet(options?: UseWalletOptions) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   return useQuery({
     queryKey: WALLET_QUERY_KEY,
     queryFn: getWallet,
-    enabled: isAuthenticated,
+    enabled: options?.enabled ?? isAuthenticated,
     staleTime: 30_000,
+    refetchInterval: options?.refetchInterval,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
+    refetchIntervalInBackground: options?.refetchIntervalInBackground ?? false,
   });
 }

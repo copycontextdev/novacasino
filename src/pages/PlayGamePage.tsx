@@ -4,6 +4,7 @@ import { AnimatePresence } from "motion/react";
 import { ArrowLeft, Loader2, LogIn, RefreshCw } from "lucide-react";
 import { AppLoader } from "@/components/AppLoader";
 import { startGame } from "@/lib/api-methods/casino.api";
+import { useWallet } from "@/hooks/queries/use-wallet";
 import { useAuthStore } from "@/store/auth-store";
 import { useBalanceStore } from "@/store/balance-store";
 import { useUiStore } from "@/store/ui-store";
@@ -22,10 +23,18 @@ export function PlayGamePage() {
   const balance = useBalanceStore((s) => s.balance);
   const currency = useBalanceStore((s) => s.currency);
   const hasLoadedInitialBalance = useBalanceStore((s) => s.hasLoadedInitialBalance);
+  const syncFromWallet = useBalanceStore((s) => s.syncFromWallet);
 
   const modeParam = searchParams.get("mode");
   const mode: GameMode = modeParam === "real" ? "real" : "demo";
   const slug = params.gameSlug ? decodeURIComponent(params.gameSlug) : "";
+  const shouldPollWallet = hydrated && isAuthenticated && mode === "real";
+  const walletQuery = useWallet({
+    enabled: shouldPollWallet,
+    refetchInterval: shouldPollWallet ? 10_000 : false,
+    refetchOnWindowFocus: true,
+    refetchIntervalInBackground: true,
+  });
 
   const [launchUrl, setLaunchUrl] = useState<string | null>(null);
   const [isRequestLoading, setIsRequestLoading] = useState(true);
@@ -79,6 +88,14 @@ export function PlayGamePage() {
       cancelled = true;
     };
   }, [hydrated, isAuthenticated, mode, openAuthModal, reloadNonce, slug]);
+
+  useEffect(() => {
+    if (!walletQuery.data) {
+      return;
+    }
+
+    syncFromWallet(walletQuery.data);
+  }, [syncFromWallet, walletQuery.data]);
 
   const isLoadingOverlayVisible = isRequestLoading || (!!launchUrl && !isIframeReady);
 

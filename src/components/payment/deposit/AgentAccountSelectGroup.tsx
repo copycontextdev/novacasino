@@ -49,7 +49,7 @@ export default function AgentAccountSelectGroup({agentAccounts, onChange, select
                       <p>{agent.account_number}</p> 
                     </div>
                   </div>
-                  <CheckCircleIcon className="size-6 text-primary opacity-0 transition group-data-checked:opacity-100" />
+                  <CheckCircleIcon className="size-6 text-secondary opacity-0 transition group-data-checked:opacity-100" />
                 </div>
               </Radio>
             ))}

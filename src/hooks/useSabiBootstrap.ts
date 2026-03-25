@@ -23,6 +23,7 @@ export function useSabiBootstrap() {
   const setLastJackpotEvent = useWsStore((s) => s.setLastJackpotEvent);
   const setLastMessage = useWsStore((s) => s.setLastMessage);
   const resetWsState = useWsStore((s) => s.reset);
+  const wsStatus = useWsStore((s) => s.wsStatus);
 
   useEffect(() => {
     hydrate();
@@ -118,4 +119,37 @@ export function useSabiBootstrap() {
     setWsStatus,
     setLastJackpotEvent,
   ]);
+
+  useEffect(() => {
+    if (!hydrated || !isAuthenticated) {
+      return;
+    }
+
+    const refetchWallet = () => {
+      void walletQuery.refetch();
+    };
+
+    const handleVisibilityChange = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        refetchWallet();
+      }
+    };
+
+    const handleWindowFocus = () => {
+      refetchWallet();
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    const fallbackPollMs =
+      wsStatus === "connected" ? 45_000 : 15_000;
+    const intervalId = window.setInterval(refetchWallet, fallbackPollMs);
+
+    return () => {
+      window.removeEventListener("focus", handleWindowFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.clearInterval(intervalId);
+    };
+  }, [hydrated, isAuthenticated, walletQuery, wsStatus]);
 }
