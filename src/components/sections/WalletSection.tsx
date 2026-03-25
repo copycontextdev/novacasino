@@ -8,6 +8,8 @@ import { ArrowDownLeft, ArrowUpRight, Loader2, FileUp } from "lucide-react";
 import { formatBalance } from "@/lib/format";
 import type { SabiDepositOrder, SabiWithdrawalOrder, SabiAmount } from "@/types/api.types";
 import DepositTabContent from "../payment/deposit/DepositTabContent";
+import WithdrawTabContent from "../payment/withdraw/WithdrawTabContent";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 
 interface WalletSectionProps {
   isAuthenticated: boolean;
@@ -24,6 +26,7 @@ interface WalletSectionProps {
   isWithdrawalsLoading: boolean;
   onConfirmDeposit: (order: SabiDepositOrder) => void;
   onCancelDeposit: (orderUuid: string) => Promise<void>;
+  onCancelWithdrawal: (orderUuid: string) => Promise<void>;
 }
 
 const WalletSection = ({
@@ -41,9 +44,8 @@ const WalletSection = ({
   isWithdrawalsLoading,
   onConfirmDeposit,
   onCancelDeposit,
+  onCancelWithdrawal,
 }: WalletSectionProps) => {
-  const [subTab, setSubTab] = useState<"deposits" | "withdrawals">("deposits");
-
   if (!isAuthenticated) {
     return (
       <div className="text-center py-16">
@@ -66,7 +68,7 @@ const WalletSection = ({
           <div className="flex flex-col items-center justify-center border-r border-white/10 py-2">
             <span className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total</span>
             <span className="text-lg font-extrabold text-primary">
-              {walletBalance != null ? `${currencyLabel} ${formatBalance(walletBalance)}` : "—"}
+              {walletBalance != null ? `${formatBalance(walletBalance)}` : "—"}
             </span>
           </div>
           <div className="flex flex-col items-center justify-center border-r border-white/10 py-2">
@@ -84,83 +86,43 @@ const WalletSection = ({
             </span>
           </div>
         </div>
-        <div className="flex gap-3 mt-6">
-          <button
-            type="button"
-            onClick={onDepositClick}
-            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold py-3.5 rounded-2xl"
-          >
-            <ArrowDownLeft className="w-4 h-4" />
-            Deposit
-          </button>
-          <button
-            type="button"
-            onClick={onWithdrawClick}
-            className="flex-1 flex items-center justify-center gap-2 bg-surface-bright border border-primary/20 text-primary font-bold py-3.5 rounded-2xl"
-          >
-            <ArrowUpRight className="w-4 h-4" />
-            Withdraw
-          </button>
-        </div>
       </section>
+
       <section className="space-y-4">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-xl font-headline font-extrabold tracking-tight">History</h2>
-          <div className="flex bg-surface-container-low p-1 rounded-full border border-white/5">
-            <button
-              type="button"
-              onClick={() => setSubTab("deposits")}
-              className={`px-4 py-1.5 text-[10px] font-bold uppercase rounded-full ${
-                subTab === "deposits" ? "bg-primary text-on-primary" : "text-on-surface-variant"
-              }`}
+        <TabGroup>
+          <TabList className="flex bg-surface-container-highest/30 p-1.5 rounded-2xl border border-white/10 w-full backdrop-blur-md">
+            <Tab
+              className="flex-1 px-4 py-3 text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none data-[selected]:bg-surface-bright data-[selected]:text-primary data-[selected]:shadow-2xl data-[selected]:border data-[selected]:border-primary/20 text-on-surface-variant/60 hover:text-on-surface-variant transition-all duration-300"
             >
               Deposits
-            </button>
-            <button
-              type="button"
-              onClick={() => setSubTab("withdrawals")}
-              className={`px-4 py-1.5 text-[10px] font-bold uppercase rounded-full ${
-                subTab === "withdrawals" ? "bg-primary text-on-primary" : "text-on-surface-variant"
-              }`}
+            </Tab>
+            <Tab
+              className="flex-1 px-4 py-3 text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none data-[selected]:bg-surface-bright data-[selected]:text-primary data-[selected]:shadow-2xl data-[selected]:border data-[selected]:border-primary/20 text-on-surface-variant/60 hover:text-on-surface-variant transition-all duration-300"
             >
               Withdrawals
-            </button>
-          </div>
-        </div>
-        {subTab === "deposits" ? (
-          <DepositTabContent
-            deposits={deposits}
-            isDepositsLoading={isDepositsLoading}
-            onConfirmDeposit={onConfirmDeposit}
-            onCancelDeposit={onCancelDeposit}
-          />
-        ) : (
-          <div className="space-y-3">
-            {isWithdrawalsLoading ? (
-              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-            ) : withdrawals.length === 0 ? (
-              <p className="text-center text-on-surface-variant py-8">No withdrawals yet</p>
-            ) : (
-              withdrawals.map((item) => (
-                <div
-                  key={item.uuid ?? String(item.amount)}
-                  className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5"
-                >
-                  <div>
-                    <p className="font-bold text-sm">Withdrawal</p>
-                    <p className="text-[10px] text-on-surface-variant">
-                      {item.created_at ? new Date(item.created_at).toLocaleString() : ""}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-headline font-bold text-secondary">-{formatBalance(item.amount ?? 0)}</p>
-                    <p className="text-[10px] text-on-surface-variant">{item.status_display ?? item.status}</p>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
+            </Tab>
+          </TabList>
+
+          <TabPanels className="mt-8">
+            <TabPanel>
+              <DepositTabContent
+                deposits={deposits}
+                isDepositsLoading={isDepositsLoading}
+                onConfirmDeposit={onConfirmDeposit}
+                onCancelDeposit={onCancelDeposit}
+                onDepositClick={onDepositClick}
+              />
+            </TabPanel>
+            <TabPanel>
+              <WithdrawTabContent
+                withdrawals={withdrawals}
+                isWithdrawalsLoading={isWithdrawalsLoading}
+                onCancelWithdrawal={onCancelWithdrawal}
+                onWithdrawClick={onWithdrawClick}
+              />
+            </TabPanel>
+          </TabPanels>
+        </TabGroup>
       </section>
     </div>
   );

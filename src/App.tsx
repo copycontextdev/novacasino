@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "motion/react";
 import { NovaGamesAuthModal } from "@/components/auth/NovaGamesAuthModal";
 import { filterActivePromotionBanners } from "@/components/PromotionBannerCarousel";
-import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
+import { APP_NAME, APP_LOGO_SRC, SUPPORT_TELEGRAM_URL } from "@/lib/app_constants";
 import { useAuthStore } from "@/store/auth-store";
 import { useBalanceStore } from "@/store/balance-store";
 import { useUiStore } from "@/store/ui-store";
@@ -32,6 +32,7 @@ import {
 import {
   useCreateWithdrawal,
   useAddUserBankInfo,
+  useCancelWithdrawal,
 } from "@/hooks/mutations/use-withdrawal";
 import { useUpdateMember } from "@/hooks/mutations/use-update-member";
 import { getAgentBanks, getAgentBankInfo } from "@/lib/api-methods/payment.api";
@@ -377,6 +378,7 @@ export default function App() {
   const updateDeposit = useUpdateDeposit();
   const cancelDeposit = useCancelDeposit();
   const createWithdrawal = useCreateWithdrawal();
+  const cancelWithdrawal = useCancelWithdrawal();
   const addUserBank = useAddUserBankInfo();
   const updateMember = useUpdateMember();
 
@@ -418,6 +420,13 @@ export default function App() {
   }, [activeTab]);
 
   const openLogin = () => openAuthModal();
+  const openHelpTelegram = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.open(SUPPORT_TELEGRAM_URL, "_blank", "noopener,noreferrer");
+  };
 
   const deposits = depositsQuery.data?.results ?? [];
   const withdrawals = withdrawalsQuery.data?.results ?? [];
@@ -482,6 +491,14 @@ export default function App() {
               await cancelDeposit.mutateAsync(uuid, {
                 onSuccess: () => {
                   depositsQuery.refetch();
+                  walletQuery.refetch();
+                },
+              });
+            }}
+            onCancelWithdrawal={async (uuid: string) => {
+              await cancelWithdrawal.mutateAsync(uuid, {
+                onSuccess: () => {
+                  withdrawalsQuery.refetch();
                   walletQuery.refetch();
                 },
               });
@@ -552,6 +569,7 @@ export default function App() {
         setActiveTab={handleTabChange}
         isLoggedIn={isAuthenticated}
         onLoginClick={openLogin}
+        onHelpClick={openHelpTelegram}
       />
       <main className="flex-1 md:ml-64 pb-32 md:pb-8 w-full max-w-full">
         <TopBar
@@ -580,7 +598,12 @@ export default function App() {
           </AnimatePresence>
         </div>
       </main>
-      <BottomNav activeTab={activeTab} setActiveTab={handleTabChange} isLoggedIn={isAuthenticated} />
+      <BottomNav
+        activeTab={activeTab}
+        setActiveTab={handleTabChange}
+        isLoggedIn={isAuthenticated}
+        onHelpClick={openHelpTelegram}
+      />
       <AnimatePresence>
         {selectedGame ? (
           <GameModal

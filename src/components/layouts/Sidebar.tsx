@@ -18,11 +18,13 @@ const Sidebar = ({
   setActiveTab,
   isLoggedIn,
   onLoginClick,
+  onHelpClick,
 }: {
   activeTab: string;
   setActiveTab: (t: string) => void;
   isLoggedIn: boolean;
   onLoginClick: () => void;
+  onHelpClick: () => void;
 }) => {
   const member = useAuthStore((s) => s.member);
   const displayName =
@@ -102,6 +104,7 @@ const Sidebar = ({
         </button>
         <button
           type="button"
+          onClick={onHelpClick}
           className="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-on-surface hover:bg-white/5 rounded-full transition-colors font-semibold text-sm"
         >
           <HelpCircle className="w-5 h-5" />

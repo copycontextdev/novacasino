@@ -96,7 +96,7 @@ const LobbySection = ({
       </div>
       {quickGames.length > 0 ? (
         <section className="-mx-4 px-4 md:mx-0 md:px-0">
-          <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide md:gap-5">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide md:gap-5">
             {quickGames.map((game) => (
               <div
                 key={`quick-${game.uuid}`}

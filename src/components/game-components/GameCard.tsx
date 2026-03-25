@@ -33,6 +33,7 @@ const GameCard = ({
     <div
       className={cn(
         "relative overflow-hidden bg-surface-container-highest border border-white/5",
+        variant === "quick" && "quick-game-card neon-glow-ember",
         variant === "quick"
           ? "aspect-1 rounded-lg"
           : "aspect-[3/4] rounded-xl",

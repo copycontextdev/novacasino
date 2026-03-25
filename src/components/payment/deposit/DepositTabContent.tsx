@@ -10,27 +10,16 @@ interface DepositTabContentProps {
   deposits: SabiDepositOrder[];
   isDepositsLoading: boolean;
   onConfirmDeposit: (order: SabiDepositOrder) => void;
+  onDepositClick: () => void;
   onCancelDeposit: (orderUuid: string) => Promise<void>;
 }
 
-function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCancelDeposit }: DepositTabContentProps) {
+function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCancelDeposit, onDepositClick }: DepositTabContentProps) {
   const [cancellingOrder, setCancellingOrder] = useState<SabiDepositOrder | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
-    const pendingCards = useMemo(() => {
-      const pending=  deposits.filter((d) => d.status === "pending")
-      if(pending.length== 0){
-        return [];
-      }
-
-      return pending.map(item => {
-        return <div key={`pending-${item.uuid}`}>
-            <AppCard>
-                <DepositOrderPreviewCard  {...item}/>
-            </AppCard>
-        </div>
-      })
-    }, [deposits]) 
+  const pendingDeposits = useMemo(() => deposits.filter((d) => d.status === "pending"), [deposits]);
+  const otherDeposits = useMemo(() => deposits.filter((d) => d.status !== "pending"), [deposits]);
 
   const handleCancelConfirm = async () => {
     if (!cancellingOrder) return;
@@ -43,66 +32,88 @@ function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCa
     }
   };
 
-  return (
-     <div className="space-y-3 flex flex-col gap-2">
-            {isDepositsLoading ? (
-              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-            ) : deposits.length === 0 ? (
-              <p className="text-center text-on-surface-variant py-8">No deposits yet</p>
-            ) : (
-            <div className="space-y-2 flex flex-col ">
-                {pendingCards.length > 0 && (
-                    <div className="flex flex-col">
-                       {
-                        
-                            pendingCards
-
-                       }
-                    </div>
-                )}
-                {
-                      deposits.map((item) => (
-                <div
-                  key={item.uuid}
-                  className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5"
-                >
-                  <div>
-                    <p className="font-bold text-sm">{item.bank_name ?? "Deposit"}</p>
-                    <p className="text-[10px] text-on-surface-variant">
-                      {item.created_at ? new Date(item.created_at).toLocaleString() : ""}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-headline font-bold text-primary">+{formatBalance(item.amount)}</p>
-                    <p className="text-[10px] text-on-surface-variant">{item.status_display ?? item.status}</p>
-                  </div>
-                  {item.status === "pending" ? (
-                    <div className="flex gap-2 ml-2">
-                      {!item.reference_number && (
-                        <button
-                          type="button"
-                          onClick={() => onConfirmDeposit(item)}
-                          className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors"
-                          title="Confirm"
-                        >
-                          <FileUp className="w-5 h-5" />
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => setCancellingOrder(item)}
-                        className="w-10 h-10 rounded-full bg-error/10 text-error flex items-center justify-center hover:bg-error/20 transition-colors"
-                        title="Cancel Deposit"
-                      >
-                        <Trash2 className="w-5 h-5 text-red-500" />
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
-              ))
-                }
-            </div>
+  const renderDepositItem = (item: SabiDepositOrder) => (
+    <div
+      key={item.uuid}
+      className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5"
+    >
+      <div className="flex-1">
+        <p className="font-bold text-sm">{item.bank_name ?? "Deposit"}</p>
+        <p className="text-[10px] text-on-surface-variant">
+          {item.created_at ? new Date(item.created_at).toLocaleString() : ""}
+        </p>
+      </div>
+      <div className="text-right flex items-center gap-3">
+        <div>
+          <p className="font-headline font-bold text-primary">+{formatBalance(item.amount)}</p>
+          <p className="text-[10px] text-on-surface-variant">{item.status_display ?? item.status}</p>
+        </div>
+        {item.status === "pending" ? (
+          <div className="flex gap-2">
+            {!item.reference_number && (
+              <button
+                type="button"
+                onClick={() => onConfirmDeposit(item)}
+                className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors"
+                title="Confirm"
+              >
+                <FileUp className="w-5 h-5" />
+              </button>
             )}
+            <button
+              type="button"
+              onClick={() => setCancellingOrder(item)}
+              className="w-10 h-10 rounded-full bg-error/10 text-error flex items-center justify-center hover:bg-error/20 transition-colors"
+              title="Cancel Deposit"
+            >
+              <Trash2 className="w-5 h-5 text-red-500" />
+            </button>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      {isDepositsLoading ? (
+        <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
+      ) : (
+        <div className="space-y-8">
+          <div className="space-y-4">
+            <div className="flex flex-row w-full justify-between items-center gap-4">
+              <h3 className="text-xs font-black uppercase tracking-widest text-primary/80 px-1">Pending</h3>
+              <button
+                type="button"
+                onClick={onDepositClick}
+                className="flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-black py-3 px-6 rounded-2xl shadow-xl shadow-primary/30 active:scale-95 transition-all duration-200"
+              >
+                <ArrowDownLeft className="w-5 h-5 stroke-[3]" />
+                <span className="text-xs uppercase tracking-wider">Deposit</span>
+              </button>
+            </div>
+
+            {pendingDeposits.length > 0 ? (
+              <div className="space-y-2">
+                {pendingDeposits.map(renderDepositItem)}
+              </div>
+            ) : (
+              <div className="bg-white/5 rounded-3xl border border-dashed border-white/10 py-10 text-center">
+                <p className="text-sm font-medium text-on-surface-variant">No pending deposit requests</p>
+              </div>
+            )}
+          </div>
+
+          {otherDeposits.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">History</h3>
+              <div className="space-y-2">
+                {otherDeposits.map(renderDepositItem)}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <DepositCancelConfirmationDialog
         isOpen={!!cancellingOrder}
@@ -111,8 +122,8 @@ function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCa
         onConfirm={handleCancelConfirm}
         isCancelling={isCancelling}
       />
-          </div>
-  )
+    </div>
+  );
 }
 
 export default DepositTabContent
