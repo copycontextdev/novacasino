@@ -1,27 +1,23 @@
 import { CopyButton } from '@/components/ui/copy-button';
 import { formatBalance } from '@/lib/format';
 import { SabiAmount, SabiDepositOrder } from '@/types/api.types';
+import { DepositOrderPreviewInfo } from '@/types/app.types';
 import React from 'react'
  
 
-interface DepositSelectionCardProps {
-  amount?: SabiAmount;  
-    bank_name?: string;
-    account_name?: string;
-    account_number?: string;
-}
+interface DepositOrderPreviewCardProps  extends DepositOrderPreviewInfo {}
 
 
-function DepositSelectionCard({
+function DepositOrderPreviewCard({
     account_name, account_number, amount, bank_name
-}: DepositSelectionCardProps) {
+}: DepositOrderPreviewCardProps) {
 
     if(!amount || !bank_name || !account_name || !account_number){
         return null;
     }
-  return (
-    <div>
-       <div className="space-y-3 text-sm mb-4 shadow-md">
+  return ( 
+       <div className="space-y-3 text-sm mb-4 shadow-md py-2 rounded">
+        <div className='flex flex-row gap-4 items-center'>
           <p>
             <span className="text-on-surface-variant">Amount:</span>{" "}
             <span className="font-bold text-primary">{formatBalance(amount)}</span>
@@ -29,20 +25,18 @@ function DepositSelectionCard({
           <p>
             <span className="text-on-surface-variant">Bank:</span> {bank_name}
           </p>
+          </div>
            <p>
-            <span className="text-on-surface-variant">Account:</span> {account_name}
+            <span className="text-on-surface-variant">Acc:</span> {account_name}
           </p>
-          <div>
              <p>
-            <span className="text-on-surface-variant">Account:</span> {account_number}
-          </p>
-          <CopyButton>
+            <span className="text-on-surface-variant">Acc. #:</span> {account_number}   <CopyButton>
             {account_number}
           </CopyButton>
-          </div>
-        </div>
-    </div>
+          </p>
+         
+        </div> 
   )
 }
 
-export default DepositSelectionCard
+export default DepositOrderPreviewCard

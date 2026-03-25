@@ -8,6 +8,7 @@ import { motion } from "motion/react";
 import { X } from "lucide-react";
 import type { SabiDepositOrder } from "@/types/api.types";
 import { formatBalance } from "@/lib/format";
+import DepositOrderPreviewCard from "./DepositOrderPreviewCard";
 
 interface DepositConfirmationModalProps {
   open: boolean;
@@ -36,6 +37,7 @@ const DepositConfirmationModal = ({
             <X className="w-5 h-5" />
           </button>
         </div>
+        <DepositOrderPreviewCard {...order} />
         <div className="space-y-3 text-sm mb-4">
           <p>
             <span className="text-on-surface-variant">Amount:</span>{" "}

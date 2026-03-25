@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { ArrowDownLeft, ArrowUpRight, Loader2, FileUp } from "lucide-react";
 import { formatBalance } from "@/lib/format";
 import type { SabiDepositOrder, SabiWithdrawalOrder, SabiAmount } from "@/types/api.types";
+import DepositTabContent from "../payment/deposit/DepositTabContent";
 
 interface WalletSectionProps {
   isAuthenticated: boolean;
@@ -125,41 +126,11 @@ const WalletSection = ({
           </div>
         </div>
         {subTab === "deposits" ? (
-          <div className="space-y-3">
-            {isDepositsLoading ? (
-              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-            ) : deposits.length === 0 ? (
-              <p className="text-center text-on-surface-variant py-8">No deposits yet</p>
-            ) : (
-              deposits.map((item) => (
-                <div
-                  key={item.uuid}
-                  className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5"
-                >
-                  <div>
-                    <p className="font-bold text-sm">{item.bank_name ?? "Deposit"}</p>
-                    <p className="text-[10px] text-on-surface-variant">
-                      {item.created_at ? new Date(item.created_at).toLocaleString() : ""}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-headline font-bold text-primary">+{formatBalance(item.amount)}</p>
-                    <p className="text-[10px] text-on-surface-variant">{item.status_display ?? item.status}</p>
-                  </div>
-                  {item.status === "pending" && !item.reference_number ? (
-                    <button
-                      type="button"
-                      onClick={() => onConfirmDeposit(item)}
-                      className="ml-2 w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center"
-                      title="Confirm"
-                    >
-                      <FileUp className="w-5 h-5" />
-                    </button>
-                  ) : null}
-                </div>
-              ))
-            )}
-          </div>
+          <DepositTabContent
+          deposits={deposits}
+          isDepositsLoading={isDepositsLoading}
+          onConfirmDeposit={onConfirmDeposit}
+          />
         ) : (
           <div className="space-y-3">
             {isWithdrawalsLoading ? (

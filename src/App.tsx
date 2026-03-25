@@ -49,8 +49,8 @@ import TopBar from "./components/layouts/TopBar";
 import Sidebar from "./components/layouts/Sidebar";
 import BottomNav from "./components/layouts/BottomNav";
 import GameModal from "./components/game-components/GameModal";
-import DepositModal from "./components/payment/DepositModal";
-import DepositConfirmationModal from "./components/payment/DepositConfirmationModal";
+import DepositModal from "./components/payment/deposit/DepositModal";
+import DepositConfirmationModal from "./components/payment/deposit/DepositConfirmationModal";
 import WithdrawModal from "./components/payment/WithdrawModal";
 import EditProfileModal from "./components/profile/EditProfileModal";
 import AddAccountModal from "./components/profile/AddAccountModal";
@@ -382,7 +382,7 @@ export default function App() {
           setSelectedBankUuid(id);
           setSelectedBankInfoUuid("");
         }}
-        selectedBankInfoUuid={effectiveBankInfoUuid}
+        selectedAgentBankUuid={effectiveBankInfoUuid}
         onBankInfoChange={setSelectedBankInfoUuid}
         isCreating={createDeposit.isPending}
         onCreate={() => {
