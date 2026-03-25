@@ -23,6 +23,7 @@ interface WalletSectionProps {
   isDepositsLoading: boolean;
   isWithdrawalsLoading: boolean;
   onConfirmDeposit: (order: SabiDepositOrder) => void;
+  onCancelDeposit: (orderUuid: string) => Promise<void>;
 }
 
 const WalletSection = ({
@@ -39,6 +40,7 @@ const WalletSection = ({
   isDepositsLoading,
   isWithdrawalsLoading,
   onConfirmDeposit,
+  onCancelDeposit,
 }: WalletSectionProps) => {
   const [subTab, setSubTab] = useState<"deposits" | "withdrawals">("deposits");
 
@@ -127,9 +129,10 @@ const WalletSection = ({
         </div>
         {subTab === "deposits" ? (
           <DepositTabContent
-          deposits={deposits}
-          isDepositsLoading={isDepositsLoading}
-          onConfirmDeposit={onConfirmDeposit}
+            deposits={deposits}
+            isDepositsLoading={isDepositsLoading}
+            onConfirmDeposit={onConfirmDeposit}
+            onCancelDeposit={onCancelDeposit}
           />
         ) : (
           <div className="space-y-3">

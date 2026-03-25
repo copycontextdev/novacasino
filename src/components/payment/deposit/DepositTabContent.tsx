@@ -1,18 +1,21 @@
- 
-
 import React, { useMemo, useState } from "react";
-import { ArrowDownLeft, ArrowUpRight, Loader2, FileUp } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Loader2, FileUp, Trash2 } from "lucide-react";
 import { formatBalance } from "@/lib/format";
 import type { SabiDepositOrder, SabiWithdrawalOrder, SabiAmount } from "@/types/api.types";
 import DepositOrderPreviewCard from "./DepositOrderPreviewCard";
 import AppCard from "@/components/ui/card";
+import DepositCancelConfirmationDialog from "./DepositCancelConfirmationDialog";
 
 interface DepositTabContentProps {
-    deposits: SabiDepositOrder[];
+  deposits: SabiDepositOrder[];
   isDepositsLoading: boolean;
   onConfirmDeposit: (order: SabiDepositOrder) => void;
+  onCancelDeposit: (orderUuid: string) => Promise<void>;
 }
-function DepositTabContent({deposits, isDepositsLoading, onConfirmDeposit}: DepositTabContentProps) {
+
+function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCancelDeposit }: DepositTabContentProps) {
+  const [cancellingOrder, setCancellingOrder] = useState<SabiDepositOrder | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
 
     const pendingCards = useMemo(() => {
       const pending=  deposits.filter((d) => d.status === "pending")
@@ -28,6 +31,18 @@ function DepositTabContent({deposits, isDepositsLoading, onConfirmDeposit}: Depo
         </div>
       })
     }, [deposits]) 
+
+  const handleCancelConfirm = async () => {
+    if (!cancellingOrder) return;
+    setIsCancelling(true);
+    try {
+      await onCancelDeposit(cancellingOrder.uuid);
+      setCancellingOrder(null);
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
   return (
      <div className="space-y-3 flex flex-col gap-2">
             {isDepositsLoading ? (
@@ -61,21 +76,41 @@ function DepositTabContent({deposits, isDepositsLoading, onConfirmDeposit}: Depo
                     <p className="font-headline font-bold text-primary">+{formatBalance(item.amount)}</p>
                     <p className="text-[10px] text-on-surface-variant">{item.status_display ?? item.status}</p>
                   </div>
-                  {item.status === "pending" && !item.reference_number ? (
-                    <button
-                      type="button"
-                      onClick={() => onConfirmDeposit(item)}
-                      className="ml-2 w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center"
-                      title="Confirm"
-                    >
-                      <FileUp className="w-5 h-5" />
-                    </button>
+                  {item.status === "pending" ? (
+                    <div className="flex gap-2 ml-2">
+                      {!item.reference_number && (
+                        <button
+                          type="button"
+                          onClick={() => onConfirmDeposit(item)}
+                          className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors"
+                          title="Confirm"
+                        >
+                          <FileUp className="w-5 h-5" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setCancellingOrder(item)}
+                        className="w-10 h-10 rounded-full bg-error/10 text-error flex items-center justify-center hover:bg-error/20 transition-colors"
+                        title="Cancel Deposit"
+                      >
+                        <Trash2 className="w-5 h-5 text-red-500" />
+                      </button>
+                    </div>
                   ) : null}
                 </div>
               ))
                 }
             </div>
             )}
+
+      <DepositCancelConfirmationDialog
+        isOpen={!!cancellingOrder}
+        order={cancellingOrder}
+        onClose={() => setCancellingOrder(null)}
+        onConfirm={handleCancelConfirm}
+        isCancelling={isCancelling}
+      />
           </div>
   )
 }

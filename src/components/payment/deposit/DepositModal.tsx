@@ -5,11 +5,10 @@
 
 import React, { useMemo } from "react";
 import { motion } from "motion/react";
-import { CheckCircleIcon, X } from "lucide-react";
-import type { SabiPaymentBank, SabiAgentBankInfo } from "@/types/api.types";
-import DepositOrderPreviewCard from "./DepositOrderPreviewCard";
+import { X } from "lucide-react";
+import type { SabiPaymentBank, SabiAgentBankInfo } from "@/types/api.types"; 
 import { DepositOrderPreviewInfo } from "@/types/app.types";
-import { Field, Fieldset, Input, Label, Legend, Radio, RadioGroup } from '@headlessui/react'  
+import { Field, Fieldset, Input, Label, Legend, Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'  
 import AgentAccountSelectGroup from "./AgentAccountSelectGroup";
 import clsx from "clsx";
 
@@ -29,6 +28,7 @@ interface DepositModalProps {
   selectedAgentBankUuid: string;
   onBankInfoChange: (v: string) => void;
   isCreating: boolean;
+  isLoadingBankInfo?: boolean;
   onCreate: () => void;
 }
 
@@ -47,6 +47,7 @@ const DepositModal = ({
   selectedAgentBankUuid,
   onBankInfoChange,
   isCreating,
+  isLoadingBankInfo,
   onCreate,
 }: DepositModalProps) => {
 
@@ -110,7 +111,6 @@ const DepositModal = ({
               <Input
               min={minDeposit}
               max={maxDeposit}
-              defaultValue={1000}
               step={10}
                 type="number"
                 className={clsx(
@@ -123,26 +123,39 @@ const DepositModal = ({
             </Field>
 
             <Field>
-              <Label className="text-sm/6 font-medium text-white">Bank</Label>
+              <Label className="text-sm/6 font-medium text-white">Select Bank & Account</Label>
               <div className="mt-3">
-                <BankSelectModal
-                  depositBanks={depositBanks}
-                  onSelect={(selected) => onBankChange(selected.uuid)}
-                  selectedBank={depositBanks.find(b => b.uuid == selectedBankUuid)}
-                />
+                <TabGroup 
+                  selectedIndex={depositBanks.findIndex(b => b.uuid === selectedBankUuid)} 
+                  onChange={(index) => onBankChange(depositBanks[index].uuid)}
+                >
+                  <TabList className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    {depositBanks.map((bank) => (
+                      <Tab
+                        key={bank.uuid}
+                        className="rounded-full px-4 py-2 text-xs font-semibold text-white whitespace-nowrap focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 border border-white/10 data-[selected]:border-primary"
+                      >
+                        {bank.name}
+                      </Tab>
+                    ))}
+                  </TabList>
+                  <TabPanels className="mt-4">
+                    {depositBanks.map((bank) => (
+                      <TabPanel key={bank.uuid} className="focus:outline-none">
+                        <AgentAccountSelectGroup 
+                          agentAccounts={bankInfoOptions} 
+                          onChange={onBankInfoChange} 
+                          selectedAccountUuid={selectedAgentBankUuid} 
+                          isLoading={isLoadingBankInfo}
+                        />
+                      </TabPanel>
+                    ))}
+                  </TabPanels>
+                </TabGroup>
               </div>
             </Field>
 
-            <Field>
-              <Label className="text-sm/6 font-medium text-white">Receiving account</Label>
-              <div className="mt-3">
-                <AgentAccountSelectGroup agentAccounts={bankInfoOptions} onChange={onBankInfoChange} selectedAccountUuid={selectedAgentBankUuid} />
-              </div>
-            </Field>
-
-         {
-          previewData && <DepositOrderPreviewCard {...previewData} />
-         }
+        
           <button
             type="button"
             disabled={isCreating}
@@ -157,43 +170,5 @@ const DepositModal = ({
     </motion.div>
   );
 };
-
- 
-
- function BankSelectModal({selectedBank, depositBanks, onSelect}: {
-  depositBanks: SabiPaymentBank[];
-  selectedBank?: SabiPaymentBank; 
-  onSelect: (bank: SabiPaymentBank) => void;
-
- }) { 
-
-  return ( 
-      <div className="mx-auto w-full max-w-md">
-        <RadioGroup by="uuid" value={selectedBank} onChange={onSelect} aria-label="Server size" className=" grid auto-cols-max grid-flow-col w-full gap-4  items-center">
-          {depositBanks.map((bank) => (
-            <Radio
-              key={bank.uuid}
-              value={bank}
-              className="group relative flex cursor-pointer rounded-lg bg-white/5 px-5 py-4 text-white shadow-md transition focus:not-data-focus:outline-none data-checked:bg-white/10 data-focus:outline data-focus:outline-white"
-            >
-              <div className="flex w-full items-center justify-between">
-                <div className="text-sm/6">
-                  {
-                      bank.logo && (<img src={bank.logo}/>)
-                  }
-                  <div className="flex gap-2 text-white/50">
-                    <div>{bank.name}</div>
-                    
-                  </div>
-                </div>
-                <CheckCircleIcon className="size-6 fill-purple opacity-0 transition group-data-checked:opacity-100" />
-              </div>
-            </Radio>
-          ))}
-        </RadioGroup>
-      </div> 
-  )
-}
-
 
 export default DepositModal;

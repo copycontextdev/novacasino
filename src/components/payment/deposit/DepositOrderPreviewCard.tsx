@@ -16,21 +16,19 @@ function DepositOrderPreviewCard({
         return null;
     }
   return ( 
-       <div className="space-y-3 text-sm mb-4 shadow-md py-2 rounded">
-        <div className='flex flex-row gap-4 items-center'>
+       <div className="space-y-3 text-sm mb-4 shadow-md py-2 rounded"> 
           <p>
             <span className="text-on-surface-variant">Amount:</span>{" "}
             <span className="font-bold text-primary">{formatBalance(amount)}</span>
           </p>
           <p>
             <span className="text-on-surface-variant">Bank:</span> {bank_name}
-          </p>
-          </div>
+          </p> 
            <p>
             <span className="text-on-surface-variant">Acc:</span> {account_name}
           </p>
-             <p>
-            <span className="text-on-surface-variant">Acc. #:</span> {account_number}   <CopyButton>
+             <p className='font-bold extra-bold'>
+            <span className="text-on-surface-variant"></span> {account_number}   <CopyButton>
             {account_number}
           </CopyButton>
           </p>

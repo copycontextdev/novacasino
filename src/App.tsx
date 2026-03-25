@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "motion/react";
@@ -24,7 +24,11 @@ import {
   useMyWithdrawalOrders,
   useUserBankInfoList,
 } from "@/hooks/queries/use-payment-queries";
-import { useCreateDeposit, useUpdateDeposit } from "@/hooks/mutations/use-deposit";
+import {
+  useCreateDeposit,
+  useUpdateDeposit,
+  useCancelDeposit,
+} from "@/hooks/mutations/use-deposit";
 import {
   useCreateWithdrawal,
   useAddUserBankInfo,
@@ -39,6 +43,7 @@ import {
 import { formatBalance } from "@/lib/format";
 import type {
   SabiGame,
+  SabiGamesQuery,
   SabiProvider,
   SabiDepositOrder,
   SabiPaymentBank,
@@ -63,6 +68,39 @@ import ProfileSection from "./components/sections/ProfileSection";
 
 import { useLobbyGamesFiltered } from "./hooks/use-lobby-games-filtered";
 
+const RECENT_GAMES_STORAGE_KEY = "nova_recent_game_ids";
+const MAX_RECENT_GAMES = 12;
+const MOBILE_VISIBLE_QUICK_GAMES = 3;
+
+function loadRecentGameIds(): string[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const raw = window.localStorage.getItem(RECENT_GAMES_STORAGE_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter((value): value is string => typeof value === "string");
+  } catch {
+    return [];
+  }
+}
+
+function persistRecentGameIds(ids: string[]): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(
+    RECENT_GAMES_STORAGE_KEY,
+    JSON.stringify(ids.slice(0, MAX_RECENT_GAMES)),
+  );
+}
+
 export default function App() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -78,6 +116,9 @@ export default function App() {
   const [selectedGame, setSelectedGame] = useState<SabiGame | null>(null);
   const [lobbyCategoryFilter, setLobbyCategoryFilter] = useState("All");
   const [searchInput, setSearchInput] = useState("");
+  const [recentGameIds, setRecentGameIds] = useState<string[]>(() => loadRecentGameIds());
+  const [searchProviderFilter, setSearchProviderFilter] = useState("all");
+  const [searchCategoryFilter, setSearchCategoryFilter] = useState("all");
 
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -101,9 +142,7 @@ export default function App() {
   const withdrawalsQuery = useMyWithdrawalOrders();
   const userBanksQuery = useUserBankInfoList();
 
-  const gamesSearchQuery = useGames(
-    searchInput.trim().length >= 2 ? { name: searchInput.trim() } : undefined,
-  );
+  const deferredSearchInput = useDeferredValue(searchInput);
 
   const handleTabChange = (tab: string) => {
     if ((tab === "wallet" || tab === "profile") && !isAuthenticated) {
@@ -145,7 +184,180 @@ export default function App() {
   const topFromApi = useMemo(() => topGamesQuery.data?.results ?? [], [topGamesQuery.data?.results]);
   const displayTrending = topFromApi.length ? topFromApi : trendingGames;
 
+  const allLobbyGames = useMemo(() => {
+    const seen = new Set<string>();
+    const flat: SabiGame[] = [];
+
+    for (const category of lobbyCategories) {
+      for (const game of category.games) {
+        if (seen.has(game.uuid)) continue;
+        seen.add(game.uuid);
+        flat.push(game);
+      }
+    }
+
+    return flat;
+  }, [lobbyCategories]);
+
+  const quickGames = useMemo(() => {
+    const gameById = new Map(allLobbyGames.map((game) => [game.uuid, game] as const));
+    const recentGames = recentGameIds
+      .map((uuid) => gameById.get(uuid))
+      .filter((game): game is SabiGame => Boolean(game));
+
+    if (recentGames.length > 0) {
+      return recentGames.slice(0, 10);
+    }
+
+    if (topFromApi.length > 0) {
+      return topFromApi.slice(0, 10);
+    }
+
+    return displayTrending.slice(0, 10);
+  }, [allLobbyGames, displayTrending, recentGameIds, topFromApi]);
+
+  const quickGamesHeading = recentGameIds.length > 0 ? "Continue Playing" : "Quick Games";
+  const quickGamesDescription = recentGameIds.length > 0
+    ? "Your recent picks, kept close for a fast return."
+    : topFromApi.length > 0
+      ? "Hand-picked fast starters from the latest top games feed."
+      : "A fast-access strip built from trending picks while top games reload.";
+
+  const featuredQuickGameIds = useMemo(
+    () => new Set(quickGames.slice(0, MOBILE_VISIBLE_QUICK_GAMES).map((game) => game.uuid)),
+    [quickGames],
+  );
+
+  const dedupedTrendingGames = useMemo(() => {
+    const filtered = displayTrending.filter((game) => !featuredQuickGameIds.has(game.uuid));
+    return filtered.length > 0 ? filtered : displayTrending;
+  }, [displayTrending, featuredQuickGameIds]);
+
+  const dedupedLobbyGridGames = useMemo(() => {
+    const filtered = lobbyGridGames.filter((game) => !featuredQuickGameIds.has(game.uuid));
+    return filtered.length > 0 ? filtered : lobbyGridGames;
+  }, [featuredQuickGameIds, lobbyGridGames]);
+
+  const searchProviderOptions = useMemo(
+    () => [
+      { value: "all", label: "All Providers" },
+      ...providers.map((provider) => ({
+        value: provider.uuid,
+        label: provider.name,
+      })),
+    ],
+    [providers],
+  );
+
+  const searchCategoryOptions = useMemo(() => {
+    const seen = new Set<string>();
+    const options = [{ value: "all", label: "All Categories" }];
+
+    for (const category of lobbyCategories) {
+      const value = category.slug ?? category.name;
+      if (!value || seen.has(value)) continue;
+      seen.add(value);
+      options.push({
+        value,
+        label: category.name,
+      });
+    }
+
+    return options;
+  }, [lobbyCategories]);
+
+  const searchGamesQueryFilters = useMemo<SabiGamesQuery>(() => {
+    const filters: SabiGamesQuery = {
+      page_size: 60,
+    };
+
+    const normalizedSearchTerm = deferredSearchInput.trim();
+
+    if (normalizedSearchTerm.length >= 2) {
+      filters.name = normalizedSearchTerm;
+    }
+
+    if (searchProviderFilter !== "all") {
+      filters.provider = searchProviderFilter;
+    }
+
+    if (searchCategoryFilter !== "all") {
+      filters.category = searchCategoryFilter;
+    }
+
+    return filters;
+  }, [deferredSearchInput, searchCategoryFilter, searchProviderFilter]);
+
+  const gamesSearchQuery = useGames(searchGamesQueryFilters, activeTab === "search");
+
   const searchGames = useMemo(() => gamesSearchQuery.data?.results ?? [], [gamesSearchQuery.data?.results]);
+
+  const searchDiscoveryGames = useMemo(() => {
+    const normalizedSearchTerm = deferredSearchInput.trim().toLowerCase();
+    const selectedProvider = providers.find((provider) => provider.uuid === searchProviderFilter) ?? null;
+    const selectedCategory = lobbyCategories.find(
+      (category) => (category.slug ?? category.name) === searchCategoryFilter,
+    ) ?? null;
+    const categoryGameIds = selectedCategory
+      ? new Set(selectedCategory.games.map((game) => game.uuid))
+      : null;
+
+    return allLobbyGames.filter((game) => {
+      if (selectedProvider) {
+        const providerKey = String(game.provider).toLowerCase();
+        const matchesProvider =
+          providerKey === selectedProvider.uuid.toLowerCase() ||
+          providerKey === String(selectedProvider.id).toLowerCase() ||
+          providerKey === selectedProvider.name.toLowerCase();
+
+        if (!matchesProvider) {
+          return false;
+        }
+      }
+
+      if (categoryGameIds && !categoryGameIds.has(game.uuid)) {
+        return false;
+      }
+
+      if (!normalizedSearchTerm) {
+        return true;
+      }
+
+      return game.name.toLowerCase().includes(normalizedSearchTerm);
+    });
+  }, [
+    allLobbyGames,
+    deferredSearchInput,
+    lobbyCategories,
+    providers,
+    searchCategoryFilter,
+    searchProviderFilter,
+  ]);
+
+  const hasSearchFilters =
+    searchProviderFilter !== "all" || searchCategoryFilter !== "all";
+  const hasSearchTerm = deferredSearchInput.trim().length > 0;
+  const searchDisplayGames = useMemo(() => {
+    if (searchGames.length > 0) {
+      return searchGames;
+    }
+
+    if (hasSearchTerm || hasSearchFilters) {
+      return searchDiscoveryGames;
+    }
+
+    if (searchDiscoveryGames.length > 0) {
+      return searchDiscoveryGames.slice(0, 36);
+    }
+
+    return displayTrending.slice(0, 24);
+  }, [
+    displayTrending,
+    hasSearchFilters,
+    hasSearchTerm,
+    searchDiscoveryGames,
+    searchGames,
+  ]);
 
   const promotionBannersFiltered = useMemo(
     () => filterActivePromotionBanners(initQuery.data?.promotion_banners),
@@ -163,6 +375,7 @@ export default function App() {
 
   const createDeposit = useCreateDeposit();
   const updateDeposit = useUpdateDeposit();
+  const cancelDeposit = useCancelDeposit();
   const createWithdrawal = useCreateWithdrawal();
   const addUserBank = useAddUserBankInfo();
   const updateMember = useUpdateMember();
@@ -211,6 +424,10 @@ export default function App() {
   const userBanks = useMemo(() => toArray<SabiUserBankInfo>(userBanksQuery.data), [userBanksQuery.data]);
 
   const navigatePlay = (game: SabiGame, mode: "real" | "demo") => {
+    const nextRecentGameIds = [game.uuid, ...recentGameIds.filter((uuid) => uuid !== game.uuid)]
+      .slice(0, MAX_RECENT_GAMES);
+    setRecentGameIds(nextRecentGameIds);
+    persistRecentGameIds(nextRecentGameIds);
     setSelectedGame(null);
     navigate(`/play/${encodeURIComponent(game.slug)}?mode=${mode}`);
   };
@@ -228,13 +445,16 @@ export default function App() {
             isError={lobbyQuery.isError}
             refetch={() => lobbyQuery.refetch()}
             promotionBanners={promotionBannersFiltered}
-            displayTrending={displayTrending}
+            quickGames={quickGames}
+            quickGamesHeading={quickGamesHeading}
+            quickGamesDescription={quickGamesDescription}
+            displayTrending={dedupedTrendingGames}
             providers={providers}
             onGameClick={(game) => setSelectedGame(game)}
             categoryChips={categoryChips}
             categoryFilter={lobbyCategoryFilter}
             onCategoryFilterChange={setLobbyCategoryFilter}
-            gridGames={lobbyGridGames}
+            gridGames={dedupedLobbyGridGames}
           />
         );
       case "promotions":
@@ -258,6 +478,14 @@ export default function App() {
               setConfirmOrder(order);
               setIsConfirmModalOpen(true);
             }}
+            onCancelDeposit={async (uuid: string) => {
+              await cancelDeposit.mutateAsync(uuid, {
+                onSuccess: () => {
+                  depositsQuery.refetch();
+                  walletQuery.refetch();
+                },
+              });
+            }}
           />
         );
       case "search":
@@ -266,9 +494,17 @@ export default function App() {
             searchInput={searchInput}
             onSearchInputChange={setSearchInput}
             isFetching={gamesSearchQuery.isFetching}
-            searchGames={searchGames}
+            searchGames={searchDisplayGames}
             providers={providers}
             onGameClick={(game) => setSelectedGame(game)}
+            providerOptions={searchProviderOptions}
+            selectedProvider={searchProviderFilter}
+            onProviderChange={setSearchProviderFilter}
+            categoryOptions={searchCategoryOptions}
+            selectedCategory={searchCategoryFilter}
+            onCategoryChange={setSearchCategoryFilter}
+            hasSearchFilters={hasSearchFilters}
+            hasSearchTerm={hasSearchTerm}
           />
         );
       case "profile":
@@ -290,13 +526,16 @@ export default function App() {
             isError={lobbyQuery.isError}
             refetch={() => lobbyQuery.refetch()}
             promotionBanners={promotionBannersFiltered}
-            displayTrending={displayTrending}
+            quickGames={quickGames}
+            quickGamesHeading={quickGamesHeading}
+            quickGamesDescription={quickGamesDescription}
+            displayTrending={dedupedTrendingGames}
             providers={providers}
             onGameClick={(game) => setSelectedGame(game)}
             categoryChips={categoryChips}
             categoryFilter={lobbyCategoryFilter}
             onCategoryFilterChange={setLobbyCategoryFilter}
-            gridGames={lobbyGridGames}
+            gridGames={dedupedLobbyGridGames}
           />
         );
     }
@@ -385,6 +624,7 @@ export default function App() {
         selectedAgentBankUuid={effectiveBankInfoUuid}
         onBankInfoChange={setSelectedBankInfoUuid}
         isCreating={createDeposit.isPending}
+        isLoadingBankInfo={bankInfoQuery.isFetching}
         onCreate={() => {
           const parsed = Number(depositAmount);
           if (!effectiveBankInfoUuid || !Number.isFinite(parsed) || parsed < minDeposit || parsed > maxDeposit)
@@ -413,6 +653,15 @@ export default function App() {
           setConfirmOrder(null);
         }}
         isSubmitting={updateDeposit.isPending}
+        onCancel={async (uuid) => {
+          await cancelDeposit.mutateAsync(uuid, {
+            onSuccess: () => {
+              setIsConfirmModalOpen(false);
+              setConfirmOrder(null);
+              depositsQuery.refetch();
+            },
+          });
+        }}
         onSubmit={(reference, file) => {
           if (!confirmOrder?.uuid) return;
           updateDeposit.mutate(

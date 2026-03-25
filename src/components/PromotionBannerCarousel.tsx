@@ -67,7 +67,7 @@ export function PromotionBannerCarousel({ banners }: { banners: SabiPromotionBan
             className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-[1.02] transition-transform duration-[2s]"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/85 to-surface/20 z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/10 to-surface/20 z-10" />
           <div className="relative z-20 h-full flex flex-col justify-center p-6 md:p-12 max-w-xl">
             {current.title ? (
               <h1 className="text-2xl md:text-5xl font-headline font-extrabold text-white tracking-tight mb-2 md:mb-3">

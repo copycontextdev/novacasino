@@ -9,13 +9,16 @@ import { PromotionBannerCarousel } from "@/components/PromotionBannerCarousel";
 import GameCard from "@/components/game-components/GameCard";
 import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
 import { resolveProviderName } from "@/lib/game-utils";
-import type { SabiGame, SabiProvider, SabiGameCategory } from "@/types/api.types";
+import type { SabiGame, SabiProvider } from "@/types/api.types";
 
 interface LobbySectionProps {
   isLoading: boolean;
   isError: boolean;
   refetch: () => void;
   promotionBanners: any[];
+  quickGames: SabiGame[];
+  quickGamesHeading: string;
+  quickGamesDescription: string;
   displayTrending: SabiGame[];
   providers: SabiProvider[];
   onGameClick: (game: SabiGame) => void;
@@ -30,6 +33,9 @@ const LobbySection = ({
   isError,
   refetch,
   promotionBanners,
+  quickGames,
+  quickGamesHeading,
+  quickGamesDescription,
   displayTrending,
   providers,
   onGameClick,
@@ -62,30 +68,51 @@ const LobbySection = ({
   }
   return (
     <div className="space-y-8">
-      {promotionBanners.length > 0 ? (
-        <PromotionBannerCarousel banners={promotionBanners} />
-      ) : (
-        <section className="relative h-48 md:h-80 rounded-2xl overflow-hidden bg-surface-container-high border border-white/5 flex items-center">
-          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/80 to-transparent z-10" />
-          <div className="relative z-20 flex items-center gap-6 p-6 md:p-12 max-w-2xl">
-            <img
-              src={APP_LOGO_SRC}
-              alt=""
-              className="h-16 w-16 md:h-24 md:w-24 object-contain rounded-2xl border border-white/10 bg-surface-container-low p-2 shrink-0"
-              width={96}
-              height={96}
-            />
-            <div>
-              <h1 className="text-2xl md:text-5xl font-headline font-extrabold text-white tracking-tight mb-2">
-                Welcome to <span className="text-primary">{APP_NAME}</span>
-              </h1>
-              <p className="text-on-surface-variant text-sm md:text-base">
-                Real games, wallet, and secure payments — powered by Sabi.
-              </p>
+      <div className="-mx-4 md:-mx-8">
+        {promotionBanners.length > 0 ? (
+          <PromotionBannerCarousel banners={promotionBanners} />
+        ) : (
+          <section className="relative h-48 md:h-80 overflow-hidden bg-surface-container-high border-y border-white/5 flex items-center">
+            <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/80 to-transparent z-10" />
+            <div className="relative z-20 flex items-center gap-6 p-6 md:p-12 max-w-2xl">
+              <img
+                src={APP_LOGO_SRC}
+                alt=""
+                className="h-16 w-16 md:h-24 md:w-24 object-contain rounded-2xl border border-white/10 bg-surface-container-low p-2 shrink-0"
+                width={96}
+                height={96}
+              />
+              <div>
+                <h1 className="text-2xl md:text-5xl font-headline font-extrabold text-white tracking-tight mb-2">
+                  Welcome to <span className="text-primary">{APP_NAME}</span>
+                </h1>
+                <p className="text-on-surface-variant text-sm md:text-base">
+                  Real games, wallet, and secure payments — powered by Sabi.
+                </p>
+              </div>
             </div>
+          </section>
+        )}
+      </div>
+      {quickGames.length > 0 ? (
+        <section className="-mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide md:gap-5">
+            {quickGames.map((game) => (
+              <div
+                key={`quick-${game.uuid}`}
+                className="w-[7.4rem] shrink-0 md:w-[8.8rem]"
+              >
+                <GameCard
+                  game={game}
+                  providerName={resolveProviderName(game, providers)}
+                  onClick={() => onGameClick(game)}
+                  variant="quick"
+                />
+              </div>
+            ))}
           </div>
         </section>
-      )}
+      ) : null}
       <section className="space-y-4 md:space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg md:text-2xl font-headline font-extrabold tracking-tight">Trending</h2>

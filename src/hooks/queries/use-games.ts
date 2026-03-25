@@ -1,15 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { getGames } from "@/lib/api-methods/casino.api";
+import { getGames, sanitizeGamesQuery } from "@/lib/api-methods/casino.api";
 import type { SabiGamesQuery } from "@/types/api.types";
 
 export const gamesQueryKey = (filters?: SabiGamesQuery) =>
-  ["games", filters] as const;
+  ["games", sanitizeGamesQuery(filters)] as const;
 
-export function useGames(filters?: SabiGamesQuery) {
+export function useGames(filters?: SabiGamesQuery, enabled = true) {
+  const normalizedFilters = sanitizeGamesQuery(filters);
+
   return useQuery({
-    queryKey: gamesQueryKey(filters),
-    queryFn: () => getGames(filters),
+    queryKey: gamesQueryKey(normalizedFilters),
+    queryFn: () => getGames(normalizedFilters),
     staleTime: 2 * 60_000,
-    enabled: !!(filters?.name || filters?.provider || filters?.category),
+    enabled,
+    placeholderData: (previousData) => previousData,
   });
 }
