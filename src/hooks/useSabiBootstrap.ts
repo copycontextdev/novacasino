@@ -1,21 +1,28 @@
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/auth-store";
+import { useBalanceStore } from "@/store/balance-store";
 import { useWsStore } from "@/store/ws-store";
 import { sabiWsClient } from "@/lib/ws/ws-client";
 import { getAccessToken } from "@/lib/session";
 import { queryClient } from "@/lib/query-client";
-import { WALLET_QUERY_KEY } from "@/hooks/queries/use-wallet";
+import { useWallet, WALLET_QUERY_KEY } from "@/hooks/queries/use-wallet";
 import { getMe } from "@/lib/api-methods/core.api";
 import type { SabiWalletResponse, SabiBalanceUpdatePayload } from "@/types/api.types";
 
 export function useSabiBootstrap() {
+  const walletQuery = useWallet();
   const hydrate = useAuthStore((s) => s.hydrate);
   const logout = useAuthStore((s) => s.logout);
   const login = useAuthStore((s) => s.login);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const hydrated = useAuthStore((s) => s.hydrated);
+  const syncFromWallet = useBalanceStore((s) => s.syncFromWallet);
+  const applyBalanceUpdate = useBalanceStore((s) => s.applyBalanceUpdate);
+  const resetBalance = useBalanceStore((s) => s.reset);
   const setWsStatus = useWsStore((s) => s.setStatus);
   const setLastJackpotEvent = useWsStore((s) => s.setLastJackpotEvent);
+  const setLastMessage = useWsStore((s) => s.setLastMessage);
+  const resetWsState = useWsStore((s) => s.reset);
 
   useEffect(() => {
     hydrate();
@@ -30,9 +37,19 @@ export function useSabiBootstrap() {
   }, [hydrated, isAuthenticated, login]);
 
   useEffect(() => {
+    if (!hydrated || !isAuthenticated || !walletQuery.data) {
+      return;
+    }
+
+    syncFromWallet(walletQuery.data);
+  }, [hydrated, isAuthenticated, syncFromWallet, walletQuery.data]);
+
+  useEffect(() => {
     if (!hydrated) return;
 
     if (!isAuthenticated) {
+      resetBalance();
+      resetWsState();
       sabiWsClient.disconnect();
       return;
     }
@@ -42,9 +59,11 @@ export function useSabiBootstrap() {
 
     sabiWsClient.onMessage = (msg) => {
       const type = (msg as { type?: string }).type;
+      setLastMessage(type ?? "unknown");
 
       if (type === "balance.update") {
         const payload = (msg as { payload?: SabiBalanceUpdatePayload }).payload ?? {};
+        applyBalanceUpdate(payload);
         queryClient.setQueryData(
           WALLET_QUERY_KEY,
           (old: SabiWalletResponse | undefined) => {
@@ -88,5 +107,15 @@ export function useSabiBootstrap() {
     return () => {
       sabiWsClient.disconnect();
     };
-  }, [hydrated, isAuthenticated, logout, setWsStatus, setLastJackpotEvent]);
+  }, [
+    applyBalanceUpdate,
+    hydrated,
+    isAuthenticated,
+    logout,
+    resetBalance,
+    resetWsState,
+    setLastMessage,
+    setWsStatus,
+    setLastJackpotEvent,
+  ]);
 }

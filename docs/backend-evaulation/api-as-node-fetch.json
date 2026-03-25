@@ -1,0 +1,1113 @@
+fetch("https://ogads-pa.clients6.google.com/$rpc/google.internal.onegoogle.asyncdata.v1.AsyncDataService/GetAsyncData", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "SAPISIDHASH 1774458588_1361eb392eb3087ed704be5789152b6b38ef4b27 SAPISID3PHASH 1774458588_1361eb392eb3087ed704be5789152b6b38ef4b27",
+    "content-type": "application/json+protobuf",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site",
+    "sec-fetch-storage-access": "active",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "x-goog-api-key": "AIzaSyCbsbvGCe7C9mCtdaTycZB2eUFuzsYKG_E",
+    "x-goog-authuser": "0",
+    "x-user-agent": "grpc-web-javascript/0.1",
+    "cookie": "__Secure-BUCKET=CK8H; __Secure-ENID=32.SE=yYIgGsNQB7mXoQ0ME3zAdICuPqQX_a2M1nE-yrx75AxhHp2yZlT9K5Q8ZwAlUxUoTN1jtNtawssoEp8DzTNIphY8uXsg-YUvK1TvLDQw5keTgTC6NnGj4VH697iT1pAmrwEa8HAC8EWB_BDqCeHaPvfYoL3uNV4PligMFXS5joqDg7bNkVRDftWDbMtizbeBp3dE48QsZHngJ0IucibKJn6Mo9s58WLYepAszAVJ57ivu-xGyZM2BkfZ8ms34U0zahv6nKaTOFp33PWMHns95gDi3kFJGkxMyPJ9b9AM1ZwwbHF6H3rr3j2h31P9REF8eOGiqggmUnxBZ5WZkiIRTQZNSx4Z7_g8WKXLzsTnO8ErI1AHXlF-SnLVpbNUxN_HgfQ9dOa1OrW1ndw2DZnENQaJ1tHDmQ; SID=g.a0007wh-EFH-USuM4pNHkGGa9Y_7IS4VIir_EPwYuIS3EK9h_g2K3q_Iu_q8gQhEhnBfiWzyhQACgYKAUcSARISFQHGX2MiVpz3BzRs7P5WEWKfM0bDxxoVAUF8yKqeb2UIWa__-caHdUggdj9O0076; __Secure-1PSID=g.a0007wh-EFH-USuM4pNHkGGa9Y_7IS4VIir_EPwYuIS3EK9h_g2Kg1RO_dj0eF1tYsdD4PpWVQACgYKAQ4SARISFQHGX2MiVrq9qaZ8IdaIb7mqAHncXhoVAUF8yKodfkmlOBU1k13J8q9oMKtp0076; __Secure-3PSID=g.a0007wh-EFH-USuM4pNHkGGa9Y_7IS4VIir_EPwYuIS3EK9h_g2KrWRZxRm6PnzsvoCsx5ushAACgYKAacSARISFQHGX2Mi76sVqtqVslI4XvJKAG5zUhoVAUF8yKrGUesSD_eOMCfv5S9DFCkE0076; HSID=Ae2KaF5g192-iIJVD; SSID=AHd5PpZMNZRG-MBJF; APISID=j5v6g6ipGErN08V3/AcKD1M60vuU0h1x3L; SAPISID=bASh77QPhOhe-6Q3/AIas2mIqBZPOpkoI3; __Secure-1PAPISID=bASh77QPhOhe-6Q3/AIas2mIqBZPOpkoI3; __Secure-3PAPISID=bASh77QPhOhe-6Q3/AIas2mIqBZPOpkoI3; AEC=AaJma5vw-bzKegTzF_UK8NDncpyLKnHZqVSU4NnFyOE40Vw3lfDQRuHVi3o; NID=530=oDzxuMaKMGpLDrNY7gMBTmBVD3O8rR6MJ1yVAzPJkRXdNyHOgZQqRYIy9coUIDa1L71jvSvGP_x9YkHJ0dZBPnv44ObLamqAHmzfVLMydYDO3K570kRqwGaASKXoNb1jEIFLxE5Ns5SVQjbW4xIVr2x4PvK2-LBMIUnrzcsySJnYlcs5pLr3tyGByB_rYz-wC7OreA5e7J6962P_O95PsVFuW18ZoqUtYztxWkdZn5ndck21nf8etFBPxFlRFO5UfMgOzTtD_xOe9m3tARe1DO2L3kKYVrU87ZoB9IABFAzFOKm6BAZJcm-iU8zxLq2cmykiVW9RX-0ANQRXyuvCi7ljUT9u0rgVFVPd6R8qnvj2hFNGtPQk06ub9IXTREjAxyw7nQzQ1fA_dBqgxryHsTqKiJBS; SEARCH_SAMESITE=CgQIuaAB; __Secure-STRP=AEEP7gLlOOMKUJBQlGM_cG3HV294X2FLFZfoWwJzTgDyFAiZutpS3bZgTGHThNcXv1ijtKoUV_nMhR79PT_ifSpZy8jNpGMyOnjr; __Secure-1PSIDTS=sidts-CjEBBj1CYsnAFRNopULZpf_K1IFZ3lQAmt8lxyIZwBuf6ylRod5m_UDJE9NWsGLm-Z_MEAA; __Secure-3PSIDTS=sidts-CjEBBj1CYsnAFRNopULZpf_K1IFZ3lQAmt8lxyIZwBuf6ylRod5m_UDJE9NWsGLm-Z_MEAA; SIDCC=AKEyXzW8jLiYiCgR0hzPoO5mRNFUvRvetujuDjPcEn2rLa2gE9D_7ncAPX4S8Fzt6XNq4saqHZhk; __Secure-1PSIDCC=AKEyXzWtzfvZzl9_k6XfAsqle2AjMvfgUg3JEYm5adIw8eRjYfSrExgzdWgncM9tSaZBF1fXcvk; __Secure-3PSIDCC=AKEyXzWmc5lQgMqb5geibcu2VIBHC_dZlQ7ppZ2wBCok1xPuXpGAu4ChlpF2GI6IEh1DmGU6kEA"
+  },
+  "body": "[243,\"\",243,\"en\",\"com.et\",1,null,0,0,\"\",\"\",1,0,null,67911908,[[1,9,13],0,1,0],[1],null,1]",
+  "method": "POST"
+}); ;
+fetch("https://play.google.com/log?format=json&hasfast=true&authuser=0", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "SAPISIDHASH c16fa2aa69d77e1cc96a3fc8ed976e2a101b0b0f SAPISID3PHASH c16fa2aa69d77e1cc96a3fc8ed976e2a101b0b0f",
+    "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site",
+    "sec-fetch-storage-access": "active",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "x-goog-authuser": "0",
+    "cookie": "__Secure-BUCKET=CK8H; _gcl_au=1.1.1058482168.1768056689; _ga=GA1.1.564357793.1768056688; _ga_6VGGZHMLM2=GS2.1.s1768056688$o1$g1$t1768057371$j60$l0$h0; __Secure-ENID=32.SE=yYIgGsNQB7mXoQ0ME3zAdICuPqQX_a2M1nE-yrx75AxhHp2yZlT9K5Q8ZwAlUxUoTN1jtNtawssoEp8DzTNIphY8uXsg-YUvK1TvLDQw5keTgTC6NnGj4VH697iT1pAmrwEa8HAC8EWB_BDqCeHaPvfYoL3uNV4PligMFXS5joqDg7bNkVRDftWDbMtizbeBp3dE48QsZHngJ0IucibKJn6Mo9s58WLYepAszAVJ57ivu-xGyZM2BkfZ8ms34U0zahv6nKaTOFp33PWMHns95gDi3kFJGkxMyPJ9b9AM1ZwwbHF6H3rr3j2h31P9REF8eOGiqggmUnxBZ5WZkiIRTQZNSx4Z7_g8WKXLzsTnO8ErI1AHXlF-SnLVpbNUxN_HgfQ9dOa1OrW1ndw2DZnENQaJ1tHDmQ; OSID=g.a0007wh-EKgQtgW-2Q4T8Zw3w124veer-TjnL13rzC3nS2m_GYhPnTK40E_q1pe34g7aY0XtuQACgYKAXYSARISFQHGX2MiwWf9TPnuHEBUpXG3hcZkDRoVAUF8yKqogOhQTGh_oCkNHnohcNnQ0076; __Secure-OSID=g.a0007wh-EKgQtgW-2Q4T8Zw3w124veer-TjnL13rzC3nS2m_GYhP2IU9EQaLr_maJxMyP7oXJQACgYKAfYSARISFQHGX2MiWLDvwpTpKbkhyPhB79RDCBoVAUF8yKr4mI-20PsQBZuQbEnq502g0076; SID=g.a0007wh-EFH-USuM4pNHkGGa9Y_7IS4VIir_EPwYuIS3EK9h_g2K3q_Iu_q8gQhEhnBfiWzyhQACgYKAUcSARISFQHGX2MiVpz3BzRs7P5WEWKfM0bDxxoVAUF8yKqeb2UIWa__-caHdUggdj9O0076; __Secure-1PSID=g.a0007wh-EFH-USuM4pNHkGGa9Y_7IS4VIir_EPwYuIS3EK9h_g2Kg1RO_dj0eF1tYsdD4PpWVQACgYKAQ4SARISFQHGX2MiVrq9qaZ8IdaIb7mqAHncXhoVAUF8yKodfkmlOBU1k13J8q9oMKtp0076; __Secure-3PSID=g.a0007wh-EFH-USuM4pNHkGGa9Y_7IS4VIir_EPwYuIS3EK9h_g2KrWRZxRm6PnzsvoCsx5ushAACgYKAacSARISFQHGX2Mi76sVqtqVslI4XvJKAG5zUhoVAUF8yKrGUesSD_eOMCfv5S9DFCkE0076; HSID=Ae2KaF5g192-iIJVD; SSID=AHd5PpZMNZRG-MBJF; APISID=j5v6g6ipGErN08V3/AcKD1M60vuU0h1x3L; SAPISID=bASh77QPhOhe-6Q3/AIas2mIqBZPOpkoI3; __Secure-1PAPISID=bASh77QPhOhe-6Q3/AIas2mIqBZPOpkoI3; __Secure-3PAPISID=bASh77QPhOhe-6Q3/AIas2mIqBZPOpkoI3; AEC=AaJma5vw-bzKegTzF_UK8NDncpyLKnHZqVSU4NnFyOE40Vw3lfDQRuHVi3o; NID=530=oDzxuMaKMGpLDrNY7gMBTmBVD3O8rR6MJ1yVAzPJkRXdNyHOgZQqRYIy9coUIDa1L71jvSvGP_x9YkHJ0dZBPnv44ObLamqAHmzfVLMydYDO3K570kRqwGaASKXoNb1jEIFLxE5Ns5SVQjbW4xIVr2x4PvK2-LBMIUnrzcsySJnYlcs5pLr3tyGByB_rYz-wC7OreA5e7J6962P_O95PsVFuW18ZoqUtYztxWkdZn5ndck21nf8etFBPxFlRFO5UfMgOzTtD_xOe9m3tARe1DO2L3kKYVrU87ZoB9IABFAzFOKm6BAZJcm-iU8zxLq2cmykiVW9RX-0ANQRXyuvCi7ljUT9u0rgVFVPd6R8qnvj2hFNGtPQk06ub9IXTREjAxyw7nQzQ1fA_dBqgxryHsTqKiJBS; SEARCH_SAMESITE=CgQIuaAB; __Secure-STRP=AEEP7gLlOOMKUJBQlGM_cG3HV294X2FLFZfoWwJzTgDyFAiZutpS3bZgTGHThNcXv1ijtKoUV_nMhR79PT_ifSpZy8jNpGMyOnjr; __Secure-1PSIDTS=sidts-CjEBBj1CYsnAFRNopULZpf_K1IFZ3lQAmt8lxyIZwBuf6ylRod5m_UDJE9NWsGLm-Z_MEAA; __Secure-3PSIDTS=sidts-CjEBBj1CYsnAFRNopULZpf_K1IFZ3lQAmt8lxyIZwBuf6ylRod5m_UDJE9NWsGLm-Z_MEAA; SIDCC=AKEyXzW8jLiYiCgR0hzPoO5mRNFUvRvetujuDjPcEn2rLa2gE9D_7ncAPX4S8Fzt6XNq4saqHZhk; __Secure-1PSIDCC=AKEyXzWtzfvZzl9_k6XfAsqle2AjMvfgUg3JEYm5adIw8eRjYfSrExgzdWgncM9tSaZBF1fXcvk; __Secure-3PSIDCC=AKEyXzWmc5lQgMqb5geibcu2VIBHC_dZlQ7ppZ2wBCok1xPuXpGAu4ChlpF2GI6IEh1DmGU6kEA"
+  },
+  "body": "[[1,null,null,null,null,null,null,null,null,null,[null,null,null,null,null,null,null,null,[[[\"Chromium\",\"146\"],[\"Not-A.Brand\",\"24\"],[\"Google Chrome\",\"146\"]],0,\"macOS\",\"15.7.1\",\"arm\",\"\",\"146.0.7680.154\"],[1,0]]],373,[[1774458588242,null,null,null,null,null,null,\"[1,40400,243,null,\\\"887809888.0\\\",\\\"zBbEadPgBO6EkdUPi-GsuQc\\\",null,null,null,\\\"en\\\",\\\"ETH\\\",1,7,16433,null,1,0,null,\\\"og-c9fad68a-5ab8-4f76-a133-f63878be56da\\\",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null,null,null,null,null,null,null,null,null,null,0,null,null,null,1,null,[2,5,\\\"we\\\",48],null,null,null,null,1]\",null,null,null,null,null,null,-10800,[null,null,null,\"[null,null,[3701384,102772546,105109531,105109534,105140909,105140912,105216917,115517798,115517801,116119825,116249040,116249043]]\"],null,null,null,null,1]],1774458589244,null,null,null,null,null,null,null,null,null,null,null,null,null,[[null,[null,null,null,null,null,null,null,null,null,null,null,null,122505695]],9]]",
+  "method": "POST"
+}); ;
+fetch("https://play.google.com/log?format=json&hasfast=true&authuser=0", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "SAPISIDHASH c16fa2aa69d77e1cc96a3fc8ed976e2a101b0b0f SAPISID3PHASH c16fa2aa69d77e1cc96a3fc8ed976e2a101b0b0f",
+    "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site",
+    "sec-fetch-storage-access": "active",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "x-goog-authuser": "0",
+    "cookie": "__Secure-BUCKET=CK8H; _gcl_au=1.1.1058482168.1768056689; _ga=GA1.1.564357793.1768056688; _ga_6VGGZHMLM2=GS2.1.s1768056688$o1$g1$t1768057371$j60$l0$h0; __Secure-ENID=32.SE=yYIgGsNQB7mXoQ0ME3zAdICuPqQX_a2M1nE-yrx75AxhHp2yZlT9K5Q8ZwAlUxUoTN1jtNtawssoEp8DzTNIphY8uXsg-YUvK1TvLDQw5keTgTC6NnGj4VH697iT1pAmrwEa8HAC8EWB_BDqCeHaPvfYoL3uNV4PligMFXS5joqDg7bNkVRDftWDbMtizbeBp3dE48QsZHngJ0IucibKJn6Mo9s58WLYepAszAVJ57ivu-xGyZM2BkfZ8ms34U0zahv6nKaTOFp33PWMHns95gDi3kFJGkxMyPJ9b9AM1ZwwbHF6H3rr3j2h31P9REF8eOGiqggmUnxBZ5WZkiIRTQZNSx4Z7_g8WKXLzsTnO8ErI1AHXlF-SnLVpbNUxN_HgfQ9dOa1OrW1ndw2DZnENQaJ1tHDmQ; OSID=g.a0007wh-EKgQtgW-2Q4T8Zw3w124veer-TjnL13rzC3nS2m_GYhPnTK40E_q1pe34g7aY0XtuQACgYKAXYSARISFQHGX2MiwWf9TPnuHEBUpXG3hcZkDRoVAUF8yKqogOhQTGh_oCkNHnohcNnQ0076; __Secure-OSID=g.a0007wh-EKgQtgW-2Q4T8Zw3w124veer-TjnL13rzC3nS2m_GYhP2IU9EQaLr_maJxMyP7oXJQACgYKAfYSARISFQHGX2MiWLDvwpTpKbkhyPhB79RDCBoVAUF8yKr4mI-20PsQBZuQbEnq502g0076; SID=g.a0007wh-EFH-USuM4pNHkGGa9Y_7IS4VIir_EPwYuIS3EK9h_g2K3q_Iu_q8gQhEhnBfiWzyhQACgYKAUcSARISFQHGX2MiVpz3BzRs7P5WEWKfM0bDxxoVAUF8yKqeb2UIWa__-caHdUggdj9O0076; __Secure-1PSID=g.a0007wh-EFH-USuM4pNHkGGa9Y_7IS4VIir_EPwYuIS3EK9h_g2Kg1RO_dj0eF1tYsdD4PpWVQACgYKAQ4SARISFQHGX2MiVrq9qaZ8IdaIb7mqAHncXhoVAUF8yKodfkmlOBU1k13J8q9oMKtp0076; __Secure-3PSID=g.a0007wh-EFH-USuM4pNHkGGa9Y_7IS4VIir_EPwYuIS3EK9h_g2KrWRZxRm6PnzsvoCsx5ushAACgYKAacSARISFQHGX2Mi76sVqtqVslI4XvJKAG5zUhoVAUF8yKrGUesSD_eOMCfv5S9DFCkE0076; HSID=Ae2KaF5g192-iIJVD; SSID=AHd5PpZMNZRG-MBJF; APISID=j5v6g6ipGErN08V3/AcKD1M60vuU0h1x3L; SAPISID=bASh77QPhOhe-6Q3/AIas2mIqBZPOpkoI3; __Secure-1PAPISID=bASh77QPhOhe-6Q3/AIas2mIqBZPOpkoI3; __Secure-3PAPISID=bASh77QPhOhe-6Q3/AIas2mIqBZPOpkoI3; AEC=AaJma5vw-bzKegTzF_UK8NDncpyLKnHZqVSU4NnFyOE40Vw3lfDQRuHVi3o; NID=530=oDzxuMaKMGpLDrNY7gMBTmBVD3O8rR6MJ1yVAzPJkRXdNyHOgZQqRYIy9coUIDa1L71jvSvGP_x9YkHJ0dZBPnv44ObLamqAHmzfVLMydYDO3K570kRqwGaASKXoNb1jEIFLxE5Ns5SVQjbW4xIVr2x4PvK2-LBMIUnrzcsySJnYlcs5pLr3tyGByB_rYz-wC7OreA5e7J6962P_O95PsVFuW18ZoqUtYztxWkdZn5ndck21nf8etFBPxFlRFO5UfMgOzTtD_xOe9m3tARe1DO2L3kKYVrU87ZoB9IABFAzFOKm6BAZJcm-iU8zxLq2cmykiVW9RX-0ANQRXyuvCi7ljUT9u0rgVFVPd6R8qnvj2hFNGtPQk06ub9IXTREjAxyw7nQzQ1fA_dBqgxryHsTqKiJBS; SEARCH_SAMESITE=CgQIuaAB; __Secure-STRP=AEEP7gLlOOMKUJBQlGM_cG3HV294X2FLFZfoWwJzTgDyFAiZutpS3bZgTGHThNcXv1ijtKoUV_nMhR79PT_ifSpZy8jNpGMyOnjr; __Secure-1PSIDTS=sidts-CjEBBj1CYsnAFRNopULZpf_K1IFZ3lQAmt8lxyIZwBuf6ylRod5m_UDJE9NWsGLm-Z_MEAA; __Secure-3PSIDTS=sidts-CjEBBj1CYsnAFRNopULZpf_K1IFZ3lQAmt8lxyIZwBuf6ylRod5m_UDJE9NWsGLm-Z_MEAA; SIDCC=AKEyXzUgfUoEJSxNpe5mb7fgFjlz60wwlTjQn6n3ot28YaX5YU2FayUMBf2T3hyiMyGC5Tg-eYX2; __Secure-1PSIDCC=AKEyXzWuDkZDgkrgKdvSJWDQ7PKR9KQbP4c8VaVkAtzmGm0d5HZOk7u5fmJsAbi2ELGt1YLSvpY; __Secure-3PSIDCC=AKEyXzVW9MsDV0g0LaCwYwYmtYAhaZOBZrgEWN2AzYn1kYXNtM_YBhrZmEBDwB-E8StqxsZyXsQ"
+  },
+  "body": "[[1,null,null,null,null,null,null,null,null,null,[null,null,null,null,null,null,null,null,[[[\"Chromium\",\"146\"],[\"Not-A.Brand\",\"24\"],[\"Google Chrome\",\"146\"]],0,\"macOS\",\"15.7.1\",\"arm\",\"\",\"146.0.7680.154\"],[1,0]]],373,[[1774458601359,null,null,null,null,null,null,\"[130,40400,243,null,\\\"887809888.0\\\",\\\"zBbEadPgBO6EkdUPi-GsuQc\\\",null,null,null,\\\"en\\\",\\\"ETH\\\",1,7,29550,null,1,0,null,\\\"og-c9fad68a-5ab8-4f76-a133-f63878be56da\\\",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,[2,5,\\\"we\\\",48],null,null,null,null,1]\",null,null,null,null,null,null,-10800,[null,null,null,\"[null,null,[3701384,102772546,105109531,105109534,105140909,105140912,105216917,115517798,115517801,116119825,116249040,116249043]]\"],null,null,null,null,2]],1774458602360,null,null,null,null,null,null,null,null,null,null,null,null,null,[[null,[null,null,null,null,null,null,null,null,null,null,null,null,122505695]],9]]",
+  "method": "POST"
+}); ;
+fetch("https://www.google.com/favicon.ico", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "cache-control": "max-age=0",
+    "if-modified-since": "Tue, 22 Oct 2019 18:30:00 GMT",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/core/init", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://novacasino.games/cdn-cgi/rum?", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/json",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": "{\"memory\":{\"totalJSHeapSize\":23754094,\"usedJSHeapSize\":19801478,\"jsHeapSizeLimit\":2248146944},\"resources\":[],\"referrer\":\"\",\"eventType\":1,\"firstPaint\":980,\"firstContentfulPaint\":980,\"startTime\":1774458972685.1,\"versions\":{\"fl\":\"2024.11.0\",\"js\":\"2026.2.0\",\"timings\":2},\"pageloadId\":\"2df0c870-6712-449e-83e7-0850bcb9f40f\",\"location\":\"https://novacasino.games/\",\"nt\":\"reload\",\"timingsV2\":{\"nextHopProtocol\":\"h2\",\"domainLookupStart\":24.800000000046566,\"domainLookupEnd\":137,\"connectStart\":137,\"connectEnd\":318.4000000000233,\"requestStart\":319,\"responseStart\":671.2000000000116,\"responseEnd\":675.3000000000466,\"domInteractive\":752.1000000000349,\"domComplete\":994.1000000000349,\"loadEventStart\":994.1000000000349,\"loadEventEnd\":994.1000000000349,\"finalResponseHeadersStart\":671.2000000000116,\"firstInterimResponseStart\":0,\"transferSize\":1072,\"decodedBodySize\":1308},\"dt\":\"\",\"siteToken\":\"d195a6ec57474820b3ab6adcdab0e25e\",\"st\":2}",
+  "method": "POST"
+}); ;
+fetch("https://api.novacasino.games/bonus/spin-award/63/reward/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/member-spin-award/list/?is_active=true", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/top-games/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/active-bonus/status/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/categories/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/core/promotion-banner/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/providers/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/lobby/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/spin-award/63/reward/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/payment/agent/my-deposit-orders/?page=1&page_size=10", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/payment/agent/banks/?type=deposit", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/core/member/me/wallet", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/payment/agent/bank-info/ca694510-0610-4b34-b293-53165400170f/list/?amount=50", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/payment/agent/deposit-orders/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "content-type": "application/json",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": "{\"agent_bank_info_id\":\"210bfb2c-95ab-4b75-b37f-5ad00546662c\",\"amount\":\"50\"}",
+  "method": "POST"
+}); ;
+fetch("https://api.novacasino.games/core/member/me/wallet", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/payment/agent/my-deposit-orders/?page=1&page_size=10", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://www.google.com/favicon.ico", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "cache-control": "max-age=0",
+    "if-modified-since": "Tue, 22 Oct 2019 18:30:00 GMT",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/payment/agent/my-withdrawal-orders/?page=1&page_size=10", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://novacasino.games/cdn-cgi/rum?", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/json",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "Referer": "https://novacasino.games/wallet-transaction"
+  },
+  "body": "{\"resources\":[],\"referrer\":\"https://novacasino.games/\",\"eventType\":1,\"firstPaint\":980,\"firstContentfulPaint\":980,\"startTime\":1774458972685.1,\"versions\":{\"fl\":\"2024.11.0\",\"js\":\"2026.2.0\",\"timings\":1},\"pageloadId\":\"4e70b681-4117-40c7-8746-01aa5a6eb114\",\"location\":\"https://novacasino.games/wallet-transaction\",\"nt\":\"reload\",\"timingsV2\":{\"nextHopProtocol\":\"h2\",\"transferSize\":1072,\"decodedBodySize\":1308},\"dt\":\"\",\"siteToken\":\"d195a6ec57474820b3ab6adcdab0e25e\",\"st\":2}",
+  "method": "POST"
+}); ;
+fetch("https://api.novacasino.games/bonus/member-spin-award/list/?is_active=true", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/member-spin-condition/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://www.google.com/favicon.ico", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "cache-control": "max-age=0",
+    "if-modified-since": "Tue, 22 Oct 2019 18:30:00 GMT",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/member-spin-result/list/?page=1", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/member-spin-condition/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://novacasino.games/cdn-cgi/rum?", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/json",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "Referer": "https://novacasino.games/spin-wheel"
+  },
+  "body": "{\"resources\":[],\"referrer\":\"https://novacasino.games/wallet-transaction\",\"eventType\":1,\"firstPaint\":980,\"firstContentfulPaint\":980,\"startTime\":1774458972685.1,\"versions\":{\"fl\":\"2024.11.0\",\"js\":\"2026.2.0\",\"timings\":1},\"pageloadId\":\"952f49c9-7fb6-4c42-bbe3-7379e684754d\",\"location\":\"https://novacasino.games/spin-wheel\",\"nt\":\"reload\",\"timingsV2\":{\"nextHopProtocol\":\"h2\",\"transferSize\":1072,\"decodedBodySize\":1308},\"dt\":\"\",\"siteToken\":\"d195a6ec57474820b3ab6adcdab0e25e\",\"st\":2}",
+  "method": "POST"
+}); ;
+fetch("https://api.novacasino.games/bonus/spin-tracker/?condition_id=1", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://novacasino.games/cdn-cgi/rum?", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/json",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "Referer": "https://novacasino.games/spin-tracker/1"
+  },
+  "body": "{\"resources\":[],\"referrer\":\"https://novacasino.games/spin-wheel\",\"eventType\":1,\"firstPaint\":980,\"firstContentfulPaint\":980,\"startTime\":1774458972685.1,\"versions\":{\"fl\":\"2024.11.0\",\"js\":\"2026.2.0\",\"timings\":1},\"pageloadId\":\"416dcdc5-aba7-4663-9c21-8a861ac0d12b\",\"location\":\"https://novacasino.games/spin-tracker/1\",\"nt\":\"reload\",\"timingsV2\":{\"nextHopProtocol\":\"h2\",\"transferSize\":1072,\"decodedBodySize\":1308},\"dt\":\"\",\"siteToken\":\"d195a6ec57474820b3ab6adcdab0e25e\",\"st\":2}",
+  "method": "POST"
+}); ;
+fetch("https://api.novacasino.games/bonus/deposit/member/bonuses/?page=1&page_size=10", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://novacasino.games/cdn-cgi/rum?", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/json",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "Referer": "https://novacasino.games/deposit-bonus"
+  },
+  "body": "{\"resources\":[],\"referrer\":\"https://novacasino.games/spin-tracker/1\",\"eventType\":1,\"firstPaint\":980,\"firstContentfulPaint\":980,\"startTime\":1774458972685.1,\"versions\":{\"fl\":\"2024.11.0\",\"js\":\"2026.2.0\",\"timings\":1},\"pageloadId\":\"ed837016-acd5-444e-bbbf-19197b81a908\",\"location\":\"https://novacasino.games/deposit-bonus\",\"nt\":\"reload\",\"timingsV2\":{\"nextHopProtocol\":\"h2\",\"transferSize\":1072,\"decodedBodySize\":1308},\"dt\":\"\",\"siteToken\":\"d195a6ec57474820b3ab6adcdab0e25e\",\"st\":2}",
+  "method": "POST"
+}); ;
+fetch("https://api.novacasino.games/core/promotion-banner/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/categories/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/providers/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/lobby/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://www.google.com/favicon.ico", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "cache-control": "max-age=0",
+    "if-modified-since": "Tue, 22 Oct 2019 18:30:00 GMT",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/games?provider=102", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://www.google.com/favicon.ico", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "cache-control": "max-age=0",
+    "if-modified-since": "Tue, 22 Oct 2019 18:30:00 GMT",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://www.google.com/favicon.ico", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "cache-control": "max-age=0",
+    "if-modified-since": "Tue, 22 Oct 2019 18:30:00 GMT",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/core/init", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/spin-award/63/reward/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/member-spin-award/list/?is_active=true", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/top-games/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/active-bonus/status/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/categories/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/providers/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/core/promotion-banner/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/spin-award/undefined/reward/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://www.google.com/favicon.ico", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "cache-control": "max-age=0",
+    "if-modified-since": "Tue, 22 Oct 2019 18:30:00 GMT",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+    "x-browser-channel": "stable",
+    "x-browser-copyright": "Copyright 2026 Google LLC. All Rights reserved.",
+    "x-browser-validation": "WCDbNiUBgi7j6pKJOZui+rDzI24=",
+    "x-browser-year": "2026",
+    "x-client-data": "CJO2yQEIpLbJAQipncoBCKOEywEIlaHLAQiGoM0BGL+pygEY7LHPAQ==",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/core/init", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/spin-award/63/reward/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/member-spin-award/list/?is_active=true", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/top-games/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/active-bonus/status/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/categories/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/xcasino/providers/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/core/promotion-banner/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+}); ;
+fetch("https://api.novacasino.games/bonus/spin-award/undefined/reward/list/", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc1MDYyNzA2LCJpYXQiOjE3NzQ0NTc5MDYsImp0aSI6IjNhNTFjMjNiMGQzMjQzOTZiMTg2OWQ0YmVlNzA4YTQ5IiwidXNlcl9pZCI6ImU1Y2VmNzEyLTU4NzAtNGE4NC1iZmQ0LThlMTc4MzdmNzUzYSIsIm5hbWUiOiJtaWtpYXMiLCJwaG9uZV9udW1iZXIiOiIyNTE5MjMyMTM3NjgiLCJiYWxhbmNlIjowLjB9.Z7lVfDr-2F2NFkPvBY2keG9R1QwDMy3G-tZ80ilkFrs",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "Referer": "https://novacasino.games/"
+  },
+  "body": null,
+  "method": "GET"
+});

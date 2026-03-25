@@ -1,12 +1,12 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
 import { ArrowLeft, Loader2, LogIn, RefreshCw } from "lucide-react";
 import { AppLoader } from "@/components/AppLoader";
 import { startGame } from "@/lib/api-methods/casino.api";
 import { useAuthStore } from "@/store/auth-store";
+import { useBalanceStore } from "@/store/balance-store";
 import { useUiStore } from "@/store/ui-store";
-import { useWallet } from "@/hooks/queries/use-wallet";
 import { formatBalance } from "@/lib/format";
 
 type GameMode = "demo" | "real";
@@ -19,7 +19,8 @@ export function PlayGamePage() {
   const hydrated = useAuthStore((s) => s.hydrated);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const openAuthModal = useUiStore((s) => s.openAuthModal);
-  const { data: wallet } = useWallet();
+  const balance = useBalanceStore((s) => s.balance);
+  const currency = useBalanceStore((s) => s.currency);
 
   const modeParam = searchParams.get("mode");
   const mode: GameMode = modeParam === "real" ? "real" : "demo";
@@ -80,7 +81,7 @@ export function PlayGamePage() {
 
   const isLoadingOverlayVisible = isRequestLoading || (!!launchUrl && !isIframeReady);
 
-  const currencyLabel = useMemo(() => wallet?.currency ?? "ETB", [wallet?.currency]);
+  const currencyLabel = currency ?? "ETB";
 
   if (!hydrated) {
     return (
@@ -114,7 +115,7 @@ export function PlayGamePage() {
           {isAuthenticated ? (
             <>
               <p className="hidden text-[11px] font-semibold text-primary sm:block">
-                {currencyLabel} {formatBalance(wallet?.balance)}
+                {currencyLabel} {formatBalance(balance)}
               </p>
               <button
                 type="button"

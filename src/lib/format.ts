@@ -1,4 +1,4 @@
-export function formatBalance(balance: string | number | undefined): string {
+export function formatBalance(balance: string | number | null | undefined): string {
   if (balance === undefined || balance === null) return "0.00";
   const value = Number(balance);
   if (!Number.isFinite(value)) return "0.00";
