@@ -3,6 +3,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { useBalanceStore } from "@/store/balance-store";
 import { useWsStore } from "@/store/ws-store";
 import { sabiWsClient } from "@/lib/ws/ws-client";
+import { isWebSocketEnabled } from "@/lib/api/config";
 import { getAccessToken } from "@/lib/session";
 import { queryClient } from "@/lib/query-client";
 import { useWallet, WALLET_QUERY_KEY } from "@/hooks/queries/use-wallet";
@@ -51,6 +52,12 @@ export function useSabiBootstrap() {
     if (!isAuthenticated) {
       resetBalance();
       resetWsState();
+      sabiWsClient.disconnect();
+      return;
+    }
+
+    if (!isWebSocketEnabled()) {
+      setWsStatus("disabled");
       sabiWsClient.disconnect();
       return;
     }

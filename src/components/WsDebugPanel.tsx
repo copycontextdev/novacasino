@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { getApiBaseUrl } from "@/lib/api/config";
+import { getApiBaseUrl, isWebSocketEnabled } from "@/lib/api/config";
 import { useAuthStore } from "@/store/auth-store";
 import { useBalanceStore } from "@/store/balance-store";
 import { useWsStore, type WsStatus } from "@/store/ws-store";
@@ -20,6 +20,8 @@ function isLocalDebugEnvironment(): boolean {
 
 function getStatusTone(status: WsStatus): string {
   switch (status) {
+    case "disabled":
+      return "text-slate-500";
     case "connected":
       return "text-emerald-300";
     case "connecting":
@@ -45,6 +47,7 @@ export function WsDebugPanel() {
   const hasLoadedInitialBalance = useBalanceStore((s) => s.hasLoadedInitialBalance);
 
   const shouldRender = isLocalDebugEnvironment();
+  const wsEnabled = isWebSocketEnabled();
 
   const wsEndpoint = useMemo(() => {
     const base = getApiBaseUrl()
@@ -81,6 +84,10 @@ export function WsDebugPanel() {
         <div className="flex justify-between gap-4">
           <span className="text-slate-400">auth</span>
           <span>{hydrated ? (isAuthenticated ? "authenticated" : "guest") : "hydrating"}</span>
+        </div>
+        <div className="flex justify-between gap-4">
+          <span className="text-slate-400">ws enabled</span>
+          <span>{wsEnabled ? "yes" : "no"}</span>
         </div>
         <div className="flex justify-between gap-4">
           <span className="text-slate-400">initial balance</span>

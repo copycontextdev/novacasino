@@ -3,6 +3,7 @@ import type { SabiWsMessage } from "@/types/api.types";
 
 export type WsStatus =
   | "idle"
+  | "disabled"
   | "connecting"
   | "connected"
   | "error"
