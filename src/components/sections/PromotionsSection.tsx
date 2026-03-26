@@ -489,7 +489,7 @@ const PromotionsSection = () => {
       return;
     }
 
-    navigate("/?tab=wallet");
+    navigate("/wallet");
     openWalletModal("deposit");
   };
 

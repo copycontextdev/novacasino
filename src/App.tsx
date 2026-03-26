@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { NovaGamesAuthModal } from "@/components/auth/NovaGamesAuthModal";
 import { SUPPORT_TELEGRAM_URL } from "@/lib/app_constants";
@@ -30,7 +30,36 @@ import WalletSection from "./components/sections/WalletSection";
 import SearchSection from "./components/sections/SearchSection";
 import ProfileSection from "./components/sections/ProfileSection";
 
+const TAB_PATHS = {
+  lobby: "/",
+  search: "/search",
+  wallet: "/wallet",
+  promotions: "/promotions",
+  profile: "/profile",
+} as const;
+
+type AppTab = keyof typeof TAB_PATHS;
+
+function isAppTab(value: string): value is AppTab {
+  return value in TAB_PATHS;
+}
+
+function getTabPath(tab: string): string {
+  return isAppTab(tab) ? TAB_PATHS[tab] : TAB_PATHS.lobby;
+}
+
+function getTabFromPathname(pathname: string): AppTab {
+  const segment = pathname.split("/").filter(Boolean)[0];
+
+  if (!segment) {
+    return "lobby";
+  }
+
+  return isAppTab(segment) ? segment : "lobby";
+}
+
 export default function App() {
+  const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const hydrated = useAuthStore((s) => s.hydrated);
@@ -45,7 +74,7 @@ export default function App() {
   const walletCurrency = useBalanceStore((s) => s.currency);
   const hasLoadedInitialBalance = useBalanceStore((s) => s.hasLoadedInitialBalance);
 
-  const [activeTab, setActiveTab] = useState("lobby");
+  const [activeTab, setActiveTab] = useState<AppTab>("lobby");
   const [selectedGame, setSelectedGame] = useState<SabiGame | null>(null);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
@@ -79,25 +108,44 @@ export default function App() {
       return;
     }
 
-    setActiveTab(tab);
+    navigate(getTabPath(tab));
   };
 
   useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab === "wallet" || tab === "profile") {
-      if (!isAuthenticated) {
-        openAuthModal();
-        return;
+    const legacyTab = searchParams.get("tab");
+    if (legacyTab && isAppTab(legacyTab)) {
+      const nextPath = getTabPath(legacyTab);
+      if (`${location.pathname}${location.search}` !== nextPath) {
+        navigate(nextPath, { replace: true });
       }
-
-      setActiveTab(tab);
       return;
     }
 
-    if (tab === "lobby") {
-      setActiveTab(tab);
+    const nextTab = getTabFromPathname(location.pathname);
+
+    if ((nextTab === "wallet" || nextTab === "profile") && !isAuthenticated) {
+      openAuthModal();
+      if (location.pathname !== TAB_PATHS.lobby) {
+        navigate(TAB_PATHS.lobby, { replace: true });
+      }
+      if (activeTab !== "lobby") {
+        setActiveTab("lobby");
+      }
+      return;
     }
-  }, [isAuthenticated, openAuthModal, searchParams]);
+
+    if (activeTab !== nextTab) {
+      setActiveTab(nextTab);
+    }
+  }, [
+    activeTab,
+    isAuthenticated,
+    location.pathname,
+    location.search,
+    navigate,
+    openAuthModal,
+    searchParams,
+  ]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -126,10 +174,6 @@ export default function App() {
   const renderContent = () => {
     switch (activeTab) {
       case "lobby":
-      case "slots":
-      case "live":
-      case "sports":
-      case "vip":
         return (
           <LobbySection
             isLoading={lobbyQuery.isLoading}
@@ -215,7 +259,7 @@ export default function App() {
               return;
             }
 
-            setActiveTab("wallet");
+            navigate(TAB_PATHS.wallet);
             openWalletModal("deposit");
           }}
         />

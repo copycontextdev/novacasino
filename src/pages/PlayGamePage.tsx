@@ -105,7 +105,7 @@ export function PlayGamePage() {
       ? `${currencyLabel} ${formatBalance(balance)}`
       : `${currencyLabel} 0.00`;
   const handleBack = () => {
-    navigate("/?tab=lobby", { replace: true });
+    navigate("/", { replace: true });
   };
 
   if (!hydrated) {
@@ -144,7 +144,7 @@ export function PlayGamePage() {
               </p>
               <button
                 type="button"
-                onClick={() => navigate("/?tab=wallet")}
+                onClick={() => navigate("/wallet")}
                 className="rounded-lg bg-gradient-to-r from-primary to-primary-dim px-3 py-1.5 text-xs font-black text-on-primary"
               >
                 Deposit
