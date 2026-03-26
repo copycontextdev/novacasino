@@ -51,7 +51,7 @@ export function PromotionBannerCarousel({ banners }: { banners: SabiPromotionBan
   };
 
   return (
-    <section className="relative h-48 md:h-80 rounded-2xl overflow-hidden border border-white/5 bg-surface-container-high group">
+    <section className="relative h-48 md:h-80 rounded-sm overflow-hidden border border-white/5 bg-surface-container-low group">
       <AnimatePresence mode="wait">
         <motion.div
           key={current.id}

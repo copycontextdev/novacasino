@@ -11,7 +11,6 @@ import type { SabiGame, SabiProvider } from "@/types/api.types";
 
 const RECENT_GAMES_STORAGE_KEY = "nova_recent_game_ids";
 const MAX_RECENT_GAMES = 12;
-const MOBILE_VISIBLE_QUICK_GAMES = 3;
 
 function loadRecentGameIds(): string[] {
   if (typeof window === "undefined") {
@@ -86,21 +85,6 @@ export function useLobbyContent(activeTab: string) {
     return displayTrending.slice(0, 10);
   }, [allLobbyGames, displayTrending, recentGameIds, topFromApi]);
 
-  const featuredQuickGameIds = useMemo(
-    () => new Set(quickGames.slice(0, MOBILE_VISIBLE_QUICK_GAMES).map((game) => game.uuid)),
-    [quickGames],
-  );
-
-  const dedupedTrendingGames = useMemo(() => {
-    const filtered = displayTrending.filter((game) => !featuredQuickGameIds.has(game.uuid));
-    return filtered.length > 0 ? filtered : displayTrending;
-  }, [displayTrending, featuredQuickGameIds]);
-
-  const dedupedLobbyGridGames = useMemo(() => {
-    const filtered = lobbyGridGames.filter((game) => !featuredQuickGameIds.has(game.uuid));
-    return filtered.length > 0 ? filtered : lobbyGridGames;
-  }, [featuredQuickGameIds, lobbyGridGames]);
-
   const categoryChips = useMemo(() => {
     const names = lobbyCategories.map((c) => c.name).filter(Boolean);
     return ["All", ...names.slice(0, 8)];
@@ -133,8 +117,8 @@ export function useLobbyContent(activeTab: string) {
     categoryChips,
     categoryFilter,
     setCategoryFilter,
-    gridGames: dedupedLobbyGridGames,
-    trendingGames: dedupedTrendingGames,
+    gridGames: lobbyGridGames,
+    trendingGames: displayTrending,
     rememberRecentGame,
     lobbyQuery,
   };

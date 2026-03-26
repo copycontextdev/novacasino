@@ -37,7 +37,7 @@ import type {
 import DepositModal from "../payment/deposit/DepositModal";
 import DepositConfirmationModal from "../payment/deposit/DepositConfirmationModal";
 import DepositTabContent from "../payment/deposit/DepositTabContent";
-import WithdrawModal from "../payment/WithdrawModal";
+import WithdrawModal from "../payment/withdraw/WithdrawModal";
 import WithdrawTabContent from "../payment/withdraw/WithdrawTabContent";
 import AddAccountModal from "../profile/AddAccountModal";
 
@@ -324,7 +324,7 @@ const WalletSection = () => {
         currencyLabel={currencyLabel}
         minWithdraw={minWithdraw}
         maxWithdraw={maxWithdraw}
-        isLoadingBanks={userBanksQuery.isLoading || userBanksQuery.isFetching}
+        isLoadingBanks={userBanksQuery.isLoading && userBanks.length === 0}
         hasBankLoadError={userBanksQuery.isError}
         onRefreshBanks={() => {
           void userBanksQuery.refetch();

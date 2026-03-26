@@ -243,7 +243,92 @@ export interface SabiInitResponse {
 }
 
 /* ============================================================
- * 4. Casino
+ * 4. Bonus & Promotions
+ * ============================================================ */
+
+export interface SabiActiveBonusStatus {
+  challenge_badge: boolean;
+  crash_jackpot: boolean;
+  deposit: boolean;
+  loyalty: boolean;
+  raffle: boolean;
+  shamo: boolean;
+  spin: boolean;
+  tournament: boolean;
+}
+
+export interface SabiSpinAward {
+  id: number;
+  uuid?: SabiUUID;
+  is_active?: boolean;
+  created_at?: SabiISODate;
+  updated_at?: SabiISODate;
+  [key: string]: unknown;
+}
+
+export interface SabiSpinCondition {
+  id: number;
+  name: string;
+  by_bet_count: boolean;
+  by_bet_amount: boolean;
+  by_winning_streak: boolean;
+  by_login_streak: boolean;
+  by_deposit_amount: boolean;
+  bet_count: number | null;
+  winning_streak: number | null;
+  login_streak_days: number | null;
+  bet_amount: SabiAmount | null;
+  deposit_amount: SabiAmount | null;
+  is_active: boolean;
+  image: SabiUrl | null;
+  description: string | null;
+  [key: string]: unknown;
+}
+
+export interface SabiSpinResult {
+  id: number;
+  uuid?: SabiUUID;
+  created_at?: SabiISODate;
+  updated_at?: SabiISODate;
+  status?: string;
+  reward_name?: string | null;
+  reward_type?: string | null;
+  reward_amount?: SabiAmount | null;
+  [key: string]: unknown;
+}
+
+export interface SabiSpinTrackerResponse {
+  active_bet_amount?: string;
+  [key: string]: unknown;
+}
+
+export interface SabiDepositBonus {
+  id: number | SabiUUID | string;
+  uuid?: SabiUUID;
+  name?: string;
+  title?: string;
+  description?: string | null;
+  status?: string;
+  amount?: SabiAmount | number | null;
+  bonus_amount?: SabiAmount | number | null;
+  deposit_amount?: SabiAmount | number | null;
+  reward_amount?: SabiAmount | number | null;
+  is_active?: boolean;
+  is_claimed?: boolean;
+  is_completed?: boolean;
+  created_at?: SabiISODate;
+  updated_at?: SabiISODate;
+  expires_at?: SabiISODate | null;
+  [key: string]: unknown;
+}
+
+export type SabiSpinAwardListResponse = SabiPaginatedResponse<SabiSpinAward>;
+export type SabiSpinConditionListResponse = SabiPaginatedResponse<SabiSpinCondition>;
+export type SabiSpinResultListResponse = SabiPaginatedResponse<SabiSpinResult>;
+export type SabiDepositBonusListResponse = SabiPaginatedResponse<SabiDepositBonus>;
+
+/* ============================================================
+ * 5. Casino
  * ============================================================ */
 
 export type SabiGameMode = "demo" | "real";

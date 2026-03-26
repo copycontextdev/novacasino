@@ -135,13 +135,10 @@ const WithdrawModal = ({
                 className="group relative flex cursor-pointer rounded-lg bg-white/5 px-4 py-4 text-white shadow-md transition focus:not-data-focus:outline-none data-checked:bg-white/10 data-focus:outline data-focus:outline-white"
               >
                 <div className="flex w-full items-center justify-between">
-                  <div className="text-sm/6">
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-white">{b.account_name}</p>
-                      <CopyButton value={b.account_number} size="sm" />
-                    </div>
+                  <div className="text-sm/6"> 
                     <div className="flex flex-col gap-0.5 text-on-surface-variant">
                       <p>{b.bank_name ?? "Bank account"}</p>
+                      <p className="font-semibold text-white">{b.account_name}</p>
                       <p>{b.account_number}</p>
                     </div>
                   </div>

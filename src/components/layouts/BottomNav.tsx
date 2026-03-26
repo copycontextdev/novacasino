@@ -4,7 +4,8 @@
  */
 
 import React from "react";
-import { Home, Search, Wallet, Gift, UserCircle, HelpCircle } from "lucide-react";
+import { HelpCircle, type LucideIcon } from "lucide-react";
+import { PRIMARY_NAV_ITEMS } from "@/components/layouts/navigation-items";
 
 interface BottomNavProps {
   activeTab: string;
@@ -13,18 +14,25 @@ interface BottomNavProps {
   onHelpClick: () => void;
 }
 
+interface BottomNavItem {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  onClick?: () => void;
+}
+
 const BottomNav = ({
   activeTab,
   setActiveTab,
   isLoggedIn,
   onHelpClick,
 }: BottomNavProps) => {
-  const items = [
-    { id: "lobby", label: "Home", icon: Home },
-    { id: "search", label: "Search", icon: Search },
-    { id: "wallet", label: "Wallet", icon: Wallet },
-    { id: "promotions", label: "Promos", icon: Gift },
-    { id: "profile", label: "Profile", icon: UserCircle },
+  const items: BottomNavItem[] = [
+    ...PRIMARY_NAV_ITEMS.map((item) => ({
+      id: item.id,
+      label: item.shortLabel,
+      icon: item.icon,
+    })),
     { id: "help", label: "Help", icon: HelpCircle, onClick: onHelpClick },
   ];
   return (

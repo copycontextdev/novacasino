@@ -1,16 +1,12 @@
 
 import {
   UserCircle,
-  Grid2X2,
-  Dices,
-  Video,
-  Gamepad2,
-  Star,
   Settings,
   HelpCircle,
 } from "lucide-react";
 import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
 import { useAuthStore } from "@/store/auth-store";
+import { PRIMARY_NAV_ITEMS } from "@/components/layouts/navigation-items";
 
 
 const Sidebar = ({
@@ -31,15 +27,6 @@ const Sidebar = ({
     member?.name ||
     [member?.first_name, member?.last_name].filter(Boolean).join(" ") ||
     "Player";
-
-  const navItems = [
-    { id: "lobby", label: "Lobby", icon: Grid2X2 },
-    { id: "slots", label: "Slots", icon: Dices },
-    { id: "live", label: "Live Casino", icon: Video },
-    { id: "sports", label: "Sports", icon: Gamepad2 },
-    { id: "vip", label: "VIP Club", icon: Star },
-    { id: "profile", label: "Profile", icon: UserCircle },
-  ];
 
   return (
     <aside className="hidden md:flex flex-col py-8 px-4 gap-4 h-screen w-64 border-r border-white/15 bg-surface fixed left-0 top-0 z-[60]">
@@ -78,7 +65,7 @@ const Sidebar = ({
         </div>
       )}
       <nav className="flex flex-col gap-1 flex-1">
-        {navItems.map((item) => (
+        {PRIMARY_NAV_ITEMS.map((item) => (
           <button
             key={item.id}
             type="button"

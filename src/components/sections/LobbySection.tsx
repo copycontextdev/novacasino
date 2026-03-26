@@ -67,7 +67,7 @@ const LobbySection = ({
     );
   }
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 md:space-y-8">
       <div className="-mx-4 md:-mx-8">
         {promotionBanners.length > 0 ? (
           <PromotionBannerCarousel banners={promotionBanners} />
@@ -117,15 +117,21 @@ const LobbySection = ({
         <div className="flex items-center justify-between">
           <h2 className="text-lg md:text-2xl font-headline font-extrabold tracking-tight">Trending</h2>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
+        <div className="-mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide md:gap-5">
           {displayTrending.map((game) => (
-            <GameCard
-              key={game.uuid}
-              game={game}
-              providerName={resolveProviderName(game, providers)}
-              onClick={() => onGameClick(game)}
-            />
+              <div
+                key={`trending-${game.uuid}`}
+                className="w-[10.25rem] shrink-0 md:w-[12.5rem] lg:w-[13.5rem]"
+              >
+                <GameCard
+                  game={game}
+                  providerName={resolveProviderName(game, providers)}
+                  onClick={() => onGameClick(game)}
+                />
+              </div>
           ))}
+          </div>
         </div>
       </section>
       <section className="space-y-4 md:space-y-6">

@@ -149,7 +149,7 @@ export default function App() {
           />
         );
       case "promotions":
-        return <PromotionsSection promotionBanners={promotionBanners} />;
+        return <PromotionsSection />;
       case "wallet":
         return <WalletSection />;
       case "search":

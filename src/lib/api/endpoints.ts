@@ -16,6 +16,14 @@ export const CORE_ME_UPDATE = "/core/member/me/update";
 export const CORE_WALLET = "/core/member/me/wallet";
 export const CORE_TRANSFER = "/core/member/transfer/";
 
+// Bonus / Promotions
+export const BONUS_ACTIVE_STATUS = "/bonus/active-bonus/status/";
+export const BONUS_MEMBER_SPIN_AWARDS = "/bonus/member-spin-award/list/";
+export const BONUS_MEMBER_SPIN_CONDITIONS = "/bonus/member-spin-condition/list/";
+export const BONUS_MEMBER_SPIN_RESULTS = "/bonus/member-spin-result/list/";
+export const BONUS_SPIN_TRACKER = "/bonus/spin-tracker/";
+export const BONUS_MEMBER_DEPOSIT_BONUSES = "/bonus/deposit/member/bonuses/";
+
 // Casino
 export const CASINO_LOBBY = "/xcasino/lobby/";
 export const CASINO_PROVIDERS = "/xcasino/providers/";
