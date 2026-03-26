@@ -8,7 +8,6 @@ The frontend is browser-first:
 - no Cloudflare Functions are required
 
 This setup does not block other deployments such as Vercel. The changes made for Cloudflare are:
-- a static SPA fallback file: [public/_redirects](/Users/mikiasbirhanu/develop/nova/nova-player/public/_redirects)
 - environment-driven API and websocket configuration
 
 ## 1. Current Deployment Defaults
@@ -65,17 +64,20 @@ This app uses `BrowserRouter`, so direct refreshes for routes like:
 
 must return `index.html`.
 
-That is handled by:
+For Cloudflare Pages Git builds, do not add a custom `_redirects` fallback if Pages/Wrangler is already using `single-page-application` asset handling. That combination can create an infinite redirect loop.
 
-- [public/_redirects](/Users/mikiasbirhanu/develop/nova/nova-player/public/_redirects)
-
-Content:
+If Cloudflare dashboard asks for a deploy command such as:
 
 ```txt
-/* /index.html 200
+npx wrangler deploy
 ```
 
-Vite copies this file into `dist/`, and Cloudflare Pages uses it for SPA fallback routing.
+remove it for a normal Pages deployment. Use only:
+
+- Build command: `pnpm build`
+- Build output directory: `dist`
+
+The Pages project should build and publish the static output directly.
 
 ## 5. Backend Requirements
 
@@ -126,11 +128,34 @@ After deployment, verify:
 6. Deposit and withdraw flows reach the external API
 7. Search and lobby data load correctly
 
-## 8. Why This Does Not Break Vercel
+## 8. Build Failure You May See
+
+If Cloudflare shows an error like:
+
+```txt
+Invalid _redirects configuration:
+Infinite loop detected in this rule
+```
+
+the cause is usually:
+
+1. Cloudflare is running `wrangler deploy`
+2. Wrangler already enables SPA fallback internally
+3. a custom `_redirects` SPA fallback is also present
+
+Fix:
+
+1. open the Cloudflare Pages project settings
+2. clear the deploy command if one is set
+3. keep only:
+   - Build command: `pnpm build`
+   - Output directory: `dist`
+4. redeploy
+
+## 9. Why This Does Not Break Vercel
 
 These changes are provider-safe:
 
-- `public/_redirects` is harmless for Vercel
 - Vite env vars work the same on Cloudflare and Vercel
 - no Cloudflare-only runtime code was added
 - no Wrangler config or Functions runtime was introduced
