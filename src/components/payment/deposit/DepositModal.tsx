@@ -99,7 +99,15 @@ const DepositModal = ({
         className="relative w-full max-w-md bg-surface-container rounded-3xl overflow-hidden border border-white/10 max-h-[90vh] overflow-y-auto"
       >
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-xl font-headline font-extrabold">Deposit</h2>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-primary/80">
+              Step 1 of 2
+            </p>
+            <h2 className="text-xl font-headline font-extrabold">Create deposit</h2>
+            <p className="mt-1 text-sm text-on-surface-variant">
+              Choose amount, payment bank, and agent bank account.
+            </p>
+          </div>
           <button type="button" onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5">
             <X className="w-4 h-4" />
           </button>
@@ -164,9 +172,9 @@ const DepositModal = ({
             type="button"
             disabled={isCreating || !canCreate}
             onClick={onCreate}
-            className="w-full mt-4 py-4 rounded-full bg-gradient-to-r from-primary to-primary-dim text-on-primary font-extrabold disabled:opacity-50"
+            className="w-full mt-4 py-4 rounded-full bg-linear-to-r from-primary to-primary-dim text-on-primary font-extrabold disabled:opacity-50"
           >
-            {isCreating ? "Creating…" : "Create deposit order"}
+            {isCreating ? "Creating…" : "Create order and continue"}
           </button>
           {amountError ? (
             <p className="mt-3 text-sm font-medium text-error">{amountError}</p>

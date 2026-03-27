@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import { motion } from "motion/react";
-import { X } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import type { SabiDepositOrder } from "@/types/api.types";
 import { formatBalance } from "@/lib/format";
 import DepositOrderPreviewCard from "./DepositOrderPreviewCard";
@@ -28,6 +28,7 @@ const DepositConfirmationModal = ({
   onCancel,
   isSubmitting,
 }: DepositConfirmationModalProps) => {
+  const fileInputId = useId();
   const [reference, setReference] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -50,7 +51,15 @@ const DepositConfirmationModal = ({
     <motion.div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
       <motion.div className="relative w-full max-w-md flex flex-col gap-2 bg-surface-container rounded-3xl border border-white/10 p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-headline font-extrabold">Confirm deposit</h2>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-primary/80">
+              Step 2 of 2
+            </p>
+            <h2 className="text-xl font-headline font-extrabold">Confirm deposit</h2>
+            <p className="mt-1 text-sm text-on-surface-variant">
+              Add the transaction reference and optional receipt after creating the order.
+            </p>
+          </div>
           <button type="button" onClick={onClose}>
             <X className="w-5 h-5" />
           </button>
@@ -62,11 +71,33 @@ const DepositConfirmationModal = ({
           value={reference}
           onChange={(e) => setReference(e.target.value)}
         />
-        <input
-          type="file"
-          className="w-full text-xs text-on-surface-variant mb-4"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        />
+        <div className="mb-4">
+          <label
+            htmlFor={fileInputId}
+            className="block cursor-pointer rounded-2xl border border-dashed border-white/15 bg-surface-container-high px-4 py-5 transition hover:border-primary/50 hover:bg-surface-container-highest/70"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+                <Upload className="h-5 w-5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-on-surface">Upload receipt or screenshot</p>
+                <p className="mt-1 text-xs text-on-surface-variant">
+                  Optional. Tap to choose a file for this deposit confirmation.
+                </p>
+                <p className="mt-2 truncate text-xs font-semibold text-primary">
+                  {file ? file.name : "No file selected"}
+                </p>
+              </div>
+            </div>
+          </label>
+          <input
+            id={fileInputId}
+            type="file"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          />
+        </div>
  
         <div className="flex flex-col gap-3 mt-2">
           <button
