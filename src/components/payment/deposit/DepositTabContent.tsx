@@ -5,16 +5,17 @@ import type { SabiDepositOrder, SabiWithdrawalOrder, SabiAmount } from "@/types/
 import DepositOrderPreviewCard from "./DepositOrderPreviewCard";
 import AppCard from "@/components/ui/card";
 import DepositCancelConfirmationDialog from "./DepositCancelConfirmationDialog";
+import AppButton from "@/components/ui/AppButton";
+import NewDepositModal from "./new/NewDepositModal";
 
 interface DepositTabContentProps {
   deposits: SabiDepositOrder[];
   isDepositsLoading: boolean;
   onConfirmDeposit: (order: SabiDepositOrder) => void;
-  onDepositClick: () => void;
   onCancelDeposit: (orderUuid: string) => Promise<void>;
 }
 
-function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCancelDeposit, onDepositClick }: DepositTabContentProps) {
+function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCancelDeposit }: DepositTabContentProps) {
   const [cancellingOrder, setCancellingOrder] = useState<SabiDepositOrder | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
@@ -83,14 +84,7 @@ function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCa
           <div className="space-y-4">
             <div className="flex flex-row w-full justify-between items-center gap-4">
               <h3 className="text-xs font-black uppercase tracking-widest text-primary/80 px-1">Pending</h3>
-              <button
-                type="button"
-                onClick={onDepositClick}
-                className="flex items-center justify-center gap-2 bg-surface-bright border-2 border-primary/40 hover:border-primary/80 text-primary font-black py-2.5 px-6 rounded-2xl shadow-2xl shadow-primary/10 active:scale-95 transition-all duration-200"
-              >
-                <ArrowDownLeft className="w-5 h-5 stroke-[3]" />
-                <span className="text-xs uppercase tracking-wider">Deposit</span>
-              </button>
+              <NewDepositModal buttonVariant="secondary" />
             </div>
 
             {pendingDeposits.length > 0 ? (

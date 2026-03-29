@@ -1,53 +1,213 @@
-import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { useState } from 'react'
+import React, { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/auth-store";
+import { useBalanceStore } from "@/store/balance-store";
+import { useInit } from "@/hooks/queries/use-init";
+import {
+  useMyDepositOrders,
+  useUserBankInfoList,
+} from "@/hooks/queries/use-payment-queries";
+import { useWallet } from "@/hooks/queries/use-wallet";
+import {
+  useCreateDeposit,
+  useUpdateDeposit,
+  useCancelDeposit,
+} from "@/hooks/mutations/use-deposit";
+import { getAgentBanks, getAgentBankInfo } from "@/lib/api-methods/payment.api";
+import { extractEnvelopeData, toArray, toPositiveNumber } from "@/lib/payment-utils";
+import { getDepositAmountError } from "@/lib/payment-validation";
+import type {
+  SabiDepositOrder,
+  SabiPaymentBank,
+} from "@/types/api.types";
+import DepositModal from "../DepositModal";
+import DepositConfirmationModal from "../DepositConfirmationModal";
+import AppButton from "@/components/ui/AppButton";
+import { ArrowDownLeft } from "lucide-react";
+import { useUiStore } from "@/store/ui-store";
+import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
+import AppModal from "@/components/ui/AppModal";
 
-export default function NewDepositModal() {
-  let [isOpen, setIsOpen] = useState(false)
 
-  function open() {
-    setIsOpen(true)
-  }
+interface NewDepositModalProps {
+  buttonVariant?: "primary" | "secondary";
+  className?: string;
+}
 
-  function close() {
-    setIsOpen(false)
-  }
+export default function NewDepositModal({ buttonVariant = "primary", className }: NewDepositModalProps) {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const openAuthModal = useUiStore((s) => s.openAuthModal);
+  const currency = useBalanceStore((s) => s.currency);
+
+  // Modal states
+  const [isOpen, setIsOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [confirmOrder, setConfirmOrder] = useState<SabiDepositOrder | null>(null);
+
+  // Form states
+  const [depositAmount, setDepositAmount] = useState("");
+  const [selectedBankUuid, setSelectedBankUuid] = useState("");
+  const [selectedBankInfoUuid, setSelectedBankInfoUuid] = useState("");
+
+  const initQuery = useInit();
+  const walletQuery = useWallet();
+  const depositsQuery = useMyDepositOrders();
+  const createDeposit = useCreateDeposit();
+  const updateDeposit = useUpdateDeposit();
+  const cancelDeposit = useCancelDeposit();
+
+  const currencyLabel = initQuery.data?.company_info?.currency ?? currency ?? "ETB";
+  const minDeposit = toPositiveNumber(initQuery.data?.system_config?.min_deposit_amount, 50);
+  const maxDeposit = toPositiveNumber(initQuery.data?.system_config?.max_deposit_amount, 1_000_000);
+
+  const depositBanksQuery = useQuery({
+    queryKey: ["deposit-modal-banks"],
+    queryFn: () => getAgentBanks({ type: "deposit" }),
+    enabled: isOpen,
+    staleTime: 60_000,
+  });
+
+  const depositBanks = useMemo(
+    () => toArray<SabiPaymentBank>(depositBanksQuery.data),
+    [depositBanksQuery.data],
+  );
+
+  const depositAmountNumber = Number(depositAmount);
+  const bankInfoQuery = useQuery({
+    queryKey: ["deposit-modal-bank-info", selectedBankUuid, depositAmountNumber],
+    queryFn: () => getAgentBankInfo(selectedBankUuid, { amount: depositAmount }),
+    enabled:
+      isOpen &&
+      !!selectedBankUuid &&
+      Number.isFinite(depositAmountNumber) &&
+      depositAmountNumber > 0,
+    staleTime: 15_000,
+  });
+
+  const bankInfoOptions = useMemo(
+    () => bankInfoQuery.data?.results ?? [],
+    [bankInfoQuery.data?.results],
+  );
+
+  const effectiveBankInfoUuid = useMemo(() => {
+    if (
+      selectedBankInfoUuid &&
+      bankInfoOptions.some((item) => item.uuid === selectedBankInfoUuid)
+    ) {
+      return selectedBankInfoUuid;
+    }
+    return bankInfoOptions[0]?.uuid ?? "";
+  }, [bankInfoOptions, selectedBankInfoUuid]);
+
+  const depositAmountError = useMemo(
+    () => getDepositAmountError(depositAmount, minDeposit, maxDeposit, currencyLabel),
+    [currencyLabel, depositAmount, maxDeposit, minDeposit],
+  );
+
+  const canCreateDeposit =
+    !depositAmountError && !!selectedBankUuid && !!effectiveBankInfoUuid && !createDeposit.isPending;
+
+  const open = () => {
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
+    setIsOpen(true);
+  };
+
+  const close = () => {
+    setIsOpen(false);
+    setDepositAmount("");
+    setSelectedBankUuid("");
+    setSelectedBankInfoUuid("");
+  };
 
   return (
     <>
-      <Button
+      <AppButton
         onClick={open}
-        className="rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-black/30"
+        variant={"primary"}
+        className={className}
       >
-        Deposit
-      </Button>
+        <ArrowDownLeft className="w-5 h-5 stroke-3" />
+        <span className="text-xs uppercase tracking-wider">Deposit</span>
+      </AppButton> 
+      <DepositModal
+        open={isOpen}
+        onClose={close}
+        currencyLabel={currencyLabel}
+        minDeposit={minDeposit}
+        maxDeposit={maxDeposit}
+        depositBanks={depositBanks}
+        bankInfoOptions={bankInfoOptions}
+        amountValue={depositAmount}
+        onAmountChange={setDepositAmount}
+        selectedBankUuid={selectedBankUuid}
+        onBankChange={(id) => {
+          setSelectedBankUuid(id);
+          setSelectedBankInfoUuid("");
+        }}
+        selectedAgentBankUuid={effectiveBankInfoUuid}
+        onBankInfoChange={setSelectedBankInfoUuid}
+        isCreating={createDeposit.isPending}
+        isLoadingBankInfo={bankInfoQuery.isFetching}
+        amountError={depositAmountError}
+        canCreate={canCreateDeposit}
+        onCreate={() => {
+          if (!canCreateDeposit) return;
+          createDeposit.mutate(
+            { amount: depositAmount, agent_bank_info_id: effectiveBankInfoUuid },
+            {
+              onSuccess: (res) => {
+                const order = extractEnvelopeData<SabiDepositOrder>(res);
+                if (order) {
+                  close();
+                  setConfirmOrder(order);
+                  setIsConfirmModalOpen(true);
+                }
+                depositsQuery.refetch();
+              },
+            },
+          );
+        }}
+      />
 
-      <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={close} __demoMode>
-          <DialogBackdrop className="fixed inset-0 bg-black/30" />
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
-            <DialogPanel
-              transition
-              className="w-full max-w-md rounded-xl bg-white/5 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
-            >
-              <DialogTitle as="h3" className="text-base/7 font-medium text-white">
-                Payment successful
-              </DialogTitle>
-              <p className="mt-2 text-sm/6 text-white/50">
-                Your payment has been successfully submitted. We’ve sent you an email with all of the details of your
-                order.
-              </p>
-              <div className="mt-4">
-                <Button
-                  className="inline-flex items-center gap-2 rounded-md bg-gray-700 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-gray-600 data-open:bg-gray-700"
-                  onClick={close}
-                >
-                  Got it, thanks!
-                </Button>
-              </div>
-            </DialogPanel>
-          </div>
-        </div>
-      </Dialog>
+      <DepositConfirmationModal
+        open={isConfirmModalOpen}
+        order={confirmOrder}
+        onClose={() => {
+          setIsConfirmModalOpen(false);
+          setConfirmOrder(null);
+        }}
+        isSubmitting={updateDeposit.isPending}
+        onCancel={async (uuid) => {
+          await cancelDeposit.mutateAsync(uuid, {
+            onSuccess: () => {
+              setIsConfirmModalOpen(false);
+              setConfirmOrder(null);
+              depositsQuery.refetch();
+            },
+          });
+        }}
+        onSubmit={(reference, file) => {
+          if (!confirmOrder?.uuid) return;
+          updateDeposit.mutate(
+            { uuid: confirmOrder.uuid, body: { reference_number: reference, receipt: file ?? undefined } },
+            {
+              onSuccess: () => {
+                setIsConfirmModalOpen(false);
+                setConfirmOrder(null);
+                walletQuery.refetch();
+                depositsQuery.refetch();
+              },
+            },
+          );
+        }}
+      />
     </>
-  )
+  );
 }
+
+
+ 
+ 

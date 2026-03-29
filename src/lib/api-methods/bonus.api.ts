@@ -5,6 +5,8 @@ import type {
   SabiPaginationQuery,
   SabiSpinAwardListResponse,
   SabiSpinConditionListResponse,
+  SabiSpinExecuteResponse,
+  SabiSpinRewardListResponse,
   SabiSpinResultListResponse,
   SabiSpinTrackerResponse,
 } from "@/types/api.types";
@@ -14,6 +16,8 @@ import {
   BONUS_MEMBER_SPIN_AWARDS,
   BONUS_MEMBER_SPIN_CONDITIONS,
   BONUS_MEMBER_SPIN_RESULTS,
+  BONUS_SPIN_AWARD_REWARDS,
+  BONUS_SPIN_AWARD_SPIN,
   BONUS_SPIN_TRACKER,
 } from "@/lib/api/endpoints";
 
@@ -48,6 +52,23 @@ export async function getMemberSpinResults(
   const { data } = await apiClient.get<SabiSpinResultListResponse>(
     BONUS_MEMBER_SPIN_RESULTS,
     { params: query },
+  );
+  return data;
+}
+
+export async function getSpinAwardRewards(
+  awardId: number,
+): Promise<SabiSpinRewardListResponse> {
+  const { data } = await apiClient.get<SabiSpinRewardListResponse>(
+    BONUS_SPIN_AWARD_REWARDS(awardId),
+  );
+  return data;
+}
+
+export async function spinAward(awardId: number): Promise<SabiSpinExecuteResponse> {
+  const { data } = await apiClient.post<SabiSpinExecuteResponse>(
+    BONUS_SPIN_AWARD_SPIN(awardId),
+    {},
   );
   return data;
 }

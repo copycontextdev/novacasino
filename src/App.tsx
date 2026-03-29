@@ -25,7 +25,8 @@ import GameModal from "./components/game-components/GameModal";
 import EditProfileModal from "./components/profile/EditProfileModal";
 import AddAccountModal from "./components/profile/AddAccountModal";
 import LobbySection from "./components/sections/LobbySection";
-import PromotionsSection from "./components/sections/PromotionsSection";
+import SpinBonusesSection from "./components/sections/SpinBonusesSection";
+import DepositBonusesSection from "./components/sections/DepositBonusesSection";
 import WalletSection from "./components/sections/WalletSection";
 import SearchSection from "./components/sections/SearchSection";
 import ProfileSection from "./components/sections/ProfileSection";
@@ -34,7 +35,8 @@ const TAB_PATHS = {
   lobby: "/",
   search: "/search",
   wallet: "/wallet",
-  promotions: "/promotions",
+  bonusSpin: "/bonus/spin",
+  bonusDeposit: "/bonus/deposit",
   profile: "/profile",
 } as const;
 
@@ -49,10 +51,19 @@ function getTabPath(tab: string): string {
 }
 
 function getTabFromPathname(pathname: string): AppTab {
-  const segment = pathname.split("/").filter(Boolean)[0];
+  const segments = pathname.split("/").filter(Boolean);
+  const [segment, child] = segments;
 
   if (!segment) {
     return "lobby";
+  }
+
+  if (segment === "bonus") {
+    return child === "deposit" ? "bonusDeposit" : "bonusSpin";
+  }
+
+  if (segment === "promotions") {
+    return "bonusSpin";
   }
 
   return isAppTab(segment) ? segment : "lobby";
@@ -70,6 +81,8 @@ export default function App() {
   const openAuthModal = useUiStore((s) => s.openAuthModal);
   const closeAuthModal = useUiStore((s) => s.closeAuthModal);
   const openWalletModal = useUiStore((s) => s.openWalletModal);
+  const pendingPostAuthPath = useUiStore((s) => s.pendingPostAuthPath);
+  const clearPendingPostAuthPath = useUiStore((s) => s.clearPendingPostAuthPath);
   const walletBalance = useBalanceStore((s) => s.balance);
   const walletCurrency = useBalanceStore((s) => s.currency);
   const hasLoadedInitialBalance = useBalanceStore((s) => s.hasLoadedInitialBalance);
@@ -102,19 +115,29 @@ export default function App() {
     [userBanksQuery.data],
   );
 
+  const authRequiredTabs: AppTab[] = ["wallet", "profile", "bonusSpin", "bonusDeposit"];
+
   const handleTabChange = (tab: string) => {
-    if ((tab === "wallet" || tab === "profile") && !isAuthenticated) {
-      openAuthModal();
+    const nextPath = getTabPath(tab);
+    const requiresAuth = isAppTab(tab) && authRequiredTabs.includes(tab);
+
+    if (requiresAuth && !isAuthenticated) {
+      openAuthModal(nextPath);
       return;
     }
 
-    navigate(getTabPath(tab));
+    navigate(nextPath);
   };
 
   useEffect(() => {
     const legacyTab = searchParams.get("tab");
-    if (legacyTab && isAppTab(legacyTab)) {
-      const nextPath = getTabPath(legacyTab);
+    if (
+      legacyTab &&
+      (isAppTab(legacyTab) || legacyTab === "promotions")
+    ) {
+      const nextPath = legacyTab === "promotions"
+        ? TAB_PATHS.bonusSpin
+        : getTabPath(legacyTab);
       if (`${location.pathname}${location.search}` !== nextPath) {
         navigate(nextPath, { replace: true });
       }
@@ -123,8 +146,10 @@ export default function App() {
 
     const nextTab = getTabFromPathname(location.pathname);
 
-    if ((nextTab === "wallet" || nextTab === "profile") && !isAuthenticated) {
-      openAuthModal();
+    const requiresAuth = authRequiredTabs.includes(nextTab);
+
+    if (requiresAuth && !isAuthenticated) {
+      openAuthModal(getTabPath(nextTab));
       if (location.pathname !== TAB_PATHS.lobby) {
         navigate(TAB_PATHS.lobby, { replace: true });
       }
@@ -146,6 +171,15 @@ export default function App() {
     openAuthModal,
     searchParams,
   ]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !pendingPostAuthPath) {
+      return;
+    }
+
+    navigate(pendingPostAuthPath, { replace: true });
+    clearPendingPostAuthPath();
+  }, [clearPendingPostAuthPath, isAuthenticated, navigate, pendingPostAuthPath]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -192,8 +226,10 @@ export default function App() {
             gridGames={gridGames}
           />
         );
-      case "promotions":
-        return <PromotionsSection />;
+      case "bonusSpin":
+        return <SpinBonusesSection />;
+      case "bonusDeposit":
+        return <DepositBonusesSection />;
       case "wallet":
         return <WalletSection />;
       case "search":
@@ -251,19 +287,11 @@ export default function App() {
           walletLoading={isAuthenticated && !hasLoadedInitialBalance}
           isLoggedIn={isAuthenticated}
           onLoginClick={openLogin}
+          onLogoClick={() => handleTabChange("lobby")}
           onLogout={logout}
           onProfileClick={() => handleTabChange("profile")}
-          onDepositClick={() => {
-            if (!isAuthenticated) {
-              openLogin();
-              return;
-            }
-
-            navigate(TAB_PATHS.wallet);
-            openWalletModal("deposit");
-          }}
         />
-        <div className="pt-20 px-4 md:pt-24 md:px-8 max-w-full overflow-x-hidden">
+        <div className="pt-12  md:pt-24 px-4 md:px-8 max-w-full overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -280,8 +308,8 @@ export default function App() {
       <BottomNav
         activeTab={activeTab}
         setActiveTab={handleTabChange}
-        isLoggedIn={isAuthenticated}
-        onHelpClick={openHelpTelegram}
+        onBonusSelect={(tab) => handleTabChange(tab)}
+        bonusActive={activeTab === "bonusSpin" || activeTab === "bonusDeposit"}
       />
       <AnimatePresence>
         {selectedGame ? (

@@ -260,6 +260,10 @@ export interface SabiActiveBonusStatus {
 export interface SabiSpinAward {
   id: number;
   uuid?: SabiUUID;
+  condition?: {
+    id: number;
+    name: string;
+  };
   is_active?: boolean;
   created_at?: SabiISODate;
   updated_at?: SabiISODate;
@@ -288,12 +292,37 @@ export interface SabiSpinCondition {
 export interface SabiSpinResult {
   id: number;
   uuid?: SabiUUID;
+  reward?: number | null;
+  reward_display?: string | null;
+  reward_value?: SabiAmount | null;
   created_at?: SabiISODate;
   updated_at?: SabiISODate;
   status?: string;
   reward_name?: string | null;
   reward_type?: string | null;
   reward_amount?: SabiAmount | null;
+  [key: string]: unknown;
+}
+
+export interface SabiSpinReward {
+  id: number;
+  condition: number;
+  reward_type: string;
+  name: string;
+  value: SabiAmount;
+  probability: number;
+  text_color: string;
+  background_color: string;
+  is_active: boolean;
+  [key: string]: unknown;
+}
+
+export interface SabiSpinExecuteResponse {
+  id: number;
+  value: number | SabiAmount;
+  name: string;
+  reward_type: string;
+  reward_value: number | SabiAmount;
   [key: string]: unknown;
 }
 
@@ -325,6 +354,7 @@ export interface SabiDepositBonus {
 export type SabiSpinAwardListResponse = SabiPaginatedResponse<SabiSpinAward>;
 export type SabiSpinConditionListResponse = SabiPaginatedResponse<SabiSpinCondition>;
 export type SabiSpinResultListResponse = SabiPaginatedResponse<SabiSpinResult>;
+export type SabiSpinRewardListResponse = SabiPaginatedResponse<SabiSpinReward>;
 export type SabiDepositBonusListResponse = SabiPaginatedResponse<SabiDepositBonus>;
 
 /* ============================================================

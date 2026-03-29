@@ -3,6 +3,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useLogin } from "@/hooks/mutations/use-login";
 import type { SabiLoginFormProps } from "@/types/auth-ui.types";
 import { getAxiosErrorMessage } from "@/lib/format";
+import AppButton from "../ui/AppButton";
 
 const field =
   "w-full rounded-2xl border border-white/10 bg-surface-container-high px-4 py-3 text-sm text-on-surface outline-none transition focus-visible:ring-2 focus-visible:ring-primary/40";
@@ -73,18 +74,16 @@ export default function LoginForm({
       {isError ? (
         <p className="rounded-xl border border-error/40 bg-error/10 px-3 py-2 text-xs text-error">{errorMessage}</p>
       ) : null}
-      <button
+      <AppButton
         type="submit"
         disabled={isPending}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-dim py-4 text-sm font-extrabold text-on-primary shadow-lg shadow-primary/20 disabled:opacity-60"
+        className="flex w-full items-center justify-center  rounded-full "
       >
         {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {isPending ? "Signing In..." : "Sign In"}
-      </button>
-      <div className="flex items-center justify-between text-xs">
-        <button type="button" onClick={onSwitchToRegister} className="font-bold text-primary hover:underline">
-          Register
-        </button>
+      </AppButton>
+      <div className="flex items-center justify-end text-xs">
+
         <button
           type="button"
           onClick={onSwitchToForgotPassword}
@@ -93,6 +92,16 @@ export default function LoginForm({
           Forgot password?
         </button>
       </div>
+
+      <span className="flex items-center">
+  <span className="h-px flex-1 bg-gray-300"></span>
+
+  <span className="shrink-0 px-4 text-gray-500">New</span>
+
+  <span className="h-px flex-1 bg-gray-300"></span>
+</span>
+
+<AppButton variant="secondary" className="w-full flex items-center justify-center" onClick={onSwitchToRegister}  >Register</AppButton>
     </form>
   );
 }

@@ -6,7 +6,10 @@ import {
 } from "lucide-react";
 import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
 import { useAuthStore } from "@/store/auth-store";
-import { PRIMARY_NAV_ITEMS } from "@/components/layouts/navigation-items";
+import {
+  BONUS_NAV_ITEMS,
+  PRIMARY_NAV_ITEMS,
+} from "@/components/layouts/navigation-items";
 
 
 const Sidebar = ({
@@ -30,7 +33,12 @@ const Sidebar = ({
 
   return (
     <aside className="hidden md:flex flex-col py-8 px-4 gap-4 h-screen w-64 border-r border-white/15 bg-surface fixed left-0 top-0 z-[60]">
-      <div className="mb-8 px-4 flex items-center gap-3">
+      <button
+        type="button"
+        onClick={() => setActiveTab("lobby")}
+        className="mb-8 px-4 flex items-center gap-3 rounded-2xl text-left transition-opacity hover:opacity-90 active:scale-[0.98]"
+        aria-label={`Go to ${APP_NAME} home`}
+      >
         <img
           src={APP_LOGO_SRC}
           alt=""
@@ -41,7 +49,7 @@ const Sidebar = ({
         <span className="text-lg font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline leading-tight">
           {APP_NAME}
         </span>
-      </div>
+      </button>
       {isLoggedIn ? (
         <div className="flex items-center gap-3 px-4 mb-6">
           <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center">
@@ -66,6 +74,28 @@ const Sidebar = ({
       )}
       <nav className="flex flex-col gap-1 flex-1">
         {PRIMARY_NAV_ITEMS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => setActiveTab(item.id)}
+            className={`flex items-center gap-3 px-4 py-3 font-semibold text-sm rounded-full transition-all duration-200 ${
+              activeTab === item.id
+                ? "bg-primary/10 text-primary translate-x-1"
+                : "text-on-surface-variant hover:text-on-surface hover:bg-white/5"
+            }`}
+          >
+            <item.icon className="w-5 h-5" />
+            <span>{item.label}</span>
+          </button>
+        ))}
+
+        <div className="px-4 pt-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-on-surface-variant/70">
+            Bonuses
+          </p>
+        </div>
+
+        {BONUS_NAV_ITEMS.map((item) => (
           <button
             key={item.id}
             type="button"

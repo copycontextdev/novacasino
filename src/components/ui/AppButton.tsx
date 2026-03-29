@@ -1,44 +1,59 @@
 import { cn } from "@/lib/utils";
 import { Button, ButtonProps } from "@headlessui/react";
-import { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
+import { Loader2 } from "lucide-react";
+import { ReactNode } from "react";
 
-interface AppButtonProps extends  ButtonProps{
-    variant: "primary"|"secondary"|"danger"
-    isLoading?: boolean
+interface AppButtonProps extends ButtonProps {
+  variant?: "primary" | "secondary" | "danger" | "outline" | "ghost";
+  isLoading?: boolean;
+  children: ReactNode;
+  className?: string;
 }
 
-export default function AppButton(props: AppButtonProps) {
-    const {children, variant, isLoading, disabled} = props
 
-    return (
-        <Button
-        className={cn()}
-        {...props}
-        >
-            {
-                isLoading ? '...' : children
-            }
-        </Button>
-    )
-    return (
-        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-10">
-            <Button />
-            <button type="button" className="w-40 py-3 active:scale-95 transition text-sm text-white rounded-full bg-slate-700"><p className="mb-0.5">publish now</p></button>
-            <button type="button" className="w-40 py-3 active:scale-95 transition text-sm text-white rounded-full bg-indigo-500"><p className="mb-0.5">publish now</p></button>
-            <button type="button" className="w-40 py-3 active:scale-95 transition text-sm text-white rounded-full bg-indigo-500 flex items-center justify-center gap-1">
-                <svg className="mt-0.5" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9.548 13.551H5.799c-3.393 0-4.842-1.449-4.842-4.842V4.961c0-3.393 1.45-4.842 4.842-4.842h3.749c3.392 0 4.842 1.45 4.842 4.842v3.748c0 3.393-1.45 4.842-4.842 4.842M5.799 1.056c-2.88 0-3.905 1.025-3.905 3.905v3.748c0 2.88 1.025 3.905 3.905 3.905h3.749c2.88 0 3.904-1.024 3.904-3.905V4.961c0-2.88-1.024-3.905-3.904-3.905z" fill="#fff"/>
-                    <path d="M6.786 9.072a.47.47 0 0 1-.331-.138L4.687 7.166a.47.47 0 0 1 0-.662.47.47 0 0 1 .662 0l1.437 1.437L9.997 4.73a.47.47 0 0 1 .662 0 .47.47 0 0 1 0 .662L7.118 8.934a.47.47 0 0 1-.331.138" fill="#fff"/>
-                </svg>
-                <p className="mb-0.5">publish now</p>
-            </button>
-            <button type="button" className="w-40 py-3 active:scale-95 transition text-sm text-gray-500 rounded-full bg-white flex items-center justify-center gap-1">
-                <svg className="mt-0.5" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9.339 13.447H5.59c-3.392 0-4.842-1.45-4.842-4.842V4.856C.748 1.464 2.198.014 5.59.014h3.749c3.392 0 4.842 1.45 4.842 4.842v3.749c0 3.392-1.45 4.842-4.842 4.842M5.59.952c-2.88 0-3.905 1.024-3.905 3.904v3.749c0 2.88 1.025 3.905 3.905 3.905h3.749c2.88 0 3.904-1.025 3.904-3.905V4.856c0-2.88-1.024-3.904-3.904-3.904z" fill="#6B7280"/>
-                    <path d="M6.577 8.967a.47.47 0 0 1-.331-.137L4.478 7.062a.47.47 0 0 1 0-.662.47.47 0 0 1 .662 0l1.437 1.437 3.211-3.212a.47.47 0 0 1 .662 0 .47.47 0 0 1 0 .663L6.909 8.83a.47.47 0 0 1-.331.137" fill="#6B7280"/>
-                </svg>
-                <p className="mb-0.5">publish now</p>
-            </button>
-        </div>
-    );
+
+const variants = {
+  // Solid colored background of the secondary theme
+  primary: "bg-gradient-to-r from-[#9A47FF] to-[#8536e5] text-white hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(157,0,255,0.5)] hover:shadow-[0_0_50px_rgba(157,0,255,0.7)] border border-[#9D00FF]/50",
+  // Bordered version with surface-bright background
+  secondary: "bg-surface-bright border-2 border-secondary/40 hover:border-secondary/80 text-secondary shadow-2xl shadow-secondary/10",
+  danger: "bg-error text-white border-2 border-error hover:bg-error/90 shadow-2xl shadow-error/20",
+  outline: "bg-transparent border-2 border-on-surface/20 text-on-surface hover:bg-on-surface/10",
+  ghost: "bg-transparent text-on-surface hover:bg-surface-bright",
 };
+
+/**
+ * A reusable button component that integrates with the project's design system.
+ * Handles loading states, variants, and disabled states with consistent styling.
+ */
+export default function AppButton({
+  variant = "primary",
+  isLoading = false,
+  disabled,
+  className,
+  children,
+  ...props
+}: AppButtonProps) {
+  return (
+    <Button
+      disabled={disabled || isLoading}
+      className={cn(
+        // Increased py-2.5 to py-3.5 for a more substantial "tall" feel as requested
+        "relative flex items-center justify-center gap-2 font-black py-3.5 px-8 rounded-2xl text-sm active:scale-95 transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 uppercase tracking-wider",
+        variants[variant],
+        className
+      )}
+      {...props}
+    >
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-inherit rounded-2xl">
+          <Loader2 className="h-5 w-5 animate-spin" />
+        </div>
+      )}
+
+      <span className={cn("flex items-center gap-2", isLoading && "invisible")}>
+        {children}
+      </span>
+    </Button>
+  );
+}

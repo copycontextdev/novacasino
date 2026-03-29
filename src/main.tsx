@@ -9,7 +9,6 @@ import { AppShell } from "@/components/AppShell";
 import App from "./App";
 import { PlayGamePage } from "./pages/PlayGamePage";
 import "./index.css";
-import TestLink from "./pages/LinkPage";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -18,7 +17,6 @@ createRoot(document.getElementById("root")!).render(
         <SabiBootstrap />
         <WsDebugPanel />
         <Routes>
-          <Route path='/test' element={<TestLink />} />
           <Route path="/play/:gameSlug" element={<PlayGamePage />} />
           <Route
             path="/*"

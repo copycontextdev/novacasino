@@ -4,6 +4,7 @@ import { useForgotPassword } from "@/hooks/mutations/use-forgot-password";
 import type { SabiForgotPasswordFormProps } from "@/types/auth-ui.types";
 import type { SabiApiEnvelope } from "@/types/api.types";
 import { getAxiosErrorMessage } from "@/lib/format";
+import AppButton from "../ui/AppButton";
 
 const field =
   "w-full rounded-2xl border border-white/10 bg-surface-container-high px-4 py-3 text-sm text-on-surface outline-none transition focus-visible:ring-2 focus-visible:ring-primary/40";
@@ -73,19 +74,29 @@ export default function ForgotPasswordForm({
           {fallbackSuccessMessage ?? "Reset request submitted. Check your phone for next steps."}
         </p>
       ) : null}
-      <button
+      <AppButton
         type="submit"
         disabled={isPending}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-dim py-4 text-sm font-extrabold text-on-primary disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-full "
       >
         {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {isPending ? "Submitting..." : "Send Reset Request"}
-      </button>
-      <div className="text-center text-xs">
-        <button type="button" onClick={onSwitchToLogin} className="font-semibold text-on-surface-variant hover:text-primary hover:underline">
-          Back to login
-        </button>
-      </div>
+      </AppButton>
+
+      <span className="flex items-center">
+        <span className="h-px flex-1 bg-gray-300"></span>
+        <span className="shrink-0 px-4 text-gray-500">Back</span>
+        <span className="h-px flex-1 bg-gray-300"></span>
+      </span>
+
+      <AppButton
+        variant="secondary"
+        className="flex w-full items-center justify-center"
+        onClick={onSwitchToLogin}
+      >
+        Login
+      </AppButton>
     </form>
   );
 }
+

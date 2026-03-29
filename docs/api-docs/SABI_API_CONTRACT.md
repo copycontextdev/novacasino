@@ -71,6 +71,9 @@
 | GET | `/dashboard/promotion-config` | Optional | `PromotionConfigListResponse` |
 | GET | `/bonus/active-bonus/status/` | **Yes** | `ActiveBonusStatusResponse` |
 | GET | `/bonus/member-spin-award/list/` | **Yes** | `PaginatedResponse<SpinAward>` |
+| GET | `/bonus/member-spin-result/list/` | **Yes** | `PaginatedResponse<SpinResult>` |
+| GET | `/bonus/spin-award/{id}/reward/list/` | **Yes** | `PaginatedResponse<SpinReward>` |
+| POST | `/bonus/spin-award/{id}/spin/` | **Yes** | `SpinExecuteResponse` |
 
 ### `GET /core/init` — the bootstrap endpoint
 
@@ -108,6 +111,24 @@ interface FrontendConfiguration {
 ```
 
 Check these flags before rendering bonus/feature UI sections.
+
+### Spin bonus live notes
+
+`GET /bonus/member-spin-result/list/?page=1` currently returns entries like:
+
+```json
+{
+  "id": 1170,
+  "reward_display": "No Reward",
+  "reward": 4,
+  "reward_value": "0.00",
+  "status": "completed",
+  "created_at": "2026-03-29T22:09:33.566299Z",
+  "updated_at": "2026-03-29T22:09:33.571753Z"
+}
+```
+
+Use `reward_display` as the primary row label in history UI, `reward_value` as the amount, and `created_at` as the display date. `status` remains useful for state but is not the primary user-facing label in the legacy history list.
 
 ---
 

@@ -1,13 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getActiveBonusStatus,
   getMemberDepositBonuses,
   getMemberSpinAwards,
   getMemberSpinConditions,
+  getSpinAwardRewards,
   getMemberSpinResults,
   getSpinTracker,
+  spinAward,
 } from "@/lib/api-methods/bonus.api";
 import { useAuthStore } from "@/store/auth-store";
+import { WALLET_QUERY_KEY } from "@/hooks/queries/use-wallet";
+import type { SabiSpinExecuteResponse } from "@/types/api.types";
 
 export function useActiveBonusStatus(enabled = true) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -53,6 +57,20 @@ export function useMemberSpinResults(enabled = true) {
   });
 }
 
+export function useSpinAwardRewards(
+  awardId: number | null | undefined,
+  enabled = true,
+) {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  return useQuery({
+    queryKey: ["bonus", "spin-award-rewards", awardId],
+    queryFn: () => getSpinAwardRewards(awardId as number),
+    enabled: isAuthenticated && enabled && awardId != null,
+    staleTime: 30_000,
+  });
+}
+
 export function useSpinTracker(conditionId: number | null | undefined, enabled = true) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
@@ -61,6 +79,25 @@ export function useSpinTracker(conditionId: number | null | undefined, enabled =
     queryFn: () => getSpinTracker(conditionId as number),
     enabled: isAuthenticated && enabled && conditionId != null,
     staleTime: 15_000,
+  });
+}
+
+export function useSpinAwardMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (awardId: number) => spinAward(awardId),
+    onSuccess: async (_data: SabiSpinExecuteResponse) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["bonus", "spin-awards", { is_active: true }],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["bonus", "spin-results"] }),
+        queryClient.invalidateQueries({ queryKey: ["bonus", "active-status"] }),
+        queryClient.invalidateQueries({ queryKey: ["bonus", "spin-conditions"] }),
+        queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY }),
+      ]);
+    },
   });
 }
 

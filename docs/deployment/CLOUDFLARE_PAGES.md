@@ -57,7 +57,8 @@ VITE_WS_ENABLED=true
 
 This app uses `BrowserRouter`, so direct refreshes for routes like:
 
-- `/promotions`
+- `/bonus/spin`
+- `/bonus/deposit`
 - `/wallet`
 - `/profile`
 - `/play/some-game`
@@ -121,12 +122,13 @@ This keeps frontend and backend clearly separated.
 After deployment, verify:
 
 1. Opening `/` loads the app shell
-2. Refreshing `/promotions` still works
-3. Refreshing `/play/<slug>` still works
-4. Login works against the external backend
-5. Wallet loads through HTTP polling fallback
-6. Deposit and withdraw flows reach the external API
-7. Search and lobby data load correctly
+2. Refreshing `/bonus/spin` still works
+3. Refreshing `/bonus/deposit` still works
+4. Refreshing `/play/<slug>` still works
+5. Login works against the external backend
+6. Wallet loads through HTTP polling fallback
+7. Deposit and withdraw flows reach the external API
+8. Search and lobby data load correctly
 
 ## 8. Build Failure You May See
 
