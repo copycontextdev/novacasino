@@ -78,8 +78,8 @@ const LobbySection = ({
               <img
                 src={APP_LOGO_SRC}
                 alt=""
-                className="h-16 w-16 md:h-24 md:w-24 object-contain rounded-2xl border border-white/10 bg-surface-container-low p-2 shrink-0"
-                width={96}
+                className="h-12 w-auto max-w-[8.5rem] shrink-0 object-contain md:h-16 md:max-w-[11rem]"
+                width={202}
                 height={96}
               />
               <div>

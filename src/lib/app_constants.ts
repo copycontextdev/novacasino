@@ -1,4 +1,4 @@
-import appLogoSrc from "@/assets/app-logo.svg";
+import appLogoSrc from "@/assets/loader-logo.png";
 
 /** Display name across header, loader, and document title */
 export const APP_NAME = "NovaGames";

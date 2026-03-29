@@ -6,6 +6,7 @@ interface SpinWheelProps {
   rewards: SabiSpinReward[];
   targetRewardId: number | null;
   isSpinning: boolean;
+  resetKey: number;
   onSpinComplete: () => void;
 }
 
@@ -13,10 +14,16 @@ export function SpinWheel({
   rewards,
   targetRewardId,
   isSpinning,
+  resetKey,
   onSpinComplete,
 }: SpinWheelProps) {
   const controls = useAnimation();
   const rotationRef = useRef(0);
+
+  useEffect(() => {
+    rotationRef.current = 0;
+    controls.set({ rotate: 0 });
+  }, [controls, resetKey]);
 
   useEffect(() => {
     if (!isSpinning || targetRewardId === null || rewards.length === 0) {
@@ -29,9 +36,10 @@ export function SpinWheel({
     }
 
     const segmentAngle = 360 / rewards.length;
-    const targetRotation =
-      360 * 8 + (360 - (targetIndex * segmentAngle + segmentAngle / 2));
-    const finalRotation = rotationRef.current + targetRotation;
+    const targetAngle = 360 - (targetIndex * segmentAngle + segmentAngle / 2);
+    const currentAngle = ((rotationRef.current % 360) + 360) % 360;
+    const deltaToTarget = ((targetAngle - currentAngle) + 360) % 360;
+    const finalRotation = rotationRef.current + 360 * 8 + deltaToTarget;
 
     void controls
       .start({

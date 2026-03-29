@@ -150,6 +150,7 @@ export function SpinBonusPanel({
   const [targetRewardId, setTargetRewardId] = useState<number | null>(null);
   const [isAnimatingSpin, setIsAnimatingSpin] = useState(false);
   const [rewardSnapshot, setRewardSnapshot] = useState<SabiSpinReward[] | null>(null);
+  const [wheelResetKey, setWheelResetKey] = useState(0);
 
   const activeAward = spinAwards[0] ?? null;
   const spinMutation = useSpinAwardMutation();
@@ -186,16 +187,27 @@ export function SpinBonusPanel({
     return new Map(entries);
   }, [spinConditions, spinTrackerQueries]);
 
-  const resetSpinResolution = () => {
+  const resetSpinResolution = async () => {
     setIsResultOpen(false);
     setCurrentResult(null);
     setTargetRewardId(null);
     setIsAnimatingSpin(false);
     setRewardSnapshot(null);
+    setWheelResetKey((value) => value + 1);
     spinMutation.reset();
 
-    void queryClient.invalidateQueries({ queryKey: ["bonus", "spin-awards"] });
-    void queryClient.invalidateQueries({ queryKey: ["bonus", "spin-award-rewards"] });
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["bonus", "spin-awards"] }),
+      queryClient.invalidateQueries({ queryKey: ["bonus", "spin-award-rewards"] }),
+      queryClient.refetchQueries({
+        queryKey: ["bonus", "spin-awards", { is_active: true }],
+        type: "active",
+      }),
+      queryClient.refetchQueries({
+        queryKey: ["bonus", "spin-award-rewards"],
+        type: "active",
+      }),
+    ]);
   };
 
   const handleSpin = () => {
@@ -276,6 +288,7 @@ export function SpinBonusPanel({
                   rewards={displayRewards}
                   targetRewardId={targetRewardId}
                   isSpinning={isAnimatingSpin}
+                  resetKey={wheelResetKey}
                   onSpinComplete={() => {
                     setIsAnimatingSpin(false);
                     setIsResultOpen(true);
@@ -439,8 +452,8 @@ export function SpinBonusPanel({
         result={currentResult}
         currency={currency}
         hasMoreSpins={spinAwards.length > 0}
-        onClose={resetSpinResolution}
-        onTryAgain={resetSpinResolution}
+        onClose={() => void resetSpinResolution()}
+        onTryAgain={() => void resetSpinResolution()}
       />
     </>
   );

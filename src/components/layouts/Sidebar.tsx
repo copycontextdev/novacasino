@@ -36,19 +36,16 @@ const Sidebar = ({
       <button
         type="button"
         onClick={() => setActiveTab("lobby")}
-        className="mb-8 px-4 flex items-center gap-3 rounded-2xl text-left transition-opacity hover:opacity-90 active:scale-[0.98]"
+        className="mb-8 px-4 flex items-center rounded-2xl text-left transition-opacity hover:opacity-90 active:scale-[0.98]"
         aria-label={`Go to ${APP_NAME} home`}
       >
         <img
           src={APP_LOGO_SRC}
           alt=""
-          className="h-10 w-10 object-contain rounded-xl border border-white/10 bg-surface-container-low p-1 shrink-0"
-          width={40}
-          height={40}
+          className="h-20 w-auto object-contain shrink-0 drop-shadow-[0_10px_24px_rgba(0,0,0,0.35)]"
+          width={120}
+          height={80}
         />
-        <span className="text-lg font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dim font-headline leading-tight">
-          {APP_NAME}
-        </span>
       </button>
       {isLoggedIn ? (
         <div className="flex items-center gap-3 px-4 mb-6">

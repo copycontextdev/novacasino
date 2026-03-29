@@ -45,17 +45,16 @@ const TopBar = ({
         <button
           type="button"
           onClick={onLogoClick}
-          className="flex items-center gap-3 rounded-2xl transition-opacity hover:opacity-90 active:scale-[0.98]"
+          className="flex items-center rounded-2xl transition-opacity hover:opacity-90 active:scale-[0.98]"
           aria-label={`Go to ${APP_NAME} home`}
         >
           <img
             src={APP_LOGO_SRC}
             alt=""
-            className="h-8 w-8 md:h-9 md:w-9 shrink-0 object-contain rounded-xl border border-white/10 bg-surface-container-low p-0.5"
-            width={36}
-            height={36}
+            className="h-12 w-auto shrink-0 object-contain drop-shadow-[0_6px_18px_rgba(0,0,0,0.35)] md:h-14"
+            width={84}
+            height={56}
           />
-          <span className="font-headline font-extrabold text-sm text-on-surface truncate lg:hidden">{APP_NAME}</span>
         </button>
         <div className="relative w-full max-w-md hidden lg:block min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4" />
@@ -85,7 +84,7 @@ const TopBar = ({
             >
               Deposit
             </button> */}
-            <NewDepositModal buttonVariant="secondary" />
+            <NewDepositModal className="px-2 py-2" buttonVariant="secondary" />
             <div className="relative">
               <button
                 type="button"

@@ -23,9 +23,9 @@ export function AppLoader() {
         <img
           src={APP_LOGO_SRC}
           alt=""
-          className="h-24 w-24 md:h-28 md:w-28 object-contain drop-shadow-[0_12px_40px_rgba(167,165,255,0.35)]"
-          width={112}
-          height={112}
+          className="h-20 w-auto max-w-[15rem] object-contain drop-shadow-[0_12px_40px_rgba(167,165,255,0.35)] md:h-24 md:max-w-[18rem]"
+          width={330}
+          height={180}
         />
       </motion.div>
       <div className="flex flex-col items-center gap-3">
