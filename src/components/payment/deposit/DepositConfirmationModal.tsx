@@ -29,7 +29,7 @@ const DepositConfirmationModal = ({
   isSubmitting,
 }: DepositConfirmationModalProps) => {
   const fileInputId = useId();
-  const [reference, setReference] = useState("");
+  const [reference, setReference] = useState(order?.reference_number ?? "");
   const [file, setFile] = useState<File | null>(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -48,7 +48,7 @@ const DepositConfirmationModal = ({
   };
 
   return (
-    <motion.div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+    <motion.div className="fixed inset-0 z-150 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
       <motion.div className="relative w-full max-w-md flex flex-col gap-2 bg-surface-container rounded-3xl border border-white/10 p-6">
         <div className="flex justify-between items-center mb-4">
           <div>

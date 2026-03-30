@@ -15,12 +15,14 @@ interface DepositTabContentProps {
   onCancelDeposit: (orderUuid: string) => Promise<void>;
 }
 
+const pendingStatuses = ["pending", "paid"];
+
 function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCancelDeposit }: DepositTabContentProps) {
   const [cancellingOrder, setCancellingOrder] = useState<SabiDepositOrder | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  const pendingDeposits = useMemo(() => deposits.filter((d) => d.status === "pending"), [deposits]);
-  const otherDeposits = useMemo(() => deposits.filter((d) => d.status !== "pending"), [deposits]);
+  const pendingDeposits = useMemo(() => deposits.filter((d) => pendingStatuses.includes(d.status)), [deposits]);
+  const otherDeposits = useMemo(() => deposits.filter((d) => !pendingStatuses.includes(d.status)), [deposits]);
 
   const handleCancelConfirm = async () => {
     if (!cancellingOrder) return;
@@ -47,20 +49,26 @@ function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCa
       <div className="text-right flex items-center gap-3">
         <div>
           <p className="font-headline font-bold text-primary">+{formatBalance(item.amount)}</p>
-          <p className="text-[10px] text-on-surface-variant">{item.status_display ?? item.status}</p>
+          <p
+            className={`text-[10px] ${
+              item.status === "cancelled" ? "line-through text-error/70" : "text-on-surface-variant"
+            }`}
+          >
+            {item.status_display ?? item.status}
+          </p>
         </div>
-        {item.status === "pending" ? (
+        {pendingStatuses.includes(item.status) ? (
           <div className="flex gap-2">
-            {!item.reference_number && (
+           
               <button
                 type="button"
                 onClick={() => onConfirmDeposit(item)}
-                className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors"
+                className="w-10 h-10 rounded-full bg-primary/10 text-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
                 title="Confirm"
               >
                 <FileUp className="w-5 h-5" />
               </button>
-            )}
+          
             <button
               type="button"
               onClick={() => setCancellingOrder(item)}
@@ -87,14 +95,8 @@ function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCa
               <NewDepositModal buttonVariant="secondary" />
             </div>
 
-            {pendingDeposits.length > 0 ? (
-              <div className="space-y-2">
-                {pendingDeposits.map(renderDepositItem)}
-              </div>
-            ) : (
-              <div className="bg-white/5 rounded-3xl border border-dashed border-white/10 py-10 text-center">
-                <p className="text-sm font-medium text-on-surface-variant">No pending deposit requests</p>
-              </div>
+            {pendingDeposits.length > 0 && (
+              <div className="space-y-2">{pendingDeposits.map(renderDepositItem)}</div>
             )}
           </div>
 
