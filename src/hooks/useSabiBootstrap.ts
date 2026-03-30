@@ -23,6 +23,7 @@ export function useSabiBootstrap() {
   const setWsStatus = useWsStore((s) => s.setStatus);
   const setLastJackpotEvent = useWsStore((s) => s.setLastJackpotEvent);
   const setLastMessage = useWsStore((s) => s.setLastMessage);
+  const incrementReconnection = useWsStore((s) => s.incrementReconnection);
   const resetWsState = useWsStore((s) => s.reset);
   const wsStatus = useWsStore((s) => s.wsStatus);
 
@@ -108,6 +109,9 @@ export function useSabiBootstrap() {
 
     sabiWsClient.onStatusChange = (status) => {
       setWsStatus(status);
+      if (status === "connecting") {
+        incrementReconnection();
+      }
     };
 
     sabiWsClient.connect(token);
