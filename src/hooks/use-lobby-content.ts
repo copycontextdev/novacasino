@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { filterActivePromotionBanners } from "@/components/PromotionBannerCarousel";
 import { useInit } from "@/hooks/queries/use-init";
 import { useLobby } from "@/hooks/queries/use-lobby";
@@ -11,6 +11,9 @@ import type { SabiGame, SabiProvider } from "@/types/api.types";
 
 const RECENT_GAMES_STORAGE_KEY = "nova_recent_game_ids";
 const MAX_RECENT_GAMES = 12;
+const MOBILE_BREAKPOINT_QUERY = "(max-width: 767px)";
+const MOBILE_QUICK_EXPOSURE_COUNT = 3;
+const MOBILE_TRENDING_EXPOSURE_COUNT = 3;
 
 function loadRecentGameIds(): string[] {
   if (typeof window === "undefined") {
@@ -41,8 +44,33 @@ function persistRecentGameIds(ids: string[]): void {
   );
 }
 
+function getIsMobileViewport(): boolean {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false;
+  }
+
+  return window.matchMedia(MOBILE_BREAKPOINT_QUERY).matches;
+}
+
+function partitionGamesBySeen(games: SabiGame[], seenIds: Set<string>) {
+  const fresh: SabiGame[] = [];
+  const seen: SabiGame[] = [];
+
+  for (const game of games) {
+    if (seenIds.has(game.uuid)) {
+      seen.push(game);
+      continue;
+    }
+
+    fresh.push(game);
+  }
+
+  return { fresh, seen };
+}
+
 export function useLobbyContent(activeTab: string) {
   const [recentGameIds, setRecentGameIds] = useState<string[]>(() => loadRecentGameIds());
+  const [isMobileViewport, setIsMobileViewport] = useState<boolean>(() => getIsMobileViewport());
 
   const initQuery = useInit();
   const lobbyQuery = useLobby();
@@ -61,10 +89,29 @@ export function useLobbyContent(activeTab: string) {
     [topGamesQuery.data?.results],
   );
   const displayTrending = topFromApi.length ? topFromApi : trendingGames;
-  const allLobbyGames = useMemo(() => flattenLobbyGames(lobbyCategories), [lobbyCategories]);
+  const flatLobbyGames = useMemo(() => flattenLobbyGames(lobbyCategories), [lobbyCategories]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia(MOBILE_BREAKPOINT_QUERY);
+    const handleChange = (event: MediaQueryListEvent) => setIsMobileViewport(event.matches);
+
+    setIsMobileViewport(mediaQuery.matches);
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+
+    mediaQuery.addListener(handleChange);
+    return () => mediaQuery.removeListener(handleChange);
+  }, []);
 
   const quickGames = useMemo(() => {
-    const gameById = new Map(allLobbyGames.map((game) => [game.uuid, game] as const));
+    const gameById = new Map(flatLobbyGames.map((game) => [game.uuid, game] as const));
     const recentGames = recentGameIds
       .map((uuid) => gameById.get(uuid))
       .filter((game): game is SabiGame => Boolean(game));
@@ -78,7 +125,40 @@ export function useLobbyContent(activeTab: string) {
     }
 
     return displayTrending.slice(0, 10);
-  }, [allLobbyGames, displayTrending, recentGameIds, topFromApi]);
+  }, [displayTrending, flatLobbyGames, recentGameIds, topFromApi]);
+
+  const orderedLobbyContent = useMemo(() => {
+    if (isMobileViewport) {
+      const exposedQuickIds = new Set(
+        quickGames.slice(0, MOBILE_QUICK_EXPOSURE_COUNT).map((game) => game.uuid),
+      );
+      const trendingPartition = partitionGamesBySeen(displayTrending, exposedQuickIds);
+      const mobileTrending = [...trendingPartition.fresh, ...trendingPartition.seen];
+
+      const exposedTrendingIds = new Set(
+        mobileTrending.slice(0, MOBILE_TRENDING_EXPOSURE_COUNT).map((game) => game.uuid),
+      );
+      const exposedIds = new Set([...exposedQuickIds, ...exposedTrendingIds]);
+      const allGamesPartition = partitionGamesBySeen(flatLobbyGames, exposedIds);
+
+      return {
+        trendingGames: mobileTrending,
+        allLobbyGames: [...allGamesPartition.fresh, ...allGamesPartition.seen],
+      };
+    }
+
+    const quickIds = new Set(quickGames.map((game) => game.uuid));
+    const desktopTrending = displayTrending.filter((game) => !quickIds.has(game.uuid));
+    const featuredIds = new Set([
+      ...quickIds,
+      ...desktopTrending.map((game) => game.uuid),
+    ]);
+
+    return {
+      trendingGames: desktopTrending,
+      allLobbyGames: flatLobbyGames.filter((game) => !featuredIds.has(game.uuid)),
+    };
+  }, [displayTrending, flatLobbyGames, isMobileViewport, quickGames]);
 
   const promotionBanners = useMemo(
     () => filterActivePromotionBanners(initQuery.data?.promotion_banners),
@@ -105,8 +185,8 @@ export function useLobbyContent(activeTab: string) {
         ? "Hand-picked fast starters from the latest top games feed."
         : "A fast-access strip built from trending picks while top games reload.",
     lobbyCategories,
-    allLobbyGames,
-    trendingGames: displayTrending,
+    allLobbyGames: orderedLobbyContent.allLobbyGames,
+    trendingGames: orderedLobbyContent.trendingGames,
     rememberRecentGame,
     lobbyQuery,
   };
