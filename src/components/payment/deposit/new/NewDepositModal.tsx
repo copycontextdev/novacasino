@@ -25,8 +25,6 @@ import DepositConfirmationModal from "../DepositConfirmationModal";
 import AppButton from "@/components/ui/AppButton";
 import { ArrowDownLeft } from "lucide-react";
 import { useUiStore } from "@/store/ui-store";
-import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
-import AppModal from "@/components/ui/AppModal";
 
 
 interface NewDepositModalProps {

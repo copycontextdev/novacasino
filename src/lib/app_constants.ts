@@ -1,10 +1,12 @@
-import appLogoSrc from "@/assets/loader-logo.png";
+import appLogoSrc from "@/assets/app-logo.svg";
+import appLogoTransparentSrc from "@/assets/logo-transparent.png";
 
 /** Display name across header, loader, and document title */
 export const APP_NAME = "NovaGames";
 
 /** Resolved URL for Vite static asset (replace `src/assets/app-logo.svg` with your logo file; keep the import path or update it here). */
 export const APP_LOGO_SRC: string = appLogoSrc;
+export const APP_LOGO_TRANSPARENT_SRC: string = appLogoTransparentSrc;
 
 const DEFAULT_SUPPORT_TELEGRAM_USERNAME = "novasu";
 const rawSupportTelegramUsername =
@@ -20,4 +22,5 @@ export const APP_CONSTANTS = {
   logoSrc: APP_LOGO_SRC,
   supportTelegramUsername: SUPPORT_TELEGRAM_USERNAME,
   supportTelegramUrl: SUPPORT_TELEGRAM_URL,
+  logoTransparentSrc: APP_LOGO_TRANSPARENT_SRC,
 } as const;

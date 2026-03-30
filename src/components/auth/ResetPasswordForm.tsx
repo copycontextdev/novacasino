@@ -3,7 +3,6 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useResetPassword } from "@/hooks/mutations/use-reset-password";
 import type { SabiResetPasswordFormProps } from "@/types/auth-ui.types";
 import { getAxiosErrorMessage } from "@/lib/format";
-import AppButton from "../ui/AppButton";
 
 const field =
   "w-full rounded-2xl border border-white/10 bg-surface-container-high px-4 py-3 text-sm text-on-surface outline-none transition focus-visible:ring-2 focus-visible:ring-primary/40";
@@ -117,24 +116,23 @@ export default function ResetPasswordForm({
           Password reset successful. Sign in with your new password.
         </p>
       ) : null}
-      <div className="flex flex-col gap-3 ">
-        <AppButton
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <button
           type="submit"
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-full "
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-dim py-3.5 text-sm font-extrabold text-on-primary disabled:opacity-60"
         >
           {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {isPending ? "Resetting..." : "Reset Password"}
-        </AppButton>
+        </button>
         {onBack ? (
-          <AppButton
-            variant="secondary"
+          <button
             type="button"
             onClick={onBack}
-            className="w-full flex items-center justify-center"
+            className="w-full rounded-2xl border border-white/15 bg-white/5 py-3.5 text-sm font-semibold text-on-surface"
           >
             Back
-          </AppButton>
+          </button>
         ) : null}
       </div>
     </form>

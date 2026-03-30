@@ -13,19 +13,15 @@ interface AppButtonProps extends ButtonProps {
 
 
 const variants = {
-  // Solid colored background of the secondary theme
-  primary: "bg-gradient-to-r from-[#9A47FF] to-[#8536e5] text-white hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(157,0,255,0.5)] hover:shadow-[0_0_50px_rgba(157,0,255,0.7)] border border-[#9D00FF]/50",
-  // Bordered version with surface-bright background
-  secondary: "bg-surface-bright border-2 border-secondary/40 hover:border-secondary/80 text-secondary shadow-2xl shadow-secondary/10",
-  danger: "bg-error text-white border-2 border-error hover:bg-error/90 shadow-2xl shadow-error/20",
-  outline: "bg-transparent border-2 border-on-surface/20 text-on-surface hover:bg-on-surface/10",
-  ghost: "bg-transparent text-on-surface hover:bg-surface-bright",
+  primary:
+    "bg-gradient-to-r from-primary to-primary-dim text-on-primary shadow-lg shadow-primary/20",
+  secondary:
+    "bg-surface-bright border border-primary/40 text-primary hover:border-primary/70 shadow-xl shadow-primary/10",
+  danger: "bg-error text-white shadow-lg shadow-error/20",
+  outline: "border border-white/15 bg-white/5 text-on-surface hover:bg-white/10",
+  ghost: "bg-transparent text-on-surface hover:bg-white/5",
 };
 
-/**
- * A reusable button component that integrates with the project's design system.
- * Handles loading states, variants, and disabled states with consistent styling.
- */
 export default function AppButton({
   variant = "primary",
   isLoading = false,
@@ -38,10 +34,9 @@ export default function AppButton({
     <Button
       disabled={disabled || isLoading}
       className={cn(
-        // Increased py-2.5 to py-3.5 for a more substantial "tall" feel as requested
-        "relative flex items-center justify-center gap-2 font-black py-3.5 px-8 rounded-2xl text-sm active:scale-95 transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 uppercase tracking-wider",
+        "relative inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition-all duration-200 active:scale-95 disabled:pointer-events-none disabled:opacity-60",
         variants[variant],
-        className
+        className,
       )}
       {...props}
     >

@@ -12,7 +12,7 @@ import {
 import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
 import { useAuthStore } from "@/store/auth-store";
 import NewDepositModal from "../payment/deposit/new/NewDepositModal";
-import AppButton from "../ui/AppButton";
+import { AppLogo } from "../AppLogo";
 
 const TopBar = ({
   walletBalanceLabel,
@@ -42,19 +42,21 @@ const TopBar = ({
   return (
     <header className="fixed top-0 right-0 left-0 md:left-64 z-50 bg-surface/80 backdrop-blur-xl h-16 flex justify-between items-center px-4 md:px-6 border-b border-white/5">
       <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+      
         <button
           type="button"
           onClick={onLogoClick}
-          className="flex items-center rounded-2xl transition-opacity hover:opacity-90 active:scale-[0.98]"
+          className="flex items-center gap-3 rounded-2xl transition-opacity hover:opacity-90 active:scale-[0.98]"
           aria-label={`Go to ${APP_NAME} home`}
         >
           <img
             src={APP_LOGO_SRC}
             alt=""
-            className="h-12 w-auto shrink-0 object-contain drop-shadow-[0_6px_18px_rgba(0,0,0,0.35)] md:h-14"
-            width={84}
-            height={56}
+            className="h-8 w-8 md:h-9 md:w-9 shrink-0 object-contain rounded-xl border border-white/10 bg-surface-container-low p-0.5"
+            width={36}
+            height={36}
           />
+          <span className="font-headline font-extrabold text-sm text-on-surface truncate lg:hidden">{APP_NAME}</span>
         </button>
         <div className="relative w-full max-w-md hidden lg:block min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4" />
@@ -84,7 +86,7 @@ const TopBar = ({
             >
               Deposit
             </button> */}
-            <NewDepositModal className="px-2 py-2" buttonVariant="secondary" />
+            <NewDepositModal buttonVariant="secondary" />
             <div className="relative">
               <button
                 type="button"
@@ -143,12 +145,13 @@ const TopBar = ({
             </div>
           </>
         ) : (
-          <AppButton
+          <button
             type="button"
-            onClick={onLoginClick} 
+            onClick={onLoginClick}
+            className="bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold px-6 py-2 rounded-full text-sm active:scale-95 transition-transform shadow-lg shadow-primary/20"
           >
             Login / Register
-          </AppButton>
+          </button>
         )}
       </div>
     </header>

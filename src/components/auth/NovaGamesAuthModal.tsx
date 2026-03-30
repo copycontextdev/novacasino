@@ -85,8 +85,8 @@ function AuthFlow() {
   return (
     <div className="p-8">
       <div className="text-center mb-6">
-        <div className="mx-auto mb-4 flex h-16 w-full max-w-[11rem] items-center justify-center overflow-hidden">
-          <img src={APP_LOGO_SRC} alt="" className="h-full w-auto object-contain" width={198} height={64} />
+        <div className="w-16 h-16 rounded-2xl bg-surface-container-lowest border border-white/10 p-2 mx-auto mb-4 shadow-lg shadow-primary/15 flex items-center justify-center overflow-hidden">
+          <img src={APP_LOGO_SRC} alt="" className="w-full h-full object-contain" width={56} height={56} />
         </div>
         <h2 className="text-2xl font-headline font-extrabold text-white tracking-tight">{viewTitles[activeView]}</h2>
         {subtitle}
