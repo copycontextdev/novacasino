@@ -5,7 +5,10 @@ import { useBalanceStore } from "@/store/balance-store";
 import { useWsStore, type WsStatus } from "@/store/ws-store";
 
 function isLocalDebugEnvironment(): boolean {
-  return false;
+  if (import.meta.env.PROD) {
+    return false;
+  }
+
   if (import.meta.env.DEV) {
     return true;
   }
