@@ -12,7 +12,6 @@ import {
 import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
 import { useAuthStore } from "@/store/auth-store";
 import NewDepositModal from "../payment/deposit/new/NewDepositModal";
-import { AppLogo } from "../AppLogo";
 
 const TopBar = ({
   walletBalanceLabel,
@@ -42,7 +41,6 @@ const TopBar = ({
   return (
     <header className="fixed top-0 right-0 left-0 md:left-64 z-50 bg-surface/80 backdrop-blur-xl h-16 flex justify-between items-center px-4 md:px-6 border-b border-white/5">
       <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
-      
         <button
           type="button"
           onClick={onLogoClick}
@@ -86,7 +84,11 @@ const TopBar = ({
             >
               Deposit
             </button> */}
-            <NewDepositModal buttonVariant="secondary" />
+            <NewDepositModal
+              buttonVariant="secondary"
+              showIcon={false}
+              className="px-5 py-2 text-xs font-black uppercase tracking-wider md:text-sm"
+            />
             <div className="relative">
               <button
                 type="button"

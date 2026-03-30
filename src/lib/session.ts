@@ -26,6 +26,11 @@ export function setTokens(access: string, refresh: string): void {
   localStorage.setItem(REFRESH_KEY, refresh);
 }
 
+export function setAccessToken(access: string): void {
+  if (!isBrowser()) return;
+  localStorage.setItem(ACCESS_KEY, access);
+}
+
 export function clearTokens(): void {
   if (!isBrowser()) return;
   localStorage.removeItem(ACCESS_KEY);

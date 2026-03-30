@@ -6,6 +6,7 @@ import { sabiWsClient } from "@/lib/ws/ws-client";
 import { isWebSocketEnabled } from "@/lib/api/config";
 import { getAccessToken } from "@/lib/session";
 import { queryClient } from "@/lib/query-client";
+import { refreshAccessToken } from "@/lib/token-refresh";
 import { useWallet, WALLET_QUERY_KEY } from "@/hooks/queries/use-wallet";
 import { getMe } from "@/lib/api-methods/core.api";
 import type { SabiWalletResponse, SabiBalanceUpdatePayload } from "@/types/api.types";
@@ -103,7 +104,15 @@ export function useSabiBootstrap() {
       }
     };
 
-    sabiWsClient.onAuthError = () => {
+    sabiWsClient.onAuthError = async () => {
+      const refreshedAccessToken = await refreshAccessToken();
+
+      if (refreshedAccessToken) {
+        sabiWsClient.connect(refreshedAccessToken);
+        void queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
+        return;
+      }
+
       logout();
     };
 

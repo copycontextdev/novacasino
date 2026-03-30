@@ -30,9 +30,14 @@ import { useUiStore } from "@/store/ui-store";
 interface NewDepositModalProps {
   buttonVariant?: "primary" | "secondary";
   className?: string;
+  showIcon?: boolean;
 }
 
-export default function NewDepositModal({ buttonVariant = "primary", className }: NewDepositModalProps) {
+export default function NewDepositModal({
+  buttonVariant = "primary",
+  className,
+  showIcon = true,
+}: NewDepositModalProps) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const openAuthModal = useUiStore((s) => s.openAuthModal);
   const currency = useBalanceStore((s) => s.currency);
@@ -124,12 +129,12 @@ export default function NewDepositModal({ buttonVariant = "primary", className }
     <>
       <AppButton
         onClick={open}
-        variant={"primary"}
+        variant={buttonVariant}
         className={className}
       >
-        <ArrowDownLeft className="w-5 h-5 stroke-3" />
+        {showIcon ? <ArrowDownLeft className="w-5 h-5 stroke-3" /> : null}
         <span className="text-xs uppercase tracking-wider">Deposit</span>
-      </AppButton> 
+      </AppButton>
       <DepositModal
         open={isOpen}
         onClose={close}

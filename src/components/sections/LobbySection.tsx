@@ -158,7 +158,7 @@ const LobbySection = ({
             <button
               type="button"
               onClick={() => setShowGrouped((value) => !value)}
-              className={`inline-flex shrink-0 items-center justify-center rounded-full border p-2 transition-all ${
+              className={`hidden md:inline-flex shrink-0 items-center justify-center rounded-full border p-2 transition-all ${
                 showGrouped
                   ? "border-primary/40 bg-primary text-on-primary shadow-lg shadow-primary/20"
                   : "border-white/10 bg-surface-container-high text-on-surface-variant hover:text-on-surface"
@@ -169,13 +169,13 @@ const LobbySection = ({
             </button>
           </div>
         </div>
-        <nav className="flex items-center gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide md:mx-0 md:px-0">
+        <nav className="flex items-center gap-2 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide md:mx-0 md:px-0">
           {categoryChips.map((label) => (
             <button
               key={label}
               type="button"
               onClick={() => setSelectedCategory(label)}
-              className={`rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-all md:text-sm ${
+              className={`rounded-full px-5 py-2.5 text-xs font-bold whitespace-nowrap transition-all md:px-4 md:py-2 md:text-sm ${
                 selectedCategory === label
                   ? "bg-primary text-on-primary shadow-lg shadow-primary/20"
                   : "bg-surface-container-high text-on-surface hover:bg-surface-bright border border-white/5"

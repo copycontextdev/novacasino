@@ -287,7 +287,7 @@ export default function App() {
           onLogout={logout}
           onProfileClick={() => handleTabChange("profile")}
         />
-        <div className="pt-12  md:pt-24 px-4 md:px-8 max-w-full overflow-x-hidden">
+        <div className="pt-20 md:pt-24 px-4 md:px-8 max-w-full overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}

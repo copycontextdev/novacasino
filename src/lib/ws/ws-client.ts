@@ -119,14 +119,12 @@ class SabiWsClient {
     };
 
     this.socket.onclose = (event) => {
+      this.socket = null;
+
       if (this.explicitlyClosed) return;
       if (event.code === 1008) {
         this.onStatusChange?.("error");
         this.onAuthError?.();
-        return;
-      }
-      if (!this.authenticatedOnce) {
-        this.onStatusChange?.("disconnected");
         return;
       }
       this._scheduleRetry();
