@@ -98,10 +98,8 @@ export default function App() {
     quickGames,
     quickGamesHeading,
     quickGamesDescription,
-    categoryChips,
-    categoryFilter,
-    setCategoryFilter,
-    gridGames,
+    lobbyCategories,
+    allLobbyGames,
     trendingGames,
     rememberRecentGame,
     displayTrending,
@@ -220,10 +218,9 @@ export default function App() {
             displayTrending={trendingGames}
             providers={providers}
             onGameClick={(game) => setSelectedGame(game)}
-            categoryChips={categoryChips}
-            categoryFilter={categoryFilter}
-            onCategoryFilterChange={setCategoryFilter}
-            gridGames={gridGames}
+            onSearchOpen={() => handleTabChange("search")}
+            lobbyCategories={lobbyCategories}
+            allLobbyGames={allLobbyGames}
           />
         );
       case "bonusSpin":
@@ -259,10 +256,9 @@ export default function App() {
             displayTrending={trendingGames}
             providers={providers}
             onGameClick={(game) => setSelectedGame(game)}
-            categoryChips={categoryChips}
-            categoryFilter={categoryFilter}
-            onCategoryFilterChange={setCategoryFilter}
-            gridGames={gridGames}
+            onSearchOpen={() => handleTabChange("search")}
+            lobbyCategories={lobbyCategories}
+            allLobbyGames={allLobbyGames}
           />
         );
     }

@@ -42,7 +42,6 @@ function persistRecentGameIds(ids: string[]): void {
 }
 
 export function useLobbyContent(activeTab: string) {
-  const [categoryFilter, setCategoryFilter] = useState("All");
   const [recentGameIds, setRecentGameIds] = useState<string[]>(() => loadRecentGameIds());
 
   const initQuery = useInit();
@@ -55,11 +54,7 @@ export function useLobbyContent(activeTab: string) {
     () => toArray<SabiProvider>(providersQuery.data),
     [providersQuery.data],
   );
-  const { trending: trendingGames, gridGames: lobbyGridGames } = useLobbyGamesFiltered(
-    lobbyCategories,
-    activeTab,
-    categoryFilter,
-  );
+  const { trending: trendingGames } = useLobbyGamesFiltered(lobbyCategories, activeTab, "All");
 
   const topFromApi = useMemo(
     () => topGamesQuery.data?.results ?? [],
@@ -85,11 +80,6 @@ export function useLobbyContent(activeTab: string) {
     return displayTrending.slice(0, 10);
   }, [allLobbyGames, displayTrending, recentGameIds, topFromApi]);
 
-  const categoryChips = useMemo(() => {
-    const names = lobbyCategories.map((c) => c.name).filter(Boolean);
-    return ["All", ...names.slice(0, 8)];
-  }, [lobbyCategories]);
-
   const promotionBanners = useMemo(
     () => filterActivePromotionBanners(initQuery.data?.promotion_banners),
     [initQuery.data?.promotion_banners],
@@ -114,10 +104,8 @@ export function useLobbyContent(activeTab: string) {
       : topFromApi.length > 0
         ? "Hand-picked fast starters from the latest top games feed."
         : "A fast-access strip built from trending picks while top games reload.",
-    categoryChips,
-    categoryFilter,
-    setCategoryFilter,
-    gridGames: lobbyGridGames,
+    lobbyCategories,
+    allLobbyGames,
     trendingGames: displayTrending,
     rememberRecentGame,
     lobbyQuery,

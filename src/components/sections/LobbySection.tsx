@@ -4,12 +4,12 @@
  */
 
 import React from "react";
-import { Loader2 } from "lucide-react";
+import { LayoutGrid, Loader2, Rows3, Search } from "lucide-react";
 import { PromotionBannerCarousel } from "@/components/PromotionBannerCarousel";
 import GameCard from "@/components/game-components/GameCard";
 import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
 import { resolveProviderName } from "@/lib/game-utils";
-import type { SabiGame, SabiProvider } from "@/types/api.types";
+import type { SabiGame, SabiGameCategory, SabiProvider } from "@/types/api.types";
 
 interface LobbySectionProps {
   isLoading: boolean;
@@ -22,10 +22,9 @@ interface LobbySectionProps {
   displayTrending: SabiGame[];
   providers: SabiProvider[];
   onGameClick: (game: SabiGame) => void;
-  categoryChips: string[];
-  categoryFilter: string;
-  onCategoryFilterChange: (category: string) => void;
-  gridGames: SabiGame[];
+  onSearchOpen: () => void;
+  lobbyCategories: SabiGameCategory[];
+  allLobbyGames: SabiGame[];
 }
 
 const LobbySection = ({
@@ -39,11 +38,21 @@ const LobbySection = ({
   displayTrending,
   providers,
   onGameClick,
-  categoryChips,
-  categoryFilter,
-  onCategoryFilterChange,
-  gridGames,
+  onSearchOpen,
+  lobbyCategories,
+  allLobbyGames,
 }: LobbySectionProps) => {
+  const [showGrouped, setShowGrouped] = React.useState(false);
+  const [selectedCategory, setSelectedCategory] = React.useState("All");
+  const visibleCategories = lobbyCategories.filter((category) => category.games.length > 0);
+  const categoryChips = React.useMemo(
+    () => ["All", ...visibleCategories.map((category) => category.name)],
+    [visibleCategories],
+  );
+  const groupedCategories = selectedCategory === "All"
+    ? visibleCategories
+    : visibleCategories.filter((category) => category.name === selectedCategory);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
@@ -137,15 +146,37 @@ const LobbySection = ({
       <section className="space-y-4 md:space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg md:text-2xl font-headline font-extrabold tracking-tight">All Games</h2>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onSearchOpen}
+              className="inline-flex shrink-0 items-center justify-center text-on-surface-variant transition-colors hover:text-on-surface"
+              aria-label="Open search"
+            >
+              <Search className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowGrouped((value) => !value)}
+              className={`inline-flex shrink-0 items-center justify-center rounded-full border p-2 transition-all ${
+                showGrouped
+                  ? "border-primary/40 bg-primary text-on-primary shadow-lg shadow-primary/20"
+                  : "border-white/10 bg-surface-container-high text-on-surface-variant hover:text-on-surface"
+              }`}
+              aria-label={showGrouped ? "Show flat games list" : "Group games by category"}
+            >
+              {showGrouped ? <Rows3 className="h-4 w-4" /> : <LayoutGrid className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
-        <nav className="flex items-center gap-2 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
+        <nav className="flex items-center gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide md:mx-0 md:px-0">
           {categoryChips.map((label) => (
             <button
               key={label}
               type="button"
-              onClick={() => onCategoryFilterChange(label)}
-              className={`px-5 py-2.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap transition-all ${
-                categoryFilter === label
+              onClick={() => setSelectedCategory(label)}
+              className={`rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-all md:text-sm ${
+                selectedCategory === label
                   ? "bg-primary text-on-primary shadow-lg shadow-primary/20"
                   : "bg-surface-container-high text-on-surface hover:bg-surface-bright border border-white/5"
               }`}
@@ -154,16 +185,49 @@ const LobbySection = ({
             </button>
           ))}
         </nav>
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-6">
-          {gridGames.map((game) => (
-            <GameCard
-              key={game.uuid}
-              game={game}
-              providerName={resolveProviderName(game, providers)}
-              onClick={() => onGameClick(game)}
-            />
-          ))}
-        </div>
+        {showGrouped ? (
+          <div className="space-y-5 md:space-y-6">
+            {groupedCategories.map((category) => (
+              <section key={category.slug ?? category.name} className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-sm font-headline font-extrabold tracking-tight text-on-surface md:text-lg">
+                    {category.name}
+                  </h3>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant md:text-xs">
+                    {category.games.length} games
+                  </span>
+                </div>
+                <div className="-mx-4 px-4 md:mx-0 md:px-0">
+                  <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide md:gap-5">
+                    {category.games.map((game) => (
+                      <div
+                        key={`${category.slug ?? category.name}-${game.uuid}`}
+                        className="w-[10.25rem] shrink-0 md:w-[12.5rem] lg:w-[13.5rem]"
+                      >
+                        <GameCard
+                          game={game}
+                          providerName={resolveProviderName(game, providers)}
+                          onClick={() => onGameClick(game)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-6">
+            {allLobbyGames.map((game) => (
+              <GameCard
+                key={game.uuid}
+                game={game}
+                providerName={resolveProviderName(game, providers)}
+                onClick={() => onGameClick(game)}
+              />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
