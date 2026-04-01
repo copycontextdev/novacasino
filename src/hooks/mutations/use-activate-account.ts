@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { activateAccount } from "@/lib/api-methods/auth.api";
-import type { SabiActivateAccountRequest } from "@/types/api.types";
+import type { NovaActivateAccountRequest } from "@/types/api.types";
 
 export function useActivateAccount() {
   return useMutation({
-    mutationFn: (body: SabiActivateAccountRequest) => activateAccount(body),
+    mutationFn: (body: NovaActivateAccountRequest) => activateAccount(body),
   });
 }

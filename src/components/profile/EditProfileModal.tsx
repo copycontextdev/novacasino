@@ -6,11 +6,11 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
-import type { SabiMemberProfile } from "@/types/api.types";
+import type { NovaMemberProfile } from "@/types/api.types";
 
 interface EditProfileModalProps {
   open: boolean;
-  member: SabiMemberProfile;
+  member: NovaMemberProfile;
   onClose: () => void;
   onSave: (b: { first_name?: string; last_name?: string; email?: string }) => void;
   isSubmitting: boolean;

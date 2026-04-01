@@ -11,7 +11,7 @@ import {
 } from "@/lib/api-methods/bonus.api";
 import { useAuthStore } from "@/store/auth-store";
 import { WALLET_QUERY_KEY } from "@/hooks/queries/use-wallet";
-import type { SabiSpinExecuteResponse } from "@/types/api.types";
+import type { NovaSpinExecuteResponse } from "@/types/api.types";
 
 export function useActiveBonusStatus(enabled = true) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -87,7 +87,7 @@ export function useSpinAwardMutation() {
 
   return useMutation({
     mutationFn: (awardId: number) => spinAward(awardId),
-    onSuccess: async (_data: SabiSpinExecuteResponse) => {
+    onSuccess: async (_data: NovaSpinExecuteResponse) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: ["bonus", "spin-awards", { is_active: true }],

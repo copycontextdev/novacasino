@@ -5,16 +5,16 @@
 
 import React from "react";
 import { UserCircle, ShieldCheck, Edit, Phone, Mail, Plus, Loader2, Landmark } from "lucide-react";
-import type { SabiMemberProfile, SabiUserBankInfo } from "@/types/api.types";
+import type { NovaMemberProfile, NovaUserBankInfo } from "@/types/api.types";
 
 interface ProfileSectionProps {
   isAuthenticated: boolean;
-  member: SabiMemberProfile | null;
+  member: NovaMemberProfile | null;
   onLoginClick: () => void;
   onEditProfileClick: () => void;
   onAddAccountClick: () => void;
   isUserBanksLoading: boolean;
-  userBanks: SabiUserBankInfo[];
+  userBanks: NovaUserBankInfo[];
 }
 
 const ProfileSection = ({

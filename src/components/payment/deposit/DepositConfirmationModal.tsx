@@ -6,14 +6,14 @@
 import React, { useId, useState } from "react";
 import { motion } from "motion/react";
 import { Upload, X } from "lucide-react";
-import type { SabiDepositOrder } from "@/types/api.types";
+import type { NovaDepositOrder } from "@/types/api.types";
 import { formatBalance } from "@/lib/format";
 import DepositOrderPreviewCard from "./DepositOrderPreviewCard";
 import DepositCancelConfirmationDialog from "./DepositCancelConfirmationDialog";
 
 interface DepositConfirmationModalProps {
   open: boolean;
-  order: SabiDepositOrder | null;
+  order: NovaDepositOrder | null;
   onClose: () => void;
   onSubmit: (reference: string, file: File | null) => void;
   onCancel: (orderUuid: string) => Promise<void>;

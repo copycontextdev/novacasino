@@ -5,29 +5,29 @@ export type AuthView =
   | "forgot-password"
   | "reset-password";
 
-export interface SabiLoginFormProps {
+export interface NovaLoginFormProps {
   onSuccess?: () => void;
   onSwitchToRegister?: () => void;
   onSwitchToForgotPassword?: () => void;
 }
 
-export interface SabiRegisterFormProps {
+export interface NovaRegisterFormProps {
   onSuccess?: (phoneNumber: string) => void;
   onSwitchToLogin?: () => void;
 }
 
-export interface SabiOtpFormProps {
+export interface NovaOtpFormProps {
   phoneNumber: string;
   onSuccess?: () => void;
   onResend?: () => void;
 }
 
-export interface SabiForgotPasswordFormProps {
+export interface NovaForgotPasswordFormProps {
   onSuccess?: (payload: { phoneNumber: string; otpId: string }) => void;
   onSwitchToLogin?: () => void;
 }
 
-export interface SabiResetPasswordFormProps {
+export interface NovaResetPasswordFormProps {
   phoneNumber: string;
   otpId: string;
   onSuccess?: () => void;

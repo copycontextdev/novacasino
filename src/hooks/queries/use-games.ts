@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getGames, sanitizeGamesQuery } from "@/lib/api-methods/casino.api";
-import type { SabiGamesQuery } from "@/types/api.types";
+import type { NovaGamesQuery } from "@/types/api.types";
 
-export const gamesQueryKey = (filters?: SabiGamesQuery) =>
+export const gamesQueryKey = (filters?: NovaGamesQuery) =>
   ["games", sanitizeGamesQuery(filters)] as const;
 
-export function useGames(filters?: SabiGamesQuery, enabled = true) {
+export function useGames(filters?: NovaGamesQuery, enabled = true) {
   const normalizedFilters = sanitizeGamesQuery(filters);
 
   return useQuery({

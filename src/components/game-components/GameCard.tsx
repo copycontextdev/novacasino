@@ -5,13 +5,13 @@
 
 import React from "react";
 import { motion } from "motion/react";
-import type { SabiGame } from "@/types/api.types";
+import type { NovaGame } from "@/types/api.types";
 import { cn } from "@/lib/utils";
 
 type GameCardVariant = "default" | "quick";
 
 interface GameCardProps {
-  game: SabiGame;
+  game: NovaGame;
   providerName: string;
   onClick: () => void;
   variant?: GameCardVariant;

@@ -1,7 +1,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useResetPassword } from "@/hooks/mutations/use-reset-password";
-import type { SabiResetPasswordFormProps } from "@/types/auth-ui.types";
+import type { NovaResetPasswordFormProps } from "@/types/auth-ui.types";
 import { getAxiosErrorMessage } from "@/lib/format";
 
 const field =
@@ -12,7 +12,7 @@ export default function ResetPasswordForm({
   otpId,
   onSuccess,
   onBack,
-}: SabiResetPasswordFormProps) {
+}: NovaResetPasswordFormProps) {
   const [otpCode, setOtpCode] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");

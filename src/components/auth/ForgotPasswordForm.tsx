@@ -1,8 +1,8 @@
 import { FormEvent, useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useForgotPassword } from "@/hooks/mutations/use-forgot-password";
-import type { SabiForgotPasswordFormProps } from "@/types/auth-ui.types";
-import type { SabiApiEnvelope } from "@/types/api.types";
+import type { NovaForgotPasswordFormProps } from "@/types/auth-ui.types";
+import type { NovaApiEnvelope } from "@/types/api.types";
 import { getAxiosErrorMessage } from "@/lib/format";
 
 const field =
@@ -11,14 +11,14 @@ const field =
 export default function ForgotPasswordForm({
   onSuccess,
   onSwitchToLogin,
-}: SabiForgotPasswordFormProps) {
+}: NovaForgotPasswordFormProps) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [fallbackSuccessMessage, setFallbackSuccessMessage] = useState<string | null>(null);
 
   const { mutate: requestReset, isPending, isSuccess, isError, error } = useForgotPassword();
   const errorMessage = useMemo(() => getAxiosErrorMessage(error), [error]);
 
-  const getOtpId = (payload: SabiApiEnvelope): string | null => {
+  const getOtpId = (payload: NovaApiEnvelope): string | null => {
     const directId = payload.id;
     if (typeof directId === "string") return directId;
     const data = payload.data as Record<string, unknown> | undefined;

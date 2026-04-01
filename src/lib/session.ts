@@ -3,8 +3,8 @@
  * All functions return null on the server (window undefined).
  */
 
-const ACCESS_KEY = "sabi_access_token";
-const REFRESH_KEY = "sabi_refresh_token";
+const ACCESS_KEY = "nova_access_token";
+const REFRESH_KEY = "nova_refresh_token";
 
 function isBrowser() {
   return typeof window !== "undefined";

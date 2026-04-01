@@ -1,11 +1,11 @@
 import { CopyButton } from '@/components/ui/copy-button';
-import { SabiAgentBankInfo } from '@/types/api.types';
+import { NovaAgentBankInfo } from '@/types/api.types';
 import { Radio, RadioGroup } from '@headlessui/react' 
 import { CheckCircleIcon, InboxIcon, Loader2 } from 'lucide-react'
 import { useState } from 'react'
  
 interface AgentAccountSelectGroupProps { 
-      agentAccounts: SabiAgentBankInfo[]; 
+      agentAccounts: NovaAgentBankInfo[]; 
       selectedAccountUuid: string; 
       onChange: (v: string) => void; 
       isLoading?: boolean;

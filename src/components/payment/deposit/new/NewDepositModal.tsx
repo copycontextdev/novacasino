@@ -17,8 +17,8 @@ import { getAgentBanks, getAgentBankInfo } from "@/lib/api-methods/payment.api";
 import { extractEnvelopeData, toArray, toPositiveNumber } from "@/lib/payment-utils";
 import { getDepositAmountError } from "@/lib/payment-validation";
 import type {
-  SabiDepositOrder,
-  SabiPaymentBank,
+  NovaDepositOrder,
+  NovaPaymentBank,
 } from "@/types/api.types";
 import DepositModal from "../DepositModal";
 import DepositConfirmationModal from "../DepositConfirmationModal";
@@ -45,7 +45,7 @@ export default function NewDepositModal({
   // Modal states
   const [isOpen, setIsOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [confirmOrder, setConfirmOrder] = useState<SabiDepositOrder | null>(null);
+  const [confirmOrder, setConfirmOrder] = useState<NovaDepositOrder | null>(null);
 
   // Form states
   const [depositAmount, setDepositAmount] = useState("");
@@ -71,7 +71,7 @@ export default function NewDepositModal({
   });
 
   const depositBanks = useMemo(
-    () => toArray<SabiPaymentBank>(depositBanksQuery.data),
+    () => toArray<NovaPaymentBank>(depositBanksQuery.data),
     [depositBanksQuery.data],
   );
 
@@ -162,7 +162,7 @@ export default function NewDepositModal({
             { amount: depositAmount, agent_bank_info_id: effectiveBankInfoUuid },
             {
               onSuccess: (res) => {
-                const order = extractEnvelopeData<SabiDepositOrder>(res);
+                const order = extractEnvelopeData<NovaDepositOrder>(res);
                 if (order) {
                   close();
                   setConfirmOrder(order);

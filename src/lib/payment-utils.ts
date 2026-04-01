@@ -1,4 +1,4 @@
-import type { SabiApiEnvelope } from "@/types/api.types";
+import type { NovaApiEnvelope } from "@/types/api.types";
 
 export function toArray<T>(
   payload:
@@ -22,7 +22,7 @@ export function toPositiveNumber(
   return parsed;
 }
 
-export function extractEnvelopeData<T>(payload: SabiApiEnvelope): T | null {
+export function extractEnvelopeData<T>(payload: NovaApiEnvelope): T | null {
   const data = payload.data;
   if (data && typeof data === "object") return data as T;
   return null;

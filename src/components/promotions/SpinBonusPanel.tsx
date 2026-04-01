@@ -19,20 +19,20 @@ import { getSpinTracker } from "@/lib/api-methods/bonus.api";
 import { formatBalance, getAxiosErrorMessage } from "@/lib/format";
 import { toArray } from "@/lib/payment-utils";
 import type {
-  SabiSpinAward,
-  SabiSpinCondition,
-  SabiSpinExecuteResponse,
-  SabiSpinResult,
-  SabiSpinReward,
+  NovaSpinAward,
+  NovaSpinCondition,
+  NovaSpinExecuteResponse,
+  NovaSpinResult,
+  NovaSpinReward,
 } from "@/types/api.types";
 import { SpinResultModal } from "@/components/promotions/SpinResultModal";
 import { SpinWheel } from "@/components/promotions/SpinWheel";
 
 interface SpinBonusPanelProps {
   currency: string;
-  spinAwards: SabiSpinAward[];
-  spinConditions: SabiSpinCondition[];
-  spinResults: SabiSpinResult[];
+  spinAwards: NovaSpinAward[];
+  spinConditions: NovaSpinCondition[];
+  spinResults: NovaSpinResult[];
   isSpinConditionsLoading: boolean;
   isSpinResultsLoading: boolean;
 }
@@ -58,7 +58,7 @@ function formatHistoryDate(value: string | undefined): { dayMonth: string; year:
   };
 }
 
-function buildConditionRequirement(condition: SabiSpinCondition, currency: string): string {
+function buildConditionRequirement(condition: NovaSpinCondition, currency: string): string {
   if (condition.by_bet_amount && condition.bet_amount) {
     return `Bet ${currency} ${formatBalance(condition.bet_amount)}`;
   }
@@ -82,7 +82,7 @@ function buildConditionRequirement(condition: SabiSpinCondition, currency: strin
   return "Complete the current qualifying activity";
 }
 
-function getHistoryRewardLabel(item: SabiSpinResult, index: number): string {
+function getHistoryRewardLabel(item: NovaSpinResult, index: number): string {
   return (
     item.reward_display?.trim() ||
     item.reward_name?.trim() ||
@@ -91,11 +91,11 @@ function getHistoryRewardLabel(item: SabiSpinResult, index: number): string {
   );
 }
 
-function getHistoryRewardAmount(item: SabiSpinResult): string {
+function getHistoryRewardAmount(item: NovaSpinResult): string {
   return formatBalance(item.reward_value ?? item.reward_amount ?? 0);
 }
 
-function SpinHistoryList({ items }: { items: SabiSpinResult[] }) {
+function SpinHistoryList({ items }: { items: NovaSpinResult[] }) {
   return (
     <div className="space-y-4">
       <h3 className="text-2xl font-headline font-extrabold text-on-surface">History</h3>
@@ -145,11 +145,11 @@ export function SpinBonusPanel({
   isSpinResultsLoading,
 }: SpinBonusPanelProps) {
   const queryClient = useQueryClient();
-  const [currentResult, setCurrentResult] = useState<SabiSpinExecuteResponse | null>(null);
+  const [currentResult, setCurrentResult] = useState<NovaSpinExecuteResponse | null>(null);
   const [isResultOpen, setIsResultOpen] = useState(false);
   const [targetRewardId, setTargetRewardId] = useState<number | null>(null);
   const [isAnimatingSpin, setIsAnimatingSpin] = useState(false);
-  const [rewardSnapshot, setRewardSnapshot] = useState<SabiSpinReward[] | null>(null);
+  const [rewardSnapshot, setRewardSnapshot] = useState<NovaSpinReward[] | null>(null);
   const [wheelResetKey, setWheelResetKey] = useState(0);
 
   const activeAward = spinAwards[0] ?? null;

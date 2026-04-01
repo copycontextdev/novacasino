@@ -7,7 +7,7 @@ import { useTopGames } from "@/hooks/queries/use-top-games";
 import { useLobbyGamesFiltered } from "@/hooks/use-lobby-games-filtered";
 import { flattenLobbyGames } from "@/lib/game-utils";
 import { toArray } from "@/lib/payment-utils";
-import type { SabiGame, SabiProvider } from "@/types/api.types";
+import type { NovaGame, NovaProvider } from "@/types/api.types";
 
 const RECENT_GAMES_STORAGE_KEY = "nova_recent_game_ids";
 const MAX_RECENT_GAMES = 12;
@@ -52,9 +52,9 @@ function getIsMobileViewport(): boolean {
   return window.matchMedia(MOBILE_BREAKPOINT_QUERY).matches;
 }
 
-function partitionGamesBySeen(games: SabiGame[], seenIds: Set<string>) {
-  const fresh: SabiGame[] = [];
-  const seen: SabiGame[] = [];
+function partitionGamesBySeen(games: NovaGame[], seenIds: Set<string>) {
+  const fresh: NovaGame[] = [];
+  const seen: NovaGame[] = [];
 
   for (const game of games) {
     if (seenIds.has(game.uuid)) {
@@ -79,7 +79,7 @@ export function useLobbyContent(activeTab: string) {
 
   const lobbyCategories = lobbyQuery.data ?? [];
   const providers = useMemo(
-    () => toArray<SabiProvider>(providersQuery.data),
+    () => toArray<NovaProvider>(providersQuery.data),
     [providersQuery.data],
   );
   const { trending: trendingGames } = useLobbyGamesFiltered(lobbyCategories, activeTab, "All");
@@ -114,7 +114,7 @@ export function useLobbyContent(activeTab: string) {
     const gameById = new Map(flatLobbyGames.map((game) => [game.uuid, game] as const));
     const recentGames = recentGameIds
       .map((uuid) => gameById.get(uuid))
-      .filter((game): game is SabiGame => Boolean(game));
+      .filter((game): game is NovaGame => Boolean(game));
 
     if (recentGames.length > 0) {
       return recentGames.slice(0, 10);

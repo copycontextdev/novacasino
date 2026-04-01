@@ -9,22 +9,22 @@ import { PromotionBannerCarousel } from "@/components/PromotionBannerCarousel";
 import GameCard from "@/components/game-components/GameCard";
 import { APP_NAME, APP_LOGO_SRC } from "@/lib/app_constants";
 import { resolveProviderName } from "@/lib/game-utils";
-import type { SabiGame, SabiGameCategory, SabiProvider } from "@/types/api.types";
+import type { NovaGame, NovaGameCategory, NovaProvider } from "@/types/api.types";
 
 interface LobbySectionProps {
   isLoading: boolean;
   isError: boolean;
   refetch: () => void;
   promotionBanners: any[];
-  quickGames: SabiGame[];
+  quickGames: NovaGame[];
   quickGamesHeading: string;
   quickGamesDescription: string;
-  displayTrending: SabiGame[];
-  providers: SabiProvider[];
-  onGameClick: (game: SabiGame) => void;
+  displayTrending: NovaGame[];
+  providers: NovaProvider[];
+  onGameClick: (game: NovaGame) => void;
   onSearchOpen: () => void;
-  lobbyCategories: SabiGameCategory[];
-  allLobbyGames: SabiGame[];
+  lobbyCategories: NovaGameCategory[];
+  allLobbyGames: NovaGame[];
 }
 
 const LobbySection = ({
@@ -96,7 +96,7 @@ const LobbySection = ({
                   Welcome to <span className="text-primary">{APP_NAME}</span>
                 </h1>
                 <p className="text-on-surface-variant text-sm md:text-base">
-                  Real games, wallet, and secure payments — powered by Sabi.
+                  Real games, wallet, and secure payments — powered by Nova.
                 </p>
               </div>
             </div>

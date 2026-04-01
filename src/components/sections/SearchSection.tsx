@@ -11,7 +11,7 @@ import { useLobby } from "@/hooks/queries/use-lobby";
 import { useProviders } from "@/hooks/queries/use-providers";
 import { useTopGames } from "@/hooks/queries/use-top-games";
 import { flattenLobbyGames, resolveProviderName } from "@/lib/game-utils";
-import type { SabiGame, SabiGamesQuery, SabiProvider } from "@/types/api.types";
+import type { NovaGame, NovaGamesQuery, NovaProvider } from "@/types/api.types";
 import { toArray } from "@/lib/payment-utils";
 
 interface SearchFilterOption {
@@ -20,7 +20,7 @@ interface SearchFilterOption {
 }
 
 interface SearchSectionProps {
-  onGameClick: (game: SabiGame) => void;
+  onGameClick: (game: NovaGame) => void;
 }
 
 const SearchSection = ({ onGameClick }: SearchSectionProps) => {
@@ -35,7 +35,7 @@ const SearchSection = ({ onGameClick }: SearchSectionProps) => {
 
   const lobbyCategories = lobbyQuery.data ?? [];
   const providers = useMemo(
-    () => toArray<SabiProvider>(providersQuery.data),
+    () => toArray<NovaProvider>(providersQuery.data),
     [providersQuery.data],
   );
   const allLobbyGames = useMemo(() => flattenLobbyGames(lobbyCategories), [lobbyCategories]);
@@ -68,8 +68,8 @@ const SearchSection = ({ onGameClick }: SearchSectionProps) => {
     return options;
   }, [lobbyCategories]);
 
-  const searchGamesQueryFilters = useMemo<SabiGamesQuery>(() => {
-    const filters: SabiGamesQuery = { page_size: 60 };
+  const searchGamesQueryFilters = useMemo<NovaGamesQuery>(() => {
+    const filters: NovaGamesQuery = { page_size: 60 };
     const normalizedSearchTerm = deferredSearchInput.trim();
 
     if (normalizedSearchTerm.length >= 2) {

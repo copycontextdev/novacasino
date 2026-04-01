@@ -1,25 +1,25 @@
 import { create } from "zustand";
 import type {
-  SabiAmount,
-  SabiBalanceUpdatePayload,
-  SabiWalletResponse,
+  NovaAmount,
+  NovaBalanceUpdatePayload,
+  NovaWalletResponse,
 } from "@/types/api.types";
 
 interface BalanceState {
   currency: string | null;
-  balance: SabiAmount | null;
-  withdrawableBalance: SabiAmount | null;
-  nonWithdrawableBalance: SabiAmount | null;
+  balance: NovaAmount | null;
+  withdrawableBalance: NovaAmount | null;
+  nonWithdrawableBalance: NovaAmount | null;
   hasLoadedInitialBalance: boolean;
 }
 
 interface BalanceActions {
-  syncFromWallet: (wallet: SabiWalletResponse) => void;
-  applyBalanceUpdate: (payload: SabiBalanceUpdatePayload) => void;
+  syncFromWallet: (wallet: NovaWalletResponse) => void;
+  applyBalanceUpdate: (payload: NovaBalanceUpdatePayload) => void;
   reset: () => void;
 }
 
-function normalizeAmount(value: number | SabiAmount | null | undefined): SabiAmount | null {
+function normalizeAmount(value: number | NovaAmount | null | undefined): NovaAmount | null {
   if (value === null || value === undefined) {
     return null;
   }

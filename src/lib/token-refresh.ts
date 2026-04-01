@@ -2,7 +2,7 @@ import axios from "axios";
 import { getApiBaseUrl } from "@/lib/api/config";
 import { AUTH_REFRESH } from "@/lib/api/endpoints";
 import { clearTokens, getRefreshToken, setAccessToken } from "@/lib/session";
-import type { SabiTokenRefreshResponse } from "@/types/api.types";
+import type { NovaTokenRefreshResponse } from "@/types/api.types";
 
 let refreshPromise: Promise<string | null> | null = null;
 
@@ -17,7 +17,7 @@ export async function refreshAccessToken(): Promise<string | null> {
   }
 
   refreshPromise = axios
-    .post<SabiTokenRefreshResponse>(
+    .post<NovaTokenRefreshResponse>(
       `${getApiBaseUrl()}${AUTH_REFRESH}`,
       { refresh },
       {

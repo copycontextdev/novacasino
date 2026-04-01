@@ -2,13 +2,13 @@ import { FormEvent, useMemo, useState } from "react";
 import { Loader2, RotateCcw } from "lucide-react";
 import { useActivateAccount } from "@/hooks/mutations/use-activate-account";
 import { resendOtp } from "@/lib/api-methods/auth.api";
-import type { SabiOtpFormProps } from "@/types/auth-ui.types";
+import type { NovaOtpFormProps } from "@/types/auth-ui.types";
 import { getAxiosErrorMessage } from "@/lib/format";
 
 const field =
   "w-full rounded-2xl border border-white/10 bg-surface-container-high px-4 py-3 text-on-surface outline-none transition focus-visible:ring-2 focus-visible:ring-primary/40";
 
-export default function OTPForm({ phoneNumber, onSuccess, onResend }: SabiOtpFormProps) {
+export default function OTPForm({ phoneNumber, onSuccess, onResend }: NovaOtpFormProps) {
   const [otp, setOtp] = useState("");
   const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [resendError, setResendError] = useState<string | null>(null);

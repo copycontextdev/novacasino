@@ -6,9 +6,9 @@ import {
   getUserBankInfo,
 } from "@/lib/api-methods/payment.api";
 import { useAuthStore } from "@/store/auth-store";
-import type { SabiPaginationQuery } from "@/types/api.types";
+import type { NovaPaginationQuery } from "@/types/api.types";
 
-export function useMyDepositOrders(query?: SabiPaginationQuery) {
+export function useMyDepositOrders(query?: NovaPaginationQuery) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: ["deposit-orders", query],
@@ -18,7 +18,7 @@ export function useMyDepositOrders(query?: SabiPaginationQuery) {
   });
 }
 
-export function useMyWithdrawalOrders(query?: SabiPaginationQuery) {
+export function useMyWithdrawalOrders(query?: NovaPaginationQuery) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: ["withdrawal-orders", query],
@@ -28,7 +28,7 @@ export function useMyWithdrawalOrders(query?: SabiPaginationQuery) {
   });
 }
 
-export function useMyTransactions(query?: SabiPaginationQuery) {
+export function useMyTransactions(query?: NovaPaginationQuery) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: ["my-transactions", query],

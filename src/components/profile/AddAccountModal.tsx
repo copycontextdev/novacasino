@@ -10,12 +10,12 @@ import { X } from "lucide-react";
 import { getAgentBanks } from "@/lib/api-methods/payment.api";
 import { toArray } from "@/lib/payment-utils";
 import { useAddUserBankInfo } from "@/hooks/mutations/use-withdrawal";
-import type { SabiPaymentBank, SabiUserBankInfo } from "@/types/api.types";
+import type { NovaPaymentBank, NovaUserBankInfo } from "@/types/api.types";
 
 interface AddAccountModalProps {
   open: boolean;
   onClose: () => void;
-  onSuccess: (account: SabiUserBankInfo) => void;
+  onSuccess: (account: NovaUserBankInfo) => void;
 }
 
 const AddAccountModal = ({
@@ -33,7 +33,7 @@ const AddAccountModal = ({
     enabled: open,
   });
 
-  const banks = useMemo(() => toArray<SabiPaymentBank>(banksQuery.data), [banksQuery.data]);
+  const banks = useMemo(() => toArray<NovaPaymentBank>(banksQuery.data), [banksQuery.data]);
   const addBank = useAddUserBankInfo();
 
   useEffect(() => {

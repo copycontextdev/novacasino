@@ -1,7 +1,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useLogin } from "@/hooks/mutations/use-login";
-import type { SabiLoginFormProps } from "@/types/auth-ui.types";
+import type { NovaLoginFormProps } from "@/types/auth-ui.types";
 import { getAxiosErrorMessage } from "@/lib/format";
 
 const field =
@@ -11,7 +11,7 @@ export default function LoginForm({
   onSuccess,
   onSwitchToRegister,
   onSwitchToForgotPassword,
-}: SabiLoginFormProps) {
+}: NovaLoginFormProps) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

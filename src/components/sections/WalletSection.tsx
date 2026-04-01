@@ -25,8 +25,8 @@ import {
 import { formatBalance } from "@/lib/format";
 import { toArray, toPositiveNumber } from "@/lib/payment-utils";
 import type {
-  SabiDepositOrder,
-  SabiUserBankInfo,
+  NovaDepositOrder,
+  NovaUserBankInfo,
 } from "@/types/api.types";
 import DepositConfirmationModal from "../payment/deposit/DepositConfirmationModal";
 import DepositTabContent from "../payment/deposit/DepositTabContent";
@@ -57,7 +57,7 @@ const WalletSection = () => {
   const cancelWithdrawal = useCancelWithdrawal();
 
   const [preferredWithdrawBankUuid, setPreferredWithdrawBankUuid] = useState<string | null>(null);
-  const [confirmOrder, setConfirmOrder] = useState<SabiDepositOrder | null>(null);
+  const [confirmOrder, setConfirmOrder] = useState<NovaDepositOrder | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
 
@@ -69,7 +69,7 @@ const WalletSection = () => {
   const deposits = depositsQuery.data?.results ?? [];
   const withdrawals = withdrawalsQuery.data?.results ?? [];
   const userBanks = useMemo(
-    () => toArray<SabiUserBankInfo>(userBanksQuery.data),
+    () => toArray<NovaUserBankInfo>(userBanksQuery.data),
     [userBanksQuery.data],
   );
 

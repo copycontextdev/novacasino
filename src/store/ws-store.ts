@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { SabiWsMessage } from "@/types/api.types";
+import type { NovaWsMessage } from "@/types/api.types";
 
 export type WsStatus =
   | "idle"
@@ -11,7 +11,7 @@ export type WsStatus =
 
 interface WsState {
   wsStatus: WsStatus;
-  lastJackpotEvent: SabiWsMessage | null;
+  lastJackpotEvent: NovaWsMessage | null;
   lastMessageType: string | null;
   lastMessageAt: number | null;
   reconnectionCount: number;
@@ -21,7 +21,7 @@ interface WsState {
 
 interface WsActions {
   setStatus: (status: WsStatus) => void;
-  setLastJackpotEvent: (event: SabiWsMessage) => void;
+  setLastJackpotEvent: (event: NovaWsMessage) => void;
   setLastMessage: (type: string | null) => void;
   incrementReconnection: () => void;
   reset: () => void;

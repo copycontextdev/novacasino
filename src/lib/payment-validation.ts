@@ -1,4 +1,4 @@
-import type { SabiAmount } from "@/types/api.types";
+import type { NovaAmount } from "@/types/api.types";
 
 export function parseAmountInput(value: string | number | null | undefined): number | null {
   if (value === null || value === undefined) return null;
@@ -43,7 +43,7 @@ export function getWithdrawalAmountError(
   amount: string,
   minWithdraw: number,
   maxWithdraw: number,
-  withdrawableBalance: SabiAmount | number | null | undefined,
+  withdrawableBalance: NovaAmount | number | null | undefined,
   currencyLabel: string,
 ): string | null {
   if (!amount.trim()) {

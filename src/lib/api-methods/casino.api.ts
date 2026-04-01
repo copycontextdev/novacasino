@@ -1,12 +1,12 @@
 import { apiClient } from "@/lib/api/client";
 import type {
-  SabiLobbyResponse,
-  SabiGamesListResponse,
-  SabiProviderListResponse,
-  SabiTopGamesResponse,
-  SabiStartGameResponse,
-  SabiGamesQuery,
-  SabiStartGameQuery,
+  NovaLobbyResponse,
+  NovaGamesListResponse,
+  NovaProviderListResponse,
+  NovaTopGamesResponse,
+  NovaStartGameResponse,
+  NovaGamesQuery,
+  NovaStartGameQuery,
 } from "@/types/api.types";
 import {
   CASINO_LOBBY,
@@ -18,8 +18,8 @@ import {
 
 const DEFAULT_GAMES_PAGE_SIZE = 60;
 
-export function sanitizeGamesQuery(query?: SabiGamesQuery): SabiGamesQuery {
-  const sanitized: SabiGamesQuery = {
+export function sanitizeGamesQuery(query?: NovaGamesQuery): NovaGamesQuery {
+  const sanitized: NovaGamesQuery = {
     page_size: query?.page_size ?? DEFAULT_GAMES_PAGE_SIZE,
   };
 
@@ -47,36 +47,36 @@ export function sanitizeGamesQuery(query?: SabiGamesQuery): SabiGamesQuery {
   return sanitized;
 }
 
-export async function getLobby(): Promise<SabiLobbyResponse> {
-  const { data } = await apiClient.get<SabiLobbyResponse>(CASINO_LOBBY);
+export async function getLobby(): Promise<NovaLobbyResponse> {
+  const { data } = await apiClient.get<NovaLobbyResponse>(CASINO_LOBBY);
   return data;
 }
 
-export async function getProviders(): Promise<SabiProviderListResponse> {
-  const { data } = await apiClient.get<SabiProviderListResponse>(CASINO_PROVIDERS);
+export async function getProviders(): Promise<NovaProviderListResponse> {
+  const { data } = await apiClient.get<NovaProviderListResponse>(CASINO_PROVIDERS);
   return data;
 }
 
 export async function getGames(
-  query?: SabiGamesQuery,
-): Promise<SabiGamesListResponse> {
+  query?: NovaGamesQuery,
+): Promise<NovaGamesListResponse> {
   const params = sanitizeGamesQuery(query);
-  const { data } = await apiClient.get<SabiGamesListResponse>(CASINO_GAMES, {
+  const { data } = await apiClient.get<NovaGamesListResponse>(CASINO_GAMES, {
     params,
   });
   return data;
 }
 
-export async function getTopGames(): Promise<SabiTopGamesResponse> {
-  const { data } = await apiClient.get<SabiTopGamesResponse>(CASINO_TOP_GAMES);
+export async function getTopGames(): Promise<NovaTopGamesResponse> {
+  const { data } = await apiClient.get<NovaTopGamesResponse>(CASINO_TOP_GAMES);
   return data;
 }
 
 export async function startGame(
   slug: string,
-  query: SabiStartGameQuery,
-): Promise<SabiStartGameResponse> {
-  const { data } = await apiClient.get<SabiStartGameResponse>(
+  query: NovaStartGameQuery,
+): Promise<NovaStartGameResponse> {
+  const { data } = await apiClient.get<NovaStartGameResponse>(
     CASINO_GAME_START(slug),
     { params: query },
   );

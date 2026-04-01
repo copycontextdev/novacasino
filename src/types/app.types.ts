@@ -1,7 +1,7 @@
-import { SabiAmount } from "./api.types";
+import { NovaAmount } from "./api.types";
 
 export interface DepositOrderPreviewInfo {
-  amount?: SabiAmount;
+  amount?: NovaAmount;
   bank_name?: string;
   account_name?: string;
   account_number?: string;

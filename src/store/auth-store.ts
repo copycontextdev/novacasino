@@ -1,15 +1,15 @@
 import { create } from "zustand";
-import type { SabiMemberProfile } from "@/types/api.types";
+import type { NovaMemberProfile } from "@/types/api.types";
 
 interface AuthState {
   hydrated: boolean;
   isAuthenticated: boolean;
-  member: SabiMemberProfile | null;
+  member: NovaMemberProfile | null;
 }
 
 interface AuthActions {
   hydrate: () => void;
-  login: (member: SabiMemberProfile) => void;
+  login: (member: NovaMemberProfile) => void;
   logout: () => void;
 }
 
@@ -20,7 +20,7 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
 
   hydrate: () => {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("sabi_access_token");
+    const token = localStorage.getItem("nova_access_token");
     set({ hydrated: true, isAuthenticated: !!token });
   },
 
@@ -30,8 +30,8 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
 
   logout: () => {
     if (typeof window !== "undefined") {
-      localStorage.removeItem("sabi_access_token");
-      localStorage.removeItem("sabi_refresh_token");
+      localStorage.removeItem("nova_access_token");
+      localStorage.removeItem("nova_refresh_token");
     }
     set({ isAuthenticated: false, member: null });
   },

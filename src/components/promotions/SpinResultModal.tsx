@@ -6,18 +6,18 @@ import {
 } from "@headlessui/react";
 import AppButton from "@/components/ui/AppButton";
 import { formatBalance } from "@/lib/format";
-import type { SabiSpinExecuteResponse } from "@/types/api.types";
+import type { NovaSpinExecuteResponse } from "@/types/api.types";
 
 interface SpinResultModalProps {
   isOpen: boolean;
-  result: SabiSpinExecuteResponse | null;
+  result: NovaSpinExecuteResponse | null;
   currency: string;
   hasMoreSpins: boolean;
   onClose: () => void;
   onTryAgain: () => void;
 }
 
-function getRewardAmount(result: SabiSpinExecuteResponse | null): number | null {
+function getRewardAmount(result: NovaSpinExecuteResponse | null): number | null {
   if (!result) return null;
 
   const value = result.reward_value ?? result.value;

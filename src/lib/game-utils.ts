@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { SabiGame, SabiGameCategory, SabiProvider } from "@/types/api.types";
+import type { NovaGame, NovaGameCategory, NovaProvider } from "@/types/api.types";
 
-export function flattenLobbyGames(lobbyCategories: SabiGameCategory[]): SabiGame[] {
+export function flattenLobbyGames(lobbyCategories: NovaGameCategory[]): NovaGame[] {
   const seen = new Set<string>();
-  const flat: SabiGame[] = [];
+  const flat: NovaGame[] = [];
 
   for (const category of lobbyCategories) {
     for (const game of category.games) {
@@ -20,7 +20,7 @@ export function flattenLobbyGames(lobbyCategories: SabiGameCategory[]): SabiGame
   return flat;
 }
 
-export function resolveProviderName(game: SabiGame, providers: SabiProvider[]): string {
+export function resolveProviderName(game: NovaGame, providers: NovaProvider[]): string {
   const key = String(game.provider);
   const p = providers.find(
     (item) =>

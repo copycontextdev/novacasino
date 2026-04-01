@@ -1,6 +1,6 @@
 import { CopyButton } from '@/components/ui/copy-button';
 import { formatBalance } from '@/lib/format';
-import { SabiAmount, SabiDepositOrder } from '@/types/api.types';
+import { NovaAmount, NovaDepositOrder } from '@/types/api.types';
 import { DepositOrderPreviewInfo } from '@/types/app.types';
 import React from 'react'
  

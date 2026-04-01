@@ -1,10 +1,10 @@
 import { ArrowRight, Coins, Gift, LoaderCircle } from "lucide-react";
-import type { SabiDepositBonus } from "@/types/api.types";
+import type { NovaDepositBonus } from "@/types/api.types";
 import { formatBalance } from "@/lib/format";
 
 interface DepositBonusPanelProps {
   currency: string;
-  items: SabiDepositBonus[];
+  items: NovaDepositBonus[];
   isLoading: boolean;
   onDeposit: () => void;
 }

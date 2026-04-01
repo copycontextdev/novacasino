@@ -1,5 +1,5 @@
 import { getApiBaseUrl } from "@/lib/api/config";
-import type { SabiWsMessage, SabiWsClientAction } from "@/types/api.types";
+import type { NovaWsMessage, NovaWsClientAction } from "@/types/api.types";
 
 const BACKOFF_DELAYS = [1000, 2000, 4000, 8000, 16000, 30000];
 const MAX_RETRIES = 6;
@@ -26,7 +26,7 @@ function isTokenExpired(token: string): boolean {
   return exp <= nowSeconds + TOKEN_EXPIRY_SKEW_SECONDS;
 }
 
-class SabiWsClient {
+class NovaWsClient {
   private socket: WebSocket | null = null;
   private retryCount = 0;
   private retryTimer: ReturnType<typeof setTimeout> | null = null;
@@ -34,7 +34,7 @@ class SabiWsClient {
   private currentToken: string | null = null;
   private authenticatedOnce = false;
 
-  onMessage?: (msg: SabiWsMessage) => void;
+  onMessage?: (msg: NovaWsMessage) => void;
   onAuthError?: () => void;
   onStatusChange?: (status: "connecting" | "connected" | "error" | "disconnected") => void;
 
@@ -70,7 +70,7 @@ class SabiWsClient {
     this.onStatusChange?.("disconnected");
   }
 
-  send(action: SabiWsClientAction): void {
+  send(action: NovaWsClientAction): void {
     if (this.socket?.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(action));
     }
@@ -91,7 +91,7 @@ class SabiWsClient {
 
     this.socket.onmessage = (event) => {
       try {
-        const msg: SabiWsMessage = JSON.parse(event.data as string);
+        const msg: NovaWsMessage = JSON.parse(event.data as string);
 
         if ((msg as { type?: string }).type === "authenticated") {
           this.retryCount = 0;
@@ -161,4 +161,4 @@ class SabiWsClient {
 }
 
 /** Singleton WS client — import this everywhere */
-export const sabiWsClient = new SabiWsClient();
+export const novaWsClient = new NovaWsClient();

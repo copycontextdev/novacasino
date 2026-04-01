@@ -1,24 +1,24 @@
 import { apiClient } from "@/lib/api/client";
 import type {
-  SabiAgentBanksQuery,
-  SabiAgentBankListResponse,
-  SabiAgentBankInfoQuery,
-  SabiAgentBankInfoListResponse,
-  SabiCreateDepositRequest,
-  SabiCreateDepositResponse,
-  SabiUpdateDepositRequest,
-  SabiUpdateDepositResponse,
-  SabiCancelDepositResponse,
-  SabiDepositOrderListResponse,
-  SabiDepositOrder,
-  SabiCreateWithdrawalRequest,
-  SabiCreateWithdrawalResponse,
-  SabiWithdrawalOrderListResponse,
-  SabiCreateUserBankInfoRequest,
-  SabiUserBankInfo,
-  SabiUserBankInfoListResponse,
-  SabiTransactionListResponse,
-  SabiPaginationQuery,
+  NovaAgentBanksQuery,
+  NovaAgentBankListResponse,
+  NovaAgentBankInfoQuery,
+  NovaAgentBankInfoListResponse,
+  NovaCreateDepositRequest,
+  NovaCreateDepositResponse,
+  NovaUpdateDepositRequest,
+  NovaUpdateDepositResponse,
+  NovaCancelDepositResponse,
+  NovaDepositOrderListResponse,
+  NovaDepositOrder,
+  NovaCreateWithdrawalRequest,
+  NovaCreateWithdrawalResponse,
+  NovaWithdrawalOrderListResponse,
+  NovaCreateUserBankInfoRequest,
+  NovaUserBankInfo,
+  NovaUserBankInfoListResponse,
+  NovaTransactionListResponse,
+  NovaPaginationQuery,
 } from "@/types/api.types";
 import {
   PAYMENT_BANKS,
@@ -38,9 +38,9 @@ import {
 // --- Banks ---
 
 export async function getAgentBanks(
-  query: SabiAgentBanksQuery,
-): Promise<SabiAgentBankListResponse> {
-  const { data } = await apiClient.get<SabiAgentBankListResponse>(PAYMENT_BANKS, {
+  query: NovaAgentBanksQuery,
+): Promise<NovaAgentBankListResponse> {
+  const { data } = await apiClient.get<NovaAgentBankListResponse>(PAYMENT_BANKS, {
     params: query,
   });
   return data;
@@ -48,9 +48,9 @@ export async function getAgentBanks(
 
 export async function getAgentBankInfo(
   bankUuid: string,
-  query?: SabiAgentBankInfoQuery,
-): Promise<SabiAgentBankInfoListResponse> {
-  const { data } = await apiClient.get<SabiAgentBankInfoListResponse>(
+  query?: NovaAgentBankInfoQuery,
+): Promise<NovaAgentBankInfoListResponse> {
+  const { data } = await apiClient.get<NovaAgentBankInfoListResponse>(
     PAYMENT_BANK_INFO(bankUuid),
     { params: query },
   );
@@ -60,30 +60,30 @@ export async function getAgentBankInfo(
 // --- Deposits ---
 
 export async function createDepositOrder(
-  body: SabiCreateDepositRequest,
-): Promise<SabiCreateDepositResponse> {
-  const { data } = await apiClient.post<SabiCreateDepositResponse>(
+  body: NovaCreateDepositRequest,
+): Promise<NovaCreateDepositResponse> {
+  const { data } = await apiClient.post<NovaCreateDepositResponse>(
     PAYMENT_DEPOSIT_ORDERS,
     body,
   );
   return data;
 }
 
-export async function getDepositOrder(uuid: string): Promise<SabiDepositOrder> {
-  const { data } = await apiClient.get<SabiDepositOrder>(PAYMENT_DEPOSIT_ORDER(uuid));
+export async function getDepositOrder(uuid: string): Promise<NovaDepositOrder> {
+  const { data } = await apiClient.get<NovaDepositOrder>(PAYMENT_DEPOSIT_ORDER(uuid));
   return data;
 }
 
 export async function updateDepositOrder(
   uuid: string,
-  body: SabiUpdateDepositRequest,
-): Promise<SabiUpdateDepositResponse> {
+  body: NovaUpdateDepositRequest,
+): Promise<NovaUpdateDepositResponse> {
   const formData = new FormData();
   if (body.reference_number) formData.append("reference_number", body.reference_number);
   if (body.receipt instanceof File || body.receipt instanceof Blob) {
     formData.append("receipt", body.receipt);
   }
-  const { data } = await apiClient.put<SabiUpdateDepositResponse>(
+  const { data } = await apiClient.put<NovaUpdateDepositResponse>(
     PAYMENT_DEPOSIT_UPDATE(uuid),
     formData,
     { headers: { "Content-Type": "multipart/form-data" } },
@@ -93,17 +93,17 @@ export async function updateDepositOrder(
 
 export async function cancelDepositOrder(
   uuid: string,
-): Promise<SabiCancelDepositResponse> {
-  const { data } = await apiClient.post<SabiCancelDepositResponse>(
+): Promise<NovaCancelDepositResponse> {
+  const { data } = await apiClient.post<NovaCancelDepositResponse>(
     PAYMENT_DEPOSIT_CANCEL(uuid),
   );
   return data;
 }
 
 export async function getMyDepositOrders(
-  query?: SabiPaginationQuery,
-): Promise<SabiDepositOrderListResponse> {
-  const { data } = await apiClient.get<SabiDepositOrderListResponse>(
+  query?: NovaPaginationQuery,
+): Promise<NovaDepositOrderListResponse> {
+  const { data } = await apiClient.get<NovaDepositOrderListResponse>(
     PAYMENT_MY_DEPOSITS,
     { params: query },
   );
@@ -113,9 +113,9 @@ export async function getMyDepositOrders(
 // --- Withdrawals ---
 
 export async function createWithdrawalOrder(
-  body: SabiCreateWithdrawalRequest,
-): Promise<SabiCreateWithdrawalResponse> {
-  const { data } = await apiClient.post<SabiCreateWithdrawalResponse>(
+  body: NovaCreateWithdrawalRequest,
+): Promise<NovaCreateWithdrawalResponse> {
+  const { data } = await apiClient.post<NovaCreateWithdrawalResponse>(
     PAYMENT_WITHDRAWAL_ORDERS,
     body,
   );
@@ -124,17 +124,17 @@ export async function createWithdrawalOrder(
 
 export async function cancelWithdrawalOrder(
   uuid: string,
-): Promise<SabiCreateWithdrawalResponse> {
-  const { data } = await apiClient.post<SabiCreateWithdrawalResponse>(
+): Promise<NovaCreateWithdrawalResponse> {
+  const { data } = await apiClient.post<NovaCreateWithdrawalResponse>(
     PAYMENT_WITHDRAWAL_CANCEL(uuid),
   );
   return data;
 }
 
 export async function getMyWithdrawalOrders(
-  query?: SabiPaginationQuery,
-): Promise<SabiWithdrawalOrderListResponse> {
-  const { data } = await apiClient.get<SabiWithdrawalOrderListResponse>(
+  query?: NovaPaginationQuery,
+): Promise<NovaWithdrawalOrderListResponse> {
+  const { data } = await apiClient.get<NovaWithdrawalOrderListResponse>(
     PAYMENT_MY_WITHDRAWALS,
     { params: query },
   );
@@ -143,17 +143,17 @@ export async function getMyWithdrawalOrders(
 
 // --- User Bank Info ---
 
-export async function getUserBankInfo(): Promise<SabiUserBankInfoListResponse> {
-  const { data } = await apiClient.get<SabiUserBankInfoListResponse>(
+export async function getUserBankInfo(): Promise<NovaUserBankInfoListResponse> {
+  const { data } = await apiClient.get<NovaUserBankInfoListResponse>(
     PAYMENT_USER_BANK_INFO,
   );
   return data;
 }
 
 export async function addUserBankInfo(
-  body: SabiCreateUserBankInfoRequest,
-): Promise<SabiUserBankInfo> {
-  const { data } = await apiClient.post<SabiUserBankInfo>(
+  body: NovaCreateUserBankInfoRequest,
+): Promise<NovaUserBankInfo> {
+  const { data } = await apiClient.post<NovaUserBankInfo>(
     PAYMENT_USER_BANK_INFO,
     body,
   );
@@ -163,9 +163,9 @@ export async function addUserBankInfo(
 // --- Transactions ---
 
 export async function getMyTransactions(
-  query?: SabiPaginationQuery,
-): Promise<SabiTransactionListResponse> {
-  const { data } = await apiClient.get<SabiTransactionListResponse>(
+  query?: NovaPaginationQuery,
+): Promise<NovaTransactionListResponse> {
+  const { data } = await apiClient.get<NovaTransactionListResponse>(
     PAYMENT_TRANSACTIONS,
     { params: query },
   );

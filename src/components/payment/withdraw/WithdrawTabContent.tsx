@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { Loader2, Trash2, Info, ArrowUpRight } from "lucide-react";
 import { formatBalance } from "@/lib/format";
-import type { SabiWithdrawalOrder } from "@/types/api.types";
+import type { NovaWithdrawalOrder } from "@/types/api.types";
 import { Dialog, DialogPanel, DialogTitle, Description } from "@headlessui/react";
 
 interface WithdrawTabContentProps {
-  withdrawals: SabiWithdrawalOrder[];
+  withdrawals: NovaWithdrawalOrder[];
   isWithdrawalsLoading: boolean;
   onCancelWithdrawal: (orderUuid: string) => Promise<void>;
   onWithdrawClick: () => void;
@@ -17,7 +17,7 @@ export default function WithdrawTabContent({
   onCancelWithdrawal,
   onWithdrawClick
 }: WithdrawTabContentProps) {
-  const [cancellingOrder, setCancellingOrder] = useState<SabiWithdrawalOrder | null>(null);
+  const [cancellingOrder, setCancellingOrder] = useState<NovaWithdrawalOrder | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
   const pendingWithdrawals = useMemo(() => withdrawals.filter((w) => w.status === "pending"), [withdrawals]);
@@ -36,7 +36,7 @@ export default function WithdrawTabContent({
     }
   };
 
-  const renderWithdrawItem = (item: SabiWithdrawalOrder) => (
+  const renderWithdrawItem = (item: NovaWithdrawalOrder) => (
     <div
       key={item.uuid}
       className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5"

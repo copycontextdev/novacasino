@@ -6,16 +6,16 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Play } from "lucide-react";
-import type { SabiGame, SabiProvider } from "@/types/api.types";
+import type { NovaGame, NovaProvider } from "@/types/api.types";
 import { resolveProviderName } from "@/lib/game-utils";
 
 interface GameModalProps {
-  game: SabiGame | null;
+  game: NovaGame | null;
   onClose: () => void;
   onPlayReal: () => void;
   onPlayDemo: () => void;
-  similarGames: SabiGame[];
-  providers: SabiProvider[];
+  similarGames: NovaGame[];
+  providers: NovaProvider[];
 }
 
 const GameModal = ({

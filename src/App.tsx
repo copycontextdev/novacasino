@@ -16,7 +16,7 @@ import { useUpdateMember } from "@/hooks/mutations/use-update-member";
 import { useLobbyContent } from "@/hooks/use-lobby-content";
 import { toArray } from "@/lib/payment-utils";
 import { formatBalance } from "@/lib/format";
-import type { SabiGame, SabiUserBankInfo } from "@/types/api.types";
+import type { NovaGame, NovaUserBankInfo } from "@/types/api.types";
 
 import TopBar from "./components/layouts/TopBar";
 import Sidebar from "./components/layouts/Sidebar";
@@ -88,7 +88,7 @@ export default function App() {
   const hasLoadedInitialBalance = useBalanceStore((s) => s.hasLoadedInitialBalance);
 
   const [activeTab, setActiveTab] = useState<AppTab>("lobby");
-  const [selectedGame, setSelectedGame] = useState<SabiGame | null>(null);
+  const [selectedGame, setSelectedGame] = useState<NovaGame | null>(null);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
 
@@ -109,7 +109,7 @@ export default function App() {
   const userBanksQuery = useUserBankInfoList();
   const updateMember = useUpdateMember();
   const userBanks = useMemo(
-    () => toArray<SabiUserBankInfo>(userBanksQuery.data),
+    () => toArray<NovaUserBankInfo>(userBanksQuery.data),
     [userBanksQuery.data],
   );
 
@@ -197,7 +197,7 @@ export default function App() {
       ? `${walletCurrency ?? "ETB"} ${formatBalance(walletBalance)}`
       : `${walletCurrency ?? "ETB"} 0.00`;
 
-  const navigatePlay = (game: SabiGame, mode: "real" | "demo") => {
+  const navigatePlay = (game: NovaGame, mode: "real" | "demo") => {
     rememberRecentGame(game.uuid);
     setSelectedGame(null);
     navigate(`/play/${encodeURIComponent(game.slug)}?mode=${mode}`);

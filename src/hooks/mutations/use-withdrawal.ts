@@ -6,14 +6,14 @@ import {
 } from "@/lib/api-methods/payment.api";
 import { WALLET_QUERY_KEY } from "@/hooks/queries/use-wallet";
 import type {
-  SabiCreateWithdrawalRequest,
-  SabiCreateUserBankInfoRequest,
+  NovaCreateWithdrawalRequest,
+  NovaCreateUserBankInfoRequest,
 } from "@/types/api.types";
 
 export function useCreateWithdrawal() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: SabiCreateWithdrawalRequest) => createWithdrawalOrder(body),
+    mutationFn: (body: NovaCreateWithdrawalRequest) => createWithdrawalOrder(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: ["withdrawal-orders"] });
@@ -34,7 +34,7 @@ export function useCancelWithdrawal() {
 export function useAddUserBankInfo() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: SabiCreateUserBankInfoRequest) => addUserBankInfo(body),
+    mutationFn: (body: NovaCreateUserBankInfoRequest) => addUserBankInfo(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-bank-info"] });
     },

@@ -1,17 +1,17 @@
 import { apiClient } from "@/lib/api/client";
 import { setTokens } from "@/lib/session";
 import type {
-  SabiLoginRequest,
-  SabiLoginResponse,
-  SabiTokenRefreshRequest,
-  SabiTokenRefreshResponse,
-  SabiRegisterRequest,
-  SabiActivateAccountRequest,
-  SabiForgotPasswordRequest,
-  SabiResetPasswordRequest,
-  SabiResendOtpRequest,
-  SabiApiEnvelope,
-  SabiMemberProfile,
+  NovaLoginRequest,
+  NovaLoginResponse,
+  NovaTokenRefreshRequest,
+  NovaTokenRefreshResponse,
+  NovaRegisterRequest,
+  NovaActivateAccountRequest,
+  NovaForgotPasswordRequest,
+  NovaResetPasswordRequest,
+  NovaResendOtpRequest,
+  NovaApiEnvelope,
+  NovaMemberProfile,
 } from "@/types/api.types";
 import {
   AUTH_LOGIN,
@@ -23,16 +23,16 @@ import {
   CORE_RESEND_OTP,
 } from "@/lib/api/endpoints";
 
-export async function login(body: SabiLoginRequest): Promise<SabiLoginResponse> {
-  const { data } = await apiClient.post<SabiLoginResponse>(AUTH_LOGIN, body);
+export async function login(body: NovaLoginRequest): Promise<NovaLoginResponse> {
+  const { data } = await apiClient.post<NovaLoginResponse>(AUTH_LOGIN, body);
   setTokens(data.access, data.refresh);
   return data;
 }
 
 export async function refreshToken(
-  body: SabiTokenRefreshRequest,
-): Promise<SabiTokenRefreshResponse> {
-  const { data } = await apiClient.post<SabiTokenRefreshResponse>(
+  body: NovaTokenRefreshRequest,
+): Promise<NovaTokenRefreshResponse> {
+  const { data } = await apiClient.post<NovaTokenRefreshResponse>(
     AUTH_REFRESH,
     body,
   );
@@ -40,9 +40,9 @@ export async function refreshToken(
 }
 
 export async function registerMember(
-  body: SabiRegisterRequest,
-): Promise<SabiApiEnvelope<SabiMemberProfile>> {
-  const { data } = await apiClient.post<SabiApiEnvelope<SabiMemberProfile>>(
+  body: NovaRegisterRequest,
+): Promise<NovaApiEnvelope<NovaMemberProfile>> {
+  const { data } = await apiClient.post<NovaApiEnvelope<NovaMemberProfile>>(
     CORE_REGISTER,
     body,
   );
@@ -50,16 +50,16 @@ export async function registerMember(
 }
 
 export async function activateAccount(
-  body: SabiActivateAccountRequest,
-): Promise<SabiApiEnvelope> {
-  const { data } = await apiClient.post<SabiApiEnvelope>(CORE_ACTIVATE, body);
+  body: NovaActivateAccountRequest,
+): Promise<NovaApiEnvelope> {
+  const { data } = await apiClient.post<NovaApiEnvelope>(CORE_ACTIVATE, body);
   return data;
 }
 
 export async function forgotPassword(
-  body: SabiForgotPasswordRequest,
-): Promise<SabiApiEnvelope> {
-  const { data } = await apiClient.post<SabiApiEnvelope>(
+  body: NovaForgotPasswordRequest,
+): Promise<NovaApiEnvelope> {
+  const { data } = await apiClient.post<NovaApiEnvelope>(
     CORE_FORGOT_PASSWORD,
     body,
   );
@@ -67,9 +67,9 @@ export async function forgotPassword(
 }
 
 export async function resetPassword(
-  body: SabiResetPasswordRequest,
-): Promise<SabiApiEnvelope> {
-  const { data } = await apiClient.post<SabiApiEnvelope>(
+  body: NovaResetPasswordRequest,
+): Promise<NovaApiEnvelope> {
+  const { data } = await apiClient.post<NovaApiEnvelope>(
     CORE_RESET_PASSWORD,
     body,
   );
@@ -77,8 +77,8 @@ export async function resetPassword(
 }
 
 export async function resendOtp(
-  body: SabiResendOtpRequest,
-): Promise<SabiApiEnvelope> {
-  const { data } = await apiClient.post<SabiApiEnvelope>(CORE_RESEND_OTP, body);
+  body: NovaResendOtpRequest,
+): Promise<NovaApiEnvelope> {
+  const { data } = await apiClient.post<NovaApiEnvelope>(CORE_RESEND_OTP, body);
   return data;
 }

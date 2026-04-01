@@ -1,32 +1,32 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight } from "lucide-react";
-import type { SabiPromotionBanner } from "@/types/api.types";
+import type { NovaPromotionBanner } from "@/types/api.types";
 
 const ROTATE_MS = 6500;
 
-function isBannerSchedulable(banner: SabiPromotionBanner): boolean {
-  if (!banner.is_active) return false;
-  const now = Date.now();
-  if (banner.start_date) {
-    const t = new Date(banner.start_date).getTime();
-    if (Number.isFinite(t) && t > now) return false;
-  }
-  if (banner.end_date) {
-    const t = new Date(banner.end_date).getTime();
-    if (Number.isFinite(t) && t < now) return false;
-  }
+function isBannerSchedulable(banner: NovaPromotionBanner): boolean {
+  // if (!banner.is_active) return false;
+  // const now = Date.now();
+  // if (banner.start_date) {
+  //   const t = new Date(banner.start_date).getTime();
+  //   if (Number.isFinite(t) && t > now) return false;
+  // }
+  // if (banner.end_date) {
+  //   const t = new Date(banner.end_date).getTime();
+  //   if (Number.isFinite(t) && t < now) return false;
+  // }
   return true;
 }
 
 export function filterActivePromotionBanners(
-  banners: SabiPromotionBanner[] | undefined,
-): SabiPromotionBanner[] {
+  banners: NovaPromotionBanner[] | undefined,
+): NovaPromotionBanner[] {
   if (!banners?.length) return [];
   return banners.filter(isBannerSchedulable);
 }
 
-export function PromotionBannerCarousel({ banners }: { banners: SabiPromotionBanner[] }) {
+export function PromotionBannerCarousel({ banners }: { banners: NovaPromotionBanner[] }) {
   const [index, setIndex] = useState(0);
   const list = useMemo(() => banners.filter((b) => b.image), [banners]);
 

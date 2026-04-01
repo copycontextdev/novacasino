@@ -1,13 +1,13 @@
 import { FormEvent, useMemo, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRegister } from "@/hooks/mutations/use-register";
-import type { SabiRegisterFormProps } from "@/types/auth-ui.types";
+import type { NovaRegisterFormProps } from "@/types/auth-ui.types";
 import { getAxiosErrorMessage } from "@/lib/format";
 
 const field =
   "w-full rounded-2xl border border-white/10 bg-surface-container-high px-4 py-3 text-sm text-on-surface outline-none transition focus-visible:ring-2 focus-visible:ring-primary/40";
 
-export default function RegisterForm({ onSuccess, onSwitchToLogin }: SabiRegisterFormProps) {
+export default function RegisterForm({ onSuccess, onSwitchToLogin }: NovaRegisterFormProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");

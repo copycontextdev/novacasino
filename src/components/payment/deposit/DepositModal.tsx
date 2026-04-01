@@ -5,7 +5,7 @@
 
 import React, { useMemo } from "react";
 import { X } from "lucide-react";
-import type { SabiPaymentBank, SabiAgentBankInfo } from "@/types/api.types";
+import type { NovaPaymentBank, NovaAgentBankInfo } from "@/types/api.types";
 import { DepositOrderPreviewInfo } from "@/types/app.types";
 import {
   Dialog,
@@ -33,8 +33,8 @@ interface DepositModalProps {
   currencyLabel: string;
   minDeposit: number;
   maxDeposit: number;
-  depositBanks: SabiPaymentBank[];
-  bankInfoOptions: SabiAgentBankInfo[];
+  depositBanks: NovaPaymentBank[];
+  bankInfoOptions: NovaAgentBankInfo[];
   amountValue: string;
   onAmountChange: (v: string) => void;
   selectedBankUuid: string;

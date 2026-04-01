@@ -6,12 +6,12 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, AlertTriangle, Loader2 } from "lucide-react";
-import type { SabiDepositOrder } from "@/types/api.types";
+import type { NovaDepositOrder } from "@/types/api.types";
 import { formatBalance } from "@/lib/format";
 
 interface DepositCancelConfirmationDialogProps {
   isOpen: boolean;
-  order: SabiDepositOrder | null;
+  order: NovaDepositOrder | null;
   onClose: () => void;
   onConfirm: () => void;
   isCancelling: boolean;

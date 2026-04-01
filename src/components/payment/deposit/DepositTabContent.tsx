@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { ArrowDownLeft, ArrowUpRight, Loader2, FileUp, Trash2 } from "lucide-react";
 import { formatBalance } from "@/lib/format";
-import type { SabiDepositOrder, SabiWithdrawalOrder, SabiAmount } from "@/types/api.types";
+import type { NovaDepositOrder, NovaWithdrawalOrder, NovaAmount } from "@/types/api.types";
 import DepositOrderPreviewCard from "./DepositOrderPreviewCard";
 import AppCard from "@/components/ui/card";
 import DepositCancelConfirmationDialog from "./DepositCancelConfirmationDialog";
@@ -9,16 +9,16 @@ import AppButton from "@/components/ui/AppButton";
 import NewDepositModal from "./new/NewDepositModal";
 
 interface DepositTabContentProps {
-  deposits: SabiDepositOrder[];
+  deposits: NovaDepositOrder[];
   isDepositsLoading: boolean;
-  onConfirmDeposit: (order: SabiDepositOrder) => void;
+  onConfirmDeposit: (order: NovaDepositOrder) => void;
   onCancelDeposit: (orderUuid: string) => Promise<void>;
 }
 
 const pendingStatuses = ["pending", "paid"];
 
 function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCancelDeposit }: DepositTabContentProps) {
-  const [cancellingOrder, setCancellingOrder] = useState<SabiDepositOrder | null>(null);
+  const [cancellingOrder, setCancellingOrder] = useState<NovaDepositOrder | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
   const pendingDeposits = useMemo(() => deposits.filter((d) => pendingStatuses.includes(d.status)), [deposits]);
@@ -35,7 +35,7 @@ function DepositTabContent({ deposits, isDepositsLoading, onConfirmDeposit, onCa
     }
   };
 
-  const renderDepositItem = (item: SabiDepositOrder) => (
+  const renderDepositItem = (item: NovaDepositOrder) => (
     <div
       key={item.uuid}
       className="bg-surface-container rounded-2xl p-4 flex items-center justify-between border border-white/5"

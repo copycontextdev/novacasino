@@ -60,7 +60,7 @@ export function WsDebugPanel() {
 
   const hasToken = useMemo(() => {
     if (typeof window === "undefined") return false;
-    return !!localStorage.getItem("sabi_access_token");
+    return !!localStorage.getItem("nova_access_token");
   }, []);
 
   if (!shouldRender) return null;

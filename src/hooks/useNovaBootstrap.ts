@@ -2,16 +2,16 @@ import { useEffect } from "react";
 import { useAuthStore } from "@/store/auth-store";
 import { useBalanceStore } from "@/store/balance-store";
 import { useWsStore } from "@/store/ws-store";
-import { sabiWsClient } from "@/lib/ws/ws-client";
+import { novaWsClient } from "@/lib/ws/ws-client";
 import { isWebSocketEnabled } from "@/lib/api/config";
 import { getAccessToken } from "@/lib/session";
 import { queryClient } from "@/lib/query-client";
 import { refreshAccessToken } from "@/lib/token-refresh";
 import { useWallet, WALLET_QUERY_KEY } from "@/hooks/queries/use-wallet";
 import { getMe } from "@/lib/api-methods/core.api";
-import type { SabiWalletResponse, SabiBalanceUpdatePayload } from "@/types/api.types";
+import type { NovaWalletResponse, NovaBalanceUpdatePayload } from "@/types/api.types";
 
-export function useSabiBootstrap() {
+export function useNovaBootstrap() {
   const walletQuery = useWallet();
   const hydrate = useAuthStore((s) => s.hydrate);
   const logout = useAuthStore((s) => s.logout);
@@ -54,29 +54,29 @@ export function useSabiBootstrap() {
     if (!isAuthenticated) {
       resetBalance();
       resetWsState();
-      sabiWsClient.disconnect();
+      novaWsClient.disconnect();
       return;
     }
 
     if (!isWebSocketEnabled()) {
       setWsStatus("disabled");
-      sabiWsClient.disconnect();
+      novaWsClient.disconnect();
       return;
     }
 
     const token = getAccessToken();
     if (!token) return;
 
-    sabiWsClient.onMessage = (msg) => {
+    novaWsClient.onMessage = (msg) => {
       const type = (msg as { type?: string }).type;
       setLastMessage(type ?? "unknown");
 
       if (type === "balance.update") {
-        const payload = (msg as { payload?: SabiBalanceUpdatePayload }).payload ?? {};
+        const payload = (msg as { payload?: NovaBalanceUpdatePayload }).payload ?? {};
         applyBalanceUpdate(payload);
         queryClient.setQueryData(
           WALLET_QUERY_KEY,
-          (old: SabiWalletResponse | undefined) => {
+          (old: NovaWalletResponse | undefined) => {
             if (!old) return old;
             return {
               ...old,
@@ -104,11 +104,11 @@ export function useSabiBootstrap() {
       }
     };
 
-    sabiWsClient.onAuthError = async () => {
+    novaWsClient.onAuthError = async () => {
       const refreshedAccessToken = await refreshAccessToken();
 
       if (refreshedAccessToken) {
-        sabiWsClient.connect(refreshedAccessToken);
+        novaWsClient.connect(refreshedAccessToken);
         void queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
         return;
       }
@@ -116,17 +116,17 @@ export function useSabiBootstrap() {
       logout();
     };
 
-    sabiWsClient.onStatusChange = (status) => {
+    novaWsClient.onStatusChange = (status) => {
       setWsStatus(status);
       if (status === "connecting") {
         incrementReconnection();
       }
     };
 
-    sabiWsClient.connect(token);
+    novaWsClient.connect(token);
 
     return () => {
-      sabiWsClient.disconnect();
+      novaWsClient.disconnect();
     };
   }, [
     applyBalanceUpdate,

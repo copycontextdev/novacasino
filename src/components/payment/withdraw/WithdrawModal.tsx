@@ -7,7 +7,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { X, CheckCircleIcon, Loader2, RefreshCw } from "lucide-react";
 import { Radio, RadioGroup } from '@headlessui/react';
-import type { SabiUserBankInfo } from "@/types/api.types";
+import type { NovaUserBankInfo } from "@/types/api.types";
 import { formatBalance } from "@/lib/format";
 import { getWithdrawalAmountError } from "@/lib/payment-validation";
 import { CopyButton } from '@/components/ui/copy-button';
@@ -15,7 +15,7 @@ import { CopyButton } from '@/components/ui/copy-button';
 interface WithdrawModalProps {
   open: boolean;
   onClose: () => void;
-  userBanks: SabiUserBankInfo[];
+  userBanks: NovaUserBankInfo[];
   withdrawable?: string | number;
   currencyLabel: string;
   minWithdraw: number;

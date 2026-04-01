@@ -1,29 +1,29 @@
 /**
- * Sabi API Type Definitions
+ * Nova API Type Definitions
  *
  * Source of truth for all API request/response shapes.
- * All types use the Sabi prefix. Use these directly as component prop types
+ * All types use the Nova prefix. Use these directly as component prop types
  * where the data maps 1:1 from the API — no adapters needed.
  *
- * Companion: docs/api/SABI_API_CONTRACT.md
+ * Companion: docs/api/NOVA_API_CONTRACT.md
  */
 
 /* ============================================================
  * 0. Shared Primitives
  * ============================================================ */
 
-export type SabiUUID = string;
-export type SabiISODate = string;
+export type NovaUUID = string;
+export type NovaISODate = string;
 /** Currency amount as decimal string — e.g. "55.00" (ETB) */
-export type SabiAmount = string;
-export type SabiUrl = string;
-export type SabiPhone = string;
+export type NovaAmount = string;
+export type NovaUrl = string;
+export type NovaPhone = string;
 
 /* ============================================================
  * 1. API Envelope & Pagination
  * ============================================================ */
 
-export interface SabiApiEnvelope<TData = Record<string, unknown>> {
+export interface NovaApiEnvelope<TData = Record<string, unknown>> {
   status?: "success" | "error" | string;
   message?: string;
   detail?: string;
@@ -31,21 +31,21 @@ export interface SabiApiEnvelope<TData = Record<string, unknown>> {
   [key: string]: unknown;
 }
 
-export interface SabiPaginatedResponse<TItem> {
+export interface NovaPaginatedResponse<TItem> {
   count: number;
   next: string | null;
   previous: string | null;
   results: TItem[];
 }
 
-export type SabiApiError =
-  | SabiApiEnvelope
+export type NovaApiError =
+  | NovaApiEnvelope
   | Record<string, string[] | string>
   | { detail: string }
   | { message: string }
   | string;
 
-export interface SabiPaginationQuery {
+export interface NovaPaginationQuery {
   page?: number;
   page_size?: number;
 }
@@ -54,29 +54,29 @@ export interface SabiPaginationQuery {
  * 2. Auth & Account
  * ============================================================ */
 
-export interface SabiLoginRequest {
-  phone_number: SabiPhone;
+export interface NovaLoginRequest {
+  phone_number: NovaPhone;
   password: string;
 }
 
-export interface SabiLoginResponse {
+export interface NovaLoginResponse {
   status: "success" | string;
   access: string;
   refresh: string;
   message?: string;
 }
 
-export interface SabiTokenRefreshRequest {
+export interface NovaTokenRefreshRequest {
   refresh: string;
 }
 
-export interface SabiTokenRefreshResponse {
+export interface NovaTokenRefreshResponse {
   access: string;
 }
 
-export interface SabiRegisterRequest {
+export interface NovaRegisterRequest {
   user_profile: {
-    phone_number: SabiPhone;
+    phone_number: NovaPhone;
     email?: string;
     first_name?: string;
     last_name?: string;
@@ -86,110 +86,110 @@ export interface SabiRegisterRequest {
   promo_code?: string;
 }
 
-export interface SabiActivateAccountRequest {
-  phone_number: SabiPhone;
+export interface NovaActivateAccountRequest {
+  phone_number: NovaPhone;
   otp: string;
 }
 
-export interface SabiForgotPasswordRequest {
-  phone_number: SabiPhone;
+export interface NovaForgotPasswordRequest {
+  phone_number: NovaPhone;
 }
 
-export interface SabiResetPasswordRequest {
-  otp_id: SabiUUID;
+export interface NovaResetPasswordRequest {
+  otp_id: NovaUUID;
   otp_code: string;
   password: string;
   password2: string;
 }
 
-export interface SabiResendOtpRequest {
-  phone_number: SabiPhone;
+export interface NovaResendOtpRequest {
+  phone_number: NovaPhone;
 }
 
-export interface SabiMemberProfile {
-  id?: number | SabiUUID;
-  uuid?: SabiUUID;
+export interface NovaMemberProfile {
+  id?: number | NovaUUID;
+  uuid?: NovaUUID;
   username?: string;
   email?: string;
   first_name?: string;
   last_name?: string;
   /** Convenience field — may be a combined first + last name */
   name?: string;
-  phone_number: SabiPhone;
+  phone_number: NovaPhone;
   is_active?: boolean;
-  created_at?: SabiISODate;
-  updated_at?: SabiISODate;
+  created_at?: NovaISODate;
+  updated_at?: NovaISODate;
   [key: string]: unknown;
 }
 
-export interface SabiWalletResponse {
-  id?: number | SabiUUID;
+export interface NovaWalletResponse {
+  id?: number | NovaUUID;
   currency?: string;
-  balance: SabiAmount | number;
-  bonus_balance?: SabiAmount | null;
-  withdrawable_balance?: SabiAmount;
-  non_withdrawable_balance?: SabiAmount;
+  balance: NovaAmount | number;
+  bonus_balance?: NovaAmount | null;
+  withdrawable_balance?: NovaAmount;
+  non_withdrawable_balance?: NovaAmount;
   is_active?: boolean;
   [key: string]: unknown;
 }
 
-export interface SabiTransferRequest {
-  phone_number: SabiPhone;
-  amount: number | SabiAmount;
+export interface NovaTransferRequest {
+  phone_number: NovaPhone;
+  amount: number | NovaAmount;
 }
 
-export type SabiTransferResponse = SabiApiEnvelope;
+export type NovaTransferResponse = NovaApiEnvelope;
 
 /* ============================================================
  * 3. Core & Init
  * ============================================================ */
 
-export interface SabiCompanyInfo {
+export interface NovaCompanyInfo {
   id: number;
   company_name: string;
-  domain: SabiUrl;
+  domain: NovaUrl;
   country: string;
   country_code: string;
   language: string;
   currency: string;
-  created_at: SabiISODate;
-  updated_at: SabiISODate;
+  created_at: NovaISODate;
+  updated_at: NovaISODate;
 }
 
-export interface SabiSystemConfig {
+export interface NovaSystemConfig {
   id: number;
-  min_deposit_amount: SabiAmount;
-  max_deposit_amount: SabiAmount;
-  min_withdraw_amount: SabiAmount;
-  max_withdraw_amount: SabiAmount;
-  transfer_min_amount: SabiAmount | null;
-  transfer_max_amount: SabiAmount | null;
-  daily_max_withdraw_amount: SabiAmount | null;
-  daily_max_transfer_amount: SabiAmount | null;
-  daily_max_deposit_amount: SabiAmount | null;
+  min_deposit_amount: NovaAmount;
+  max_deposit_amount: NovaAmount;
+  min_withdraw_amount: NovaAmount;
+  max_withdraw_amount: NovaAmount;
+  transfer_min_amount: NovaAmount | null;
+  transfer_max_amount: NovaAmount | null;
+  daily_max_withdraw_amount: NovaAmount | null;
+  daily_max_transfer_amount: NovaAmount | null;
+  daily_max_deposit_amount: NovaAmount | null;
   dashboard_deposit_allowed: boolean;
   company_info: number;
-  created_at: SabiISODate;
-  updated_at: SabiISODate;
+  created_at: NovaISODate;
+  updated_at: NovaISODate;
 }
 
-export interface SabiPromotionBanner {
+export interface NovaPromotionBanner {
   id: number;
   title: string | null;
   description: string;
-  image: SabiUrl;
-  link: SabiUrl | null;
+  image: NovaUrl;
+  link: NovaUrl | null;
   button_text: string | null;
   location: number;
   location_display: string;
   is_active: boolean;
-  start_date: SabiISODate | null;
-  end_date: SabiISODate | null;
-  created_at: SabiISODate;
-  updated_at: SabiISODate;
+  start_date: NovaISODate | null;
+  end_date: NovaISODate | null;
+  created_at: NovaISODate;
+  updated_at: NovaISODate;
 }
 
-export interface SabiContactInfo {
+export interface NovaContactInfo {
   id: number;
   phone: string[];
   email: string;
@@ -197,11 +197,11 @@ export interface SabiContactInfo {
   twitter: string;
   instagram: string;
   tiktok: string;
-  telegram: SabiUrl;
+  telegram: NovaUrl;
   chat: string | null;
 }
 
-export interface SabiWebsiteInfo {
+export interface NovaWebsiteInfo {
   about_us: string;
   terms_conditions: string;
   privacy_policy: string;
@@ -211,7 +211,7 @@ export interface SabiWebsiteInfo {
   responsible_gaming: string;
 }
 
-export interface SabiFrontendConfig {
+export interface NovaFrontendConfig {
   id: number;
   withdrawal_mode: "bank_info" | "unique_code" | string;
   transfer_enabled: boolean;
@@ -231,14 +231,14 @@ export interface SabiFrontendConfig {
 }
 
 /** Response from GET /core/init — bootstraps the entire frontend */
-export interface SabiInitResponse {
-  company_info: SabiCompanyInfo;
-  system_config: SabiSystemConfig;
-  promotion_banners: SabiPromotionBanner[];
+export interface NovaInitResponse {
+  company_info: NovaCompanyInfo;
+  system_config: NovaSystemConfig;
+  promotion_banners: NovaPromotionBanner[];
   promotion_configs: Record<string, unknown>[];
-  contact_info: SabiContactInfo;
-  website_info: SabiWebsiteInfo;
-  frontend_configuration: SabiFrontendConfig;
+  contact_info: NovaContactInfo;
+  website_info: NovaWebsiteInfo;
+  frontend_configuration: NovaFrontendConfig;
   text_banners: Record<string, unknown>[];
 }
 
@@ -246,7 +246,7 @@ export interface SabiInitResponse {
  * 4. Bonus & Promotions
  * ============================================================ */
 
-export interface SabiActiveBonusStatus {
+export interface NovaActiveBonusStatus {
   challenge_badge: boolean;
   crash_jackpot: boolean;
   deposit: boolean;
@@ -257,20 +257,20 @@ export interface SabiActiveBonusStatus {
   tournament: boolean;
 }
 
-export interface SabiSpinAward {
+export interface NovaSpinAward {
   id: number;
-  uuid?: SabiUUID;
+  uuid?: NovaUUID;
   condition?: {
     id: number;
     name: string;
   };
   is_active?: boolean;
-  created_at?: SabiISODate;
-  updated_at?: SabiISODate;
+  created_at?: NovaISODate;
+  updated_at?: NovaISODate;
   [key: string]: unknown;
 }
 
-export interface SabiSpinCondition {
+export interface NovaSpinCondition {
   id: number;
   name: string;
   by_bet_count: boolean;
@@ -281,35 +281,35 @@ export interface SabiSpinCondition {
   bet_count: number | null;
   winning_streak: number | null;
   login_streak_days: number | null;
-  bet_amount: SabiAmount | null;
-  deposit_amount: SabiAmount | null;
+  bet_amount: NovaAmount | null;
+  deposit_amount: NovaAmount | null;
   is_active: boolean;
-  image: SabiUrl | null;
+  image: NovaUrl | null;
   description: string | null;
   [key: string]: unknown;
 }
 
-export interface SabiSpinResult {
+export interface NovaSpinResult {
   id: number;
-  uuid?: SabiUUID;
+  uuid?: NovaUUID;
   reward?: number | null;
   reward_display?: string | null;
-  reward_value?: SabiAmount | null;
-  created_at?: SabiISODate;
-  updated_at?: SabiISODate;
+  reward_value?: NovaAmount | null;
+  created_at?: NovaISODate;
+  updated_at?: NovaISODate;
   status?: string;
   reward_name?: string | null;
   reward_type?: string | null;
-  reward_amount?: SabiAmount | null;
+  reward_amount?: NovaAmount | null;
   [key: string]: unknown;
 }
 
-export interface SabiSpinReward {
+export interface NovaSpinReward {
   id: number;
   condition: number;
   reward_type: string;
   name: string;
-  value: SabiAmount;
+  value: NovaAmount;
   probability: number;
   text_color: string;
   background_color: string;
@@ -317,55 +317,55 @@ export interface SabiSpinReward {
   [key: string]: unknown;
 }
 
-export interface SabiSpinExecuteResponse {
+export interface NovaSpinExecuteResponse {
   id: number;
-  value: number | SabiAmount;
+  value: number | NovaAmount;
   name: string;
   reward_type: string;
-  reward_value: number | SabiAmount;
+  reward_value: number | NovaAmount;
   [key: string]: unknown;
 }
 
-export interface SabiSpinTrackerResponse {
+export interface NovaSpinTrackerResponse {
   active_bet_amount?: string;
   [key: string]: unknown;
 }
 
-export interface SabiDepositBonus {
-  id: number | SabiUUID | string;
-  uuid?: SabiUUID;
+export interface NovaDepositBonus {
+  id: number | NovaUUID | string;
+  uuid?: NovaUUID;
   name?: string;
   title?: string;
   description?: string | null;
   status?: string;
-  amount?: SabiAmount | number | null;
-  bonus_amount?: SabiAmount | number | null;
-  deposit_amount?: SabiAmount | number | null;
-  reward_amount?: SabiAmount | number | null;
+  amount?: NovaAmount | number | null;
+  bonus_amount?: NovaAmount | number | null;
+  deposit_amount?: NovaAmount | number | null;
+  reward_amount?: NovaAmount | number | null;
   is_active?: boolean;
   is_claimed?: boolean;
   is_completed?: boolean;
-  created_at?: SabiISODate;
-  updated_at?: SabiISODate;
-  expires_at?: SabiISODate | null;
+  created_at?: NovaISODate;
+  updated_at?: NovaISODate;
+  expires_at?: NovaISODate | null;
   [key: string]: unknown;
 }
 
-export type SabiSpinAwardListResponse = SabiPaginatedResponse<SabiSpinAward>;
-export type SabiSpinConditionListResponse = SabiPaginatedResponse<SabiSpinCondition>;
-export type SabiSpinResultListResponse = SabiPaginatedResponse<SabiSpinResult>;
-export type SabiSpinRewardListResponse = SabiPaginatedResponse<SabiSpinReward>;
-export type SabiDepositBonusListResponse = SabiPaginatedResponse<SabiDepositBonus>;
+export type NovaSpinAwardListResponse = NovaPaginatedResponse<NovaSpinAward>;
+export type NovaSpinConditionListResponse = NovaPaginatedResponse<NovaSpinCondition>;
+export type NovaSpinResultListResponse = NovaPaginatedResponse<NovaSpinResult>;
+export type NovaSpinRewardListResponse = NovaPaginatedResponse<NovaSpinReward>;
+export type NovaDepositBonusListResponse = NovaPaginatedResponse<NovaDepositBonus>;
 
 /* ============================================================
  * 5. Casino
  * ============================================================ */
 
-export type SabiGameMode = "demo" | "real";
-export type SabiDeviceType = "desktop" | "mobile";
+export type NovaGameMode = "demo" | "real";
+export type NovaDeviceType = "desktop" | "mobile";
 
-export interface SabiGame {
-  uuid: SabiUUID;
+export interface NovaGame {
+  uuid: NovaUUID;
   slug: string;
   name: string;
   description: string;
@@ -375,91 +375,91 @@ export interface SabiGame {
    * IMPORTANT: always render with <img> or <Image unoptimized>.
    * The CDN rejects Next.js image proxy requests (/_next/image).
    */
-  default_logo: SabiUrl | null;
-  logo: SabiUrl | null;
-  icon: SabiUrl | null;
+  default_logo: NovaUrl | null;
+  logo: NovaUrl | null;
+  icon: NovaUrl | null;
   demo_support: boolean;
   /** Badge text shown on the card — e.g. "HOT", "NEW". Null = no badge. */
   label: string | null;
   label_bg_color: string | null;
   is_crash: boolean;
   is_top_game: boolean;
-  /** Provider id or uuid — cross-reference with SabiProvider */
-  provider: number | SabiUUID | string;
+  /** Provider id or uuid — cross-reference with NovaProvider */
+  provider: number | NovaUUID | string;
   [key: string]: unknown;
 }
 
 /**
  * A named lobby category with its games list.
  *
- * Returned by GET /xcasino/lobby/ as SabiLobbyResponse.
+ * Returned by GET /xcasino/lobby/ as NovaLobbyResponse.
  * This is the primary data source for category view.
  * Do NOT use /xcasino/categories/ — it returns count: 0 for all categories.
  *
  * Examples: "Top Games", "Slots", "Live Casino", "Fishing", "Crash"
  */
-export interface SabiGameCategory {
+export interface NovaGameCategory {
   name: string;
   slug: string | null;
   description: string;
-  logo: SabiUrl | null;
+  logo: NovaUrl | null;
   order: number;
-  games: SabiGame[];
+  games: NovaGame[];
   [key: string]: unknown;
 }
 
-export interface SabiProvider {
+export interface NovaProvider {
   id: number;
-  uuid: SabiUUID;
+  uuid: NovaUUID;
   name: string;
   description: string;
   order: number;
-  default_logo: SabiUrl | null;
-  logo: SabiUrl | null;
+  default_logo: NovaUrl | null;
+  logo: NovaUrl | null;
   [key: string]: unknown;
 }
 
-export interface SabiCategory {
+export interface NovaCategory {
   id?: number;
-  uuid?: SabiUUID;
+  uuid?: NovaUUID;
   slug?: string | null;
   name?: string;
   description?: string;
   order?: number;
-  logo?: SabiUrl | null;
+  logo?: NovaUrl | null;
   [key: string]: unknown;
 }
 
-export interface SabiGamesQuery extends SabiPaginationQuery {
+export interface NovaGamesQuery extends NovaPaginationQuery {
   name?: string;
   provider?: number | string;
   category?: number | string;
 }
 
-export interface SabiStartGameQuery {
-  mode: SabiGameMode;
-  device: SabiDeviceType;
+export interface NovaStartGameQuery {
+  mode: NovaGameMode;
+  device: NovaDeviceType;
   lobby_url?: string;
 }
 
-export interface SabiStartGameResponse {
+export interface NovaStartGameResponse {
   /** One-time launch URL from qtlauncher.com — render in <iframe> without sandbox */
-  url: SabiUrl;
+  url: NovaUrl;
   [key: string]: unknown;
 }
 
 // Response type aliases — casino
-export type SabiLobbyResponse = SabiGameCategory[];
-export type SabiProviderListResponse = SabiPaginatedResponse<SabiProvider>;
-export type SabiCategoryListResponse = SabiPaginatedResponse<SabiCategory>;
-export type SabiGamesListResponse = SabiPaginatedResponse<SabiGame>;
-export type SabiTopGamesResponse = SabiPaginatedResponse<SabiGame>;
+export type NovaLobbyResponse = NovaGameCategory[];
+export type NovaProviderListResponse = NovaPaginatedResponse<NovaProvider>;
+export type NovaCategoryListResponse = NovaPaginatedResponse<NovaCategory>;
+export type NovaGamesListResponse = NovaPaginatedResponse<NovaGame>;
+export type NovaTopGamesResponse = NovaPaginatedResponse<NovaGame>;
 
 /* ============================================================
  * 5. Payment & Transactions
  * ============================================================ */
 
-export type SabiOrderStatus =
+export type NovaOrderStatus =
   | "pending"
   | "success"
   | "completed"
@@ -467,38 +467,38 @@ export type SabiOrderStatus =
   | "cancelled"
   | string;
 
-export type SabiPaymentBankType = "deposit" | "withdraw" | "both" | string;
+export type NovaPaymentBankType = "deposit" | "withdraw" | "both" | string;
 
-export interface SabiPaymentBank {
+export interface NovaPaymentBank {
   id?: number;
-  uuid: SabiUUID;
+  uuid: NovaUUID;
   code: string;
   name: string;
   order?: number;
-  logo?: SabiUrl | null;
-  transaction_support?: SabiPaymentBankType;
+  logo?: NovaUrl | null;
+  transaction_support?: NovaPaymentBankType;
   is_active?: boolean;
   [key: string]: unknown;
 }
 
 /** Bank account owned by an agent — used to receive deposit transfers */
-export interface SabiAgentBankInfo {
-  uuid: SabiUUID;
+export interface NovaAgentBankInfo {
+  uuid: NovaUUID;
   agent_name?: string;
   agent_nickname?: string;
   bank_name: string;
   account_name: string;
   account_number: string;
   note?: string;
-  min_amount?: SabiAmount;
-  max_amount?: SabiAmount;
+  min_amount?: NovaAmount;
+  max_amount?: NovaAmount;
   [key: string]: unknown;
 }
 
 /** Bank account owned by the member — used for withdrawal */
-export interface SabiUserBankInfo {
-  uuid: SabiUUID;
-  bank: SabiUUID;
+export interface NovaUserBankInfo {
+  uuid: NovaUUID;
+  bank: NovaUUID;
   bank_name?: string;
   account_number: string;
   account_name: string;
@@ -506,10 +506,10 @@ export interface SabiUserBankInfo {
   [key: string]: unknown;
 }
 
-export interface SabiDepositOrder {
-  uuid: SabiUUID;
-  amount: SabiAmount;
-  status: SabiOrderStatus;
+export interface NovaDepositOrder {
+  uuid: NovaUUID;
+  amount: NovaAmount;
+  status: NovaOrderStatus;
   status_display?: string;
   user_name?: string;
   user_phone?: string;
@@ -520,101 +520,101 @@ export interface SabiDepositOrder {
   account_number?: string;
   reference_number?: string | null;
   receipt?: string | null;
-  expires_at?: SabiISODate;
-  created_at?: SabiISODate;
-  updated_at?: SabiISODate;
+  expires_at?: NovaISODate;
+  created_at?: NovaISODate;
+  updated_at?: NovaISODate;
   [key: string]: unknown;
 }
 
-export interface SabiWithdrawalOrder {
-  uuid?: SabiUUID;
-  amount?: SabiAmount;
-  status?: SabiOrderStatus;
+export interface NovaWithdrawalOrder {
+  uuid?: NovaUUID;
+  amount?: NovaAmount;
+  status?: NovaOrderStatus;
   status_display?: string;
-  created_at?: SabiISODate;
-  updated_at?: SabiISODate;
+  created_at?: NovaISODate;
+  updated_at?: NovaISODate;
   [key: string]: unknown;
 }
 
-export interface SabiTransactionItem {
-  id?: number | SabiUUID;
-  uuid?: SabiUUID;
+export interface NovaTransactionItem {
+  id?: number | NovaUUID;
+  uuid?: NovaUUID;
   type?: string;
   status?: string;
   status_display?: string;
-  amount?: SabiAmount;
-  created_at?: SabiISODate;
-  updated_at?: SabiISODate;
+  amount?: NovaAmount;
+  created_at?: NovaISODate;
+  updated_at?: NovaISODate;
   [key: string]: unknown;
 }
 
 // Request types — payment
-export interface SabiCreateDepositRequest {
-  agent_bank_info_id?: SabiUUID;
-  agent_bank_info?: SabiUUID;
-  amount: SabiAmount;
+export interface NovaCreateDepositRequest {
+  agent_bank_info_id?: NovaUUID;
+  agent_bank_info?: NovaUUID;
+  amount: NovaAmount;
 }
 
-export interface SabiUpdateDepositRequest {
+export interface NovaUpdateDepositRequest {
   reference_number?: string;
   receipt?: File | Blob | string; // sent as multipart/form-data
 }
 
-export interface SabiCreateWithdrawalRequest {
-  amount: SabiAmount;
-  bank_info_id: SabiUUID;
+export interface NovaCreateWithdrawalRequest {
+  amount: NovaAmount;
+  bank_info_id: NovaUUID;
 }
 
-export interface SabiCreateUserBankInfoRequest {
-  bank: SabiUUID;
+export interface NovaCreateUserBankInfoRequest {
+  bank: NovaUUID;
   account_number: string;
   account_name: string;
 }
 
-export interface SabiAgentBanksQuery {
+export interface NovaAgentBanksQuery {
   type: "deposit" | "withdraw";
 }
 
-export interface SabiAgentBankInfoQuery {
-  amount?: SabiAmount | number;
+export interface NovaAgentBankInfoQuery {
+  amount?: NovaAmount | number;
 }
 
 // Response type aliases — payment
-export type SabiDepositOrderListResponse = SabiPaginatedResponse<SabiDepositOrder>;
-export type SabiWithdrawalOrderListResponse = SabiPaginatedResponse<SabiWithdrawalOrder>;
-export type SabiTransactionListResponse = SabiPaginatedResponse<SabiTransactionItem>;
-export type SabiAgentBankListResponse =
-  | SabiPaymentBank[]
-  | SabiPaginatedResponse<SabiPaymentBank>;
-export type SabiAgentBankInfoListResponse = SabiPaginatedResponse<SabiAgentBankInfo>;
-export type SabiUserBankInfoListResponse =
-  | SabiUserBankInfo[]
-  | SabiPaginatedResponse<SabiUserBankInfo>;
-export type SabiCreateDepositResponse = SabiApiEnvelope<SabiDepositOrder>;
-export type SabiUpdateDepositResponse = SabiApiEnvelope<Partial<SabiDepositOrder>>;
-export type SabiCancelDepositResponse = SabiApiEnvelope<SabiDepositOrder>;
-export type SabiCreateWithdrawalResponse = SabiApiEnvelope<SabiWithdrawalOrder>;
+export type NovaDepositOrderListResponse = NovaPaginatedResponse<NovaDepositOrder>;
+export type NovaWithdrawalOrderListResponse = NovaPaginatedResponse<NovaWithdrawalOrder>;
+export type NovaTransactionListResponse = NovaPaginatedResponse<NovaTransactionItem>;
+export type NovaAgentBankListResponse =
+  | NovaPaymentBank[]
+  | NovaPaginatedResponse<NovaPaymentBank>;
+export type NovaAgentBankInfoListResponse = NovaPaginatedResponse<NovaAgentBankInfo>;
+export type NovaUserBankInfoListResponse =
+  | NovaUserBankInfo[]
+  | NovaPaginatedResponse<NovaUserBankInfo>;
+export type NovaCreateDepositResponse = NovaApiEnvelope<NovaDepositOrder>;
+export type NovaUpdateDepositResponse = NovaApiEnvelope<Partial<NovaDepositOrder>>;
+export type NovaCancelDepositResponse = NovaApiEnvelope<NovaDepositOrder>;
+export type NovaCreateWithdrawalResponse = NovaApiEnvelope<NovaWithdrawalOrder>;
 
 /* ============================================================
  * 6. WebSocket
  * ============================================================ */
 
-export interface SabiWsAuthQuery {
+export interface NovaWsAuthQuery {
   token: string;
 }
 
-export type SabiWsClientAction =
+export type NovaWsClientAction =
   | { action: "join_crash_jackpot" }
   | { action: "leave_crash_jackpot" };
 
-export interface SabiBalanceUpdatePayload {
-  balance?: number | SabiAmount;
-  withdrawable?: number | SabiAmount;
-  non_withdrawable?: number | SabiAmount;
+export interface NovaBalanceUpdatePayload {
+  balance?: number | NovaAmount;
+  withdrawable?: number | NovaAmount;
+  non_withdrawable?: number | NovaAmount;
   [key: string]: unknown;
 }
 
-export type SabiWsMessage =
+export type NovaWsMessage =
   | { type: "authenticated"; [key: string]: unknown }
   | {
       type: "authentication_error";
@@ -622,7 +622,7 @@ export type SabiWsMessage =
       message?: string;
       [key: string]: unknown;
     }
-  | { type: "balance.update"; payload?: SabiBalanceUpdatePayload; [key: string]: unknown }
+  | { type: "balance.update"; payload?: NovaBalanceUpdatePayload; [key: string]: unknown }
   | { type: "jackpot_contribution"; [key: string]: unknown }
   | { type: "personal_crash_jackpot_win"; [key: string]: unknown }
   | { type: "crash_jackpot_win"; [key: string]: unknown }

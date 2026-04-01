@@ -4,15 +4,15 @@
  */
 
 import { useMemo } from "react";
-import type { SabiGame, SabiGameCategory } from "@/types/api.types";
+import type { NovaGame, NovaGameCategory } from "@/types/api.types";
 
 export function useLobbyGamesFiltered(
-  lobbyCategories: SabiGameCategory[],
+  lobbyCategories: NovaGameCategory[],
   navTab: string,
   categoryFilter: string,
-): { trending: SabiGame[]; gridGames: SabiGame[] } {
+): { trending: NovaGame[]; gridGames: NovaGame[] } {
   return useMemo(() => {
-    const flat: SabiGame[] = [];
+    const flat: NovaGame[] = [];
     const seen = new Set<string>();
     for (const cat of lobbyCategories) {
       for (const g of cat.games) {
@@ -23,7 +23,7 @@ export function useLobbyGamesFiltered(
       }
     }
 
-    const byNav = (games: SabiGame[]) => {
+    const byNav = (games: NovaGame[]) => {
       const n = navTab.toLowerCase();
       if (n === "slots")
         return games.filter(

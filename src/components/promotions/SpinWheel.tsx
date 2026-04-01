@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { motion, useAnimation } from "motion/react";
-import type { SabiSpinReward } from "@/types/api.types";
+import type { NovaSpinReward } from "@/types/api.types";
 
 interface SpinWheelProps {
-  rewards: SabiSpinReward[];
+  rewards: NovaSpinReward[];
   targetRewardId: number | null;
   isSpinning: boolean;
   resetKey: number;
