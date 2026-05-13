@@ -1,0 +1,23 @@
+# Cloudflare Pages headers
+# Vite copies this file from /public to /dist on build.
+# Reference: https://developers.cloudflare.com/pages/configuration/headers/
+
+# Global defaults
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+# NOTE: X-Frame-Options is intentionally omitted so the app can be embedded
+# inside the Telegram Mini App webview. Adding `X-Frame-Options: DENY` (or
+# `SAMEORIGIN`) will break the Telegram bot's Play button.
+#
+# A Content-Security-Policy is intentionally NOT set yet. Game iframes load
+# from many third-party provider domains resolved at runtime, so the policy
+# needs to be drafted in report-only mode first and tuned against real traffic
+# before enforcing. Tracked as G6 in the gap analysis.
+
+# Cache hashed build assets aggressively — Vite fingerprints filenames in /assets/
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -9,8 +9,9 @@ import { AppLoader } from "@/components/AppLoader";
  */
 export function AppShell({ children }: { children: ReactNode }) {
   const hydrated = useAuthStore((s) => s.hydrated);
+  const telegramAuthPending = useAuthStore((s) => s.telegramAuthPending);
   const initQuery = useInit();
-  const ready = hydrated && initQuery.isFetched;
+  const ready = hydrated && initQuery.isFetched && !telegramAuthPending;
 
   return (
     <>

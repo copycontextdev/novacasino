@@ -3,6 +3,7 @@
 // Auth
 export const AUTH_LOGIN = "/auth/login/";
 export const AUTH_REFRESH = "/auth/token/refresh/";
+export const AUTH_TELEGRAM = "/auth/telegram/";
 
 // Core / Member
 export const CORE_INIT = "/core/init";

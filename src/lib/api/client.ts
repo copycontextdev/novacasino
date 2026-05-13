@@ -1,8 +1,9 @@
 import axios from "axios";
 import { getApiBaseUrl } from "./config";
 import { getAccessToken } from "@/lib/session";
-import { AUTH_REFRESH } from "@/lib/api/endpoints";
+import { AUTH_REFRESH, AUTH_TELEGRAM } from "@/lib/api/endpoints";
 import { refreshAccessToken } from "@/lib/token-refresh";
+import { attemptTelegramReauth } from "@/lib/telegram-reauth";
 
 export const apiClient = axios.create({
   baseURL: getApiBaseUrl(),
@@ -25,11 +26,15 @@ apiClient.interceptors.response.use(
       | (typeof error.config & { _retry?: boolean })
       | undefined;
 
+    const requestUrl = String(originalRequest?.url ?? "");
+    const isAuthEndpoint =
+      requestUrl.includes(AUTH_REFRESH) || requestUrl.includes(AUTH_TELEGRAM);
+
     if (
       error.response?.status === 401 &&
       originalRequest &&
       !originalRequest._retry &&
-      !String(originalRequest.url ?? "").includes(AUTH_REFRESH)
+      !isAuthEndpoint
     ) {
       originalRequest._retry = true;
       const refreshedAccessToken = await refreshAccessToken();
@@ -37,6 +42,15 @@ apiClient.interceptors.response.use(
       if (refreshedAccessToken) {
         originalRequest.headers = originalRequest.headers ?? {};
         originalRequest.headers.Authorization = `Bearer ${refreshedAccessToken}`;
+        return apiClient(originalRequest);
+      }
+
+      // Refresh failed. If we're inside Telegram, try minting a fresh session
+      // from initData before giving up and showing the login modal.
+      const telegramToken = await attemptTelegramReauth();
+      if (telegramToken) {
+        originalRequest.headers = originalRequest.headers ?? {};
+        originalRequest.headers.Authorization = `Bearer ${telegramToken}`;
         return apiClient(originalRequest);
       }
     }

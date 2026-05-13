@@ -9,6 +9,7 @@ import { queryClient } from "@/lib/query-client";
 import { refreshAccessToken } from "@/lib/token-refresh";
 import { useWallet, WALLET_QUERY_KEY } from "@/hooks/queries/use-wallet";
 import { getMe } from "@/lib/api-methods/core.api";
+import { useTelegramAutoAuth } from "@/hooks/useTelegramAutoAuth";
 import type { NovaWalletResponse, NovaBalanceUpdatePayload } from "@/types/api.types";
 
 export function useNovaBootstrap() {
@@ -31,6 +32,8 @@ export function useNovaBootstrap() {
   useEffect(() => {
     hydrate();
   }, [hydrate]);
+
+  useTelegramAutoAuth();
 
   useEffect(() => {
     if (!hydrated || !isAuthenticated) return;

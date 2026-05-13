@@ -59,6 +59,17 @@ export interface NovaLoginRequest {
   password: string;
 }
 
+export interface NovaTelegramAuthRequest {
+  init_data: string;
+}
+
+export interface NovaTelegramAuthResponse {
+  status: "authenticated" | "link_required";
+  access?: string;
+  refresh?: string;
+  telegram_user: { id: number; username?: string };
+}
+
 export interface NovaLoginResponse {
   status: "success" | string;
   access: string;

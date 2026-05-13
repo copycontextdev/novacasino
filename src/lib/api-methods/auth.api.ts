@@ -12,10 +12,13 @@ import type {
   NovaResendOtpRequest,
   NovaApiEnvelope,
   NovaMemberProfile,
+  NovaTelegramAuthRequest,
+  NovaTelegramAuthResponse,
 } from "@/types/api.types";
 import {
   AUTH_LOGIN,
   AUTH_REFRESH,
+  AUTH_TELEGRAM,
   CORE_REGISTER,
   CORE_ACTIVATE,
   CORE_FORGOT_PASSWORD,
@@ -80,5 +83,15 @@ export async function resendOtp(
   body: NovaResendOtpRequest,
 ): Promise<NovaApiEnvelope> {
   const { data } = await apiClient.post<NovaApiEnvelope>(CORE_RESEND_OTP, body);
+  return data;
+}
+
+export async function telegramLogin(
+  body: NovaTelegramAuthRequest,
+): Promise<NovaTelegramAuthResponse> {
+  const { data } = await apiClient.post<NovaTelegramAuthResponse>(AUTH_TELEGRAM, body);
+  if (data.status === "authenticated" && data.access && data.refresh) {
+    setTokens(data.access, data.refresh);
+  }
   return data;
 }
