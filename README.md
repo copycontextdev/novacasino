@@ -43,7 +43,7 @@ Before you begin, ensure you have the following installed:
    ```bash
    cp .env.example .env
    ```
-   *Note: For local development, you can leave the `GEMINI_API_KEY` empty unless you are implementing AI-driven features.*
+   *Note: For local development, you can leave the `GEMINI_API_KEY`  unless you are implementing AI-driven features.*
 
 4. **Start the development server:**
    ```bash
