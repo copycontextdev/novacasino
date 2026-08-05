@@ -4,7 +4,8 @@
  */
 
 import React from "react";
-import { UserCircle, ShieldCheck, Edit, Phone, Mail, Plus, Loader2, Landmark } from "lucide-react";
+import { UserCircle, ShieldCheck, Edit, Phone, Mail, Plus, Loader2, Landmark, MessageSquare } from "lucide-react";
+import { SUPPORT_TELEGRAM_URL } from "@/lib/app_constants";
 import type { NovaMemberProfile, NovaUserBankInfo } from "@/types/api.types";
 
 interface ProfileSectionProps {
@@ -113,6 +114,30 @@ const ProfileSection = ({
               </div>
             ))
           )}
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-xl font-headline font-extrabold">Contact & Support</h2>
+        </div>
+        <div className="bg-surface-container rounded-2xl p-4 border border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <MessageSquare className="w-6 h-6 text-primary" />
+            <div>
+              <div className="font-bold">Contact Us</div>
+              <div className="text-[12px] text-on-surface-variant">Reach out via Telegram for support</div>
+            </div>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={() => window.open(SUPPORT_TELEGRAM_URL, "_blank", "noopener,noreferrer")}
+              className="rounded-full bg-gradient-to-r from-primary to-primary-dim px-4 py-2 text-on-primary font-bold"
+            >
+              Open Chat
+            </button>
+          </div>
         </div>
       </section>
     </div>

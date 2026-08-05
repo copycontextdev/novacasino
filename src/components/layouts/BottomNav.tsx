@@ -6,6 +6,7 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { BONUS_NAV_ITEMS, MOBILE_BONUS_NAV_ITEM, PRIMARY_NAV_ITEMS } from "@/components/layouts/navigation-items";
+import { SUPPORT_TELEGRAM_URL } from "@/lib/app_constants";
 
 interface BottomNavProps {
   activeTab: string;
@@ -23,7 +24,7 @@ const BottomNav = ({
   const [bonusPickerOpen, setBonusPickerOpen] = useState(false);
   const items = [
     ...PRIMARY_NAV_ITEMS.filter((item) =>
-      ["lobby", "wallet", "profile"].includes(item.id)
+      ["lobby", "wallet", "chat", "profile"].includes(item.id)
     ).map((item) => ({
       id: item.id,
       label: item.shortLabel,
@@ -38,6 +39,7 @@ const BottomNav = ({
   const orderedItems = [
     items.find((item) => item.id === "lobby"),
     items.find((item) => item.id === "wallet"),
+    items.find((item) => item.id === "chat"),
     items.find((item) => item.id === MOBILE_BONUS_NAV_ITEM.id),
     items.find((item) => item.id === "profile"),
   ].filter(Boolean) as typeof items;
@@ -105,6 +107,12 @@ const BottomNav = ({
                 }
 
                 setBonusPickerOpen(false);
+                if (item.id === "chat") {
+                  // Open Telegram support in a new tab/window
+                  window.open(SUPPORT_TELEGRAM_URL, "_blank", "noopener,noreferrer");
+                  return;
+                }
+
                 setActiveTab(item.id);
               }}
               className={`flex flex-col items-center justify-center p-2 transition-all ${

@@ -6,6 +6,7 @@ import {
   Sparkles,
   UserCircle,
   Wallet,
+  MessageSquare,
   type LucideIcon,
 } from "lucide-react";
 
@@ -20,6 +21,7 @@ export const PRIMARY_NAV_ITEMS: NavItem[] = [
   { id: "lobby", label: "Lobby", shortLabel: "Home", icon: Home },
   { id: "search", label: "Search", shortLabel: "Search", icon: Search },
   { id: "wallet", label: "Wallet", shortLabel: "Wallet", icon: Wallet },
+  { id: "chat", label: "Chat", shortLabel: "Chat", icon: MessageSquare },
   { id: "profile", label: "Profile", shortLabel: "Profile", icon: UserCircle },
 ];
 
